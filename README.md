@@ -93,9 +93,9 @@ If you use this data, code, or materials in your research, please cite:
 
 | Hypothesis | Description | Status |
 |------------|-------------|--------|
-| **H1** | Punitiveness will be positively correlated with all correlate measures | ✅ Supported |
-| **H2** | Hostile Aggression cluster will show stronger correlations with punitiveness than Crime Concerns cluster | ✅ Supported |
-| **H3** | Most correlate measures will be positively intercorrelated | ✅ Supported |
+| **H1** | Punitiveness will be positively correlated with all correlate measures | Supported |
+| **H2** | Hostile Aggression cluster will show stronger correlations with punitiveness than Crime Concerns cluster | Supported |
+| **H3** | Most correlate measures will be positively intercorrelated | Supported |
 
 ---
 
