@@ -40,9 +40,9 @@ If you use this data, code, or materials in your research, please cite:
 
 | Hypothesis | Description | Status |
 |------------|-------------|--------|
-| **H1** | Punitiveness will be positively correlated with all correlate measures | ✅ Supported |
-| **H2** | Hostile Aggression cluster will show stronger correlations with punitiveness than Crime Concerns cluster | ✅ Supported |
-| **H3** | Most correlate measures will be positively intercorrelated | ✅ Supported |
+| **H1** | Punitiveness will be positively correlated with all correlate measures | Supported |
+| **H2** | Hostile Aggression cluster will show stronger correlations with punitiveness than Crime Concerns cluster | Supported |
+| **H3** | Most correlate measures will be positively intercorrelated | Supported |
 
 ## Study Design
 
@@ -274,12 +274,13 @@ This research was conducted in accordance with ethical guidelines and approved b
 ## Authors
 
 - **Dan Simon** - USC Gould School of Law, Department of Psychology
-- **David G. Kamper** - UCLA
+- **David G. Kamper** - UCLA Department of Psychology
 
 ## Contact
 
 For questions about this research, please contact:
-- Professor Dan Simon: dsimon@law.usc.edu
+- Dan Simon: dsimon@law.usc.edu
+- David G. Kamper: davidgkamper@ucla.edu
 
 ## License
 
