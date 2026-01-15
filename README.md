@@ -24,7 +24,7 @@ If you use this data, code, or materials in your research, please cite:
   author = {Simon, Dan and Kamper, David G.},
   journal = {Working Paper},
   year = {2025},
-  institution = {University of Southern California, Gould School of Law}
+  institution = {University of Southern California, Gould School of Law, University of California, Los Angeles}
 }
 ```
 
