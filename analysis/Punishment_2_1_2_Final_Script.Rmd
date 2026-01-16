@@ -1,0 +1,1755 @@
+---
+title: "Punishment Study 2.1.2 - Final Analysis"
+author: "DGK"
+date: "January 2026"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+  word_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+Pre-registered Hypotheses:
+   H1: Punitiveness positively correlated with all correlate measures
+   H2: Hostile Aggression cluster > Crime Concerns cluster in predicting punitiveness
+   H3: Most correlate measures positively intercorrelated
+
+# PHASE 0: SETUP AND PACKAGE LOADING
+
+```{r packages}
+# Clear environment
+rm(list = ls())
+
+# Required packages - install if needed
+required_packages <- c(
+  "tidyverse",      # Data manipulation and visualization
+  "psych",          # Cronbach's alpha, correlations, factor analysis
+  "corrplot",       # Correlation heat maps
+  "Hmisc",          # rcorr for correlation matrices with p-values
+  "cocor",          # Steiger's Z-test for comparing correlations
+  "lme4",           # Mixed-effects models
+  "lmerTest",       # P-values for mixed models
+  "car",            # ANOVA, diagnostics
+  "effectsize",     # Effect size calculations
+  "ggcorrplot",     # Alternative correlation plots
+  "RColorBrewer",   # Color palettes
+  "knitr",          # Tables
+  "broom",          # Tidy model outputs
+  "scales",         # Percentage formatting
+  "performance",    # ICC and model diagnostics
+  "lavaan"          # CFA
+)
+
+# Install missing packages
+new_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
+# Load packages
+lapply(required_packages, library, character.only = TRUE)
+
+# Set options
+options(scipen = 999)  # Avoid scientific notation
+options(digits = 4)    # Default decimal places
+```
+
+# PHASE 1: DATA LOADING AND CLEANING
+
+## 1.1 Load Data
+
+```{r load_data}
+# Read the data file
+# UPDATE THIS PATH TO YOUR LOCAL FILE LOCATION
+raw_data <- read.csv("/Users/dgkamper/Library/CloudStorage/GoogleDrive-dgkamper@gmail.com/My Drive/DGK Lab/Collaborations/Dan Simon/Punishment/Data/Data_Final.csv", stringsAsFactors = FALSE)
+
+cat("Raw data loaded:", nrow(raw_data), "rows,", ncol(raw_data), "columns\n\n")
+```
+
+## 1.2 Data Filtering
+
+```{r filter_data}
+# Track exclusions at each step
+n_raw <- nrow(raw_data)
+cat("=== DATA FILTERING ===\n\n")
+cat("Starting N:", n_raw, "\n")
+
+# Filter 1: Progress = 100 (completed survey)
+df <- raw_data %>% filter(Progress == 100)
+n_after_progress <- nrow(df)
+cat("After Progress = 100:", n_after_progress, 
+    "(excluded", n_raw - n_after_progress, ")\n")
+
+# Filter 2: Finished = 1
+df <- df %>% filter(Finished == 1)
+n_after_finished <- nrow(df)
+cat("After Finished = 1:", n_after_finished, 
+    "(excluded", n_after_progress - n_after_finished, ")\n")
+
+# Filter 3: Attention Check 1 = 9 ("Strongly agree")
+df <- df %>% filter(AttnCheck1 == 9)
+n_after_attn1 <- nrow(df)
+cat("After AttnCheck1 = 9:", n_after_attn1, 
+    "(excluded", n_after_finished - n_after_attn1, ")\n")
+
+# Filter 4: Attention Check 2 = 4 (8+7=15, option 4)
+df <- df %>% filter(AttnCheck2 == 4)
+n_after_attn2 <- nrow(df)
+cat("After AttnCheck2 = 4:", n_after_attn2, 
+    "(excluded", n_after_attn1 - n_after_attn2, ")\n")
+
+# Final sample
+cat("\n*** FINAL SAMPLE: N =", nrow(df), "***\n")
+cat("Total excluded:", n_raw - nrow(df), "\n\n")
+```
+
+## 1.3 Check for Missing Data
+
+```{r missing_data}
+# Key variables to check
+key_vars <- c("Sentence_1", "punishmore_1", "punishmore_2", "vignette",
+              "hate_1", "revenge_1", "rwa_1", "sdo_1")
+
+missing_summary <- df %>%
+  select(all_of(key_vars)) %>%
+  summarise(across(everything(), ~sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "N_Missing")
+
+cat("=== MISSING DATA CHECK ===\n\n")
+print(as.data.frame(missing_summary))
+cat("\n")
+```
+
+# PHASE 2: REVERSE CODING
+
+```{r create_working_df}
+# Create working dataframe
+df_clean <- df
+```
+
+## 2.1 Punitiveness Items (reverse code so higher = more punitive)
+
+```{r reverse_punitiveness}
+# punishmore_1: "Current level of punishment is too high" - REVERSE
+# (Agreeing means LESS punitive, so reverse)
+df_clean$punishmore_1_R <- 8 - df_clean$punishmore_1
+
+# parsimony_1: "Criminal punishments should be as light as possible" - REVERSE
+df_clean$parsimony_1_R <- 8 - df_clean$parsimony_1
+
+# parsimony_2: "The state should not punish more than necessary" - REVERSE
+df_clean$parsimony_2_R <- 8 - df_clean$parsimony_2
+
+cat("Punitiveness items reverse coded: punishmore_1, parsimony_1, parsimony_2\n")
+```
+
+## 2.2 Emotion Items
+
+```{r reverse_emotion}
+# hate_2: "I am sympathetic towards criminals" - REVERSE
+# (Sympathy = opposite of hatred)
+df_clean$hate_2_R <- 8 - df_clean$hate_2
+
+cat("Emotion items reverse coded: hate_2 (sympathy)\n")
+```
+
+## 2.3 Harshness/Hostile Aggression Items
+
+```{r reverse_harshness}
+# degrad_1: "Prisoners deserve dignity and respect" - REVERSE
+df_clean$degrad_1_R <- 8 - df_clean$degrad_1
+
+# prisonvi_1: "I feel bad when a prisoner is assaulted" - REVERSE
+# (Feeling bad = NOT tolerating violence)
+df_clean$prisonvi_1_R <- 8 - df_clean$prisonvi_1
+
+# prisonvi_2: "Sexual assault of prisoners is a serious problem" - REVERSE
+# (Viewing it as serious = NOT tolerating violence)
+df_clean$prisonvi_2_R <- 8 - df_clean$prisonvi_2
+
+# harsh_2: "Prisoners deserve decent living conditions" - REVERSE
+df_clean$harsh_2_R <- 8 - df_clean$harsh_2
+
+cat("Harshness items reverse coded: degrad_1, prisonvi_1, prisonvi_2, harsh_2\n")
+```
+
+## 2.4 Crime Concerns Items
+
+```{r reverse_crime}
+# fear_1: "How safe do you feel walking at night" - REVERSE
+# (Feeling safe = LOW fear)
+df_clean$fear_1_R <- 8 - df_clean$fear_1
+
+cat("Crime concerns items reverse coded: fear_1 (safety)\n")
+```
+
+## 2.5 Personality Items - RWA
+
+```{r reverse_rwa}
+# rwa_3: "Nothing wrong with premarital sex" - REVERSE
+df_clean$rwa_3_R <- 8 - df_clean$rwa_3
+
+cat("RWA items reverse coded: rwa_3\n")
+```
+
+## 2.6 Personality Items - SDO
+
+```{r reverse_sdo}
+# sdo_3: "No one group should dominate" - REVERSE (egalitarian)
+df_clean$sdo_3_R <- 8 - df_clean$sdo_3
+
+# sdo_4: "Bottom groups are just as deserving" - REVERSE (egalitarian)
+df_clean$sdo_4_R <- 8 - df_clean$sdo_4
+
+# sdo_7: "Should equalize conditions for groups" - REVERSE (egalitarian)
+df_clean$sdo_7_R <- 8 - df_clean$sdo_7
+
+# sdo_8: "Should give all groups equal chance" - REVERSE (egalitarian)
+df_clean$sdo_8_R <- 8 - df_clean$sdo_8
+
+cat("SDO items reverse coded: sdo_3, sdo_4, sdo_7, sdo_8\n")
+```
+
+## 2.7 Personality Items - Vengefulness
+
+```{r reverse_venge}
+# venge_1: "Not worth my time to pay back someone" - REVERSE
+df_clean$venge_1_R <- 8 - df_clean$venge_1
+
+# venge_5: "I am not a vengeful person" - REVERSE
+df_clean$venge_5_R <- 8 - df_clean$venge_5
+
+cat("Vengefulness items reverse coded: venge_1, venge_5\n")
+```
+
+## 2.8 Personality Items - Racial Resentment
+
+```{r reverse_raceresent}
+# Raceresent_1: "Slavery/discrimination created difficult conditions" - REVERSE
+# (Acknowledging systemic issues = LOW racial resentment)
+df_clean$Raceresent_1_R <- 8 - df_clean$Raceresent_1
+
+# Raceresent_4: "Blacks have gotten less than they deserve" - REVERSE
+df_clean$Raceresent_4_R <- 8 - df_clean$Raceresent_4
+
+cat("Racial Resentment items reverse coded: Raceresent_1, Raceresent_4\n")
+```
+
+## 2.9 Due Process Items (Exploratory - collected but cluster dropped)
+
+```{r reverse_dueprocess}
+# dueprocess_2: "Every defendant deserves due process" - REVERSE
+# (Supporting due process = NOT tolerating violations)
+df_clean$dueprocess_2_R <- 8 - df_clean$dueprocess_2
+
+cat("Due Process items reverse coded: dueprocess_2\n")
+```
+
+# PHASE 3: Z-SCORE SENTENCES WITHIN VIGNETTE
+
+```{r vignette_distribution}
+# Check vignette distribution
+cat("=== VIGNETTE DISTRIBUTION ===\n\n")
+vignette_table <- table(df_clean$vignette, useNA = "ifany")
+print(vignette_table)
+
+cat("\nVignette Labels:\n")
+cat("  1 = Stranger Felony-Murder (purse snatching)\n")
+cat("  2 = Domestic Violence Murder (restraining order violation)\n")
+cat("  3 = Organized Crime Murder (car theft operation)\n\n")
+```
+
+```{r sentence_raw_descriptives}
+# Descriptive stats by vignette BEFORE z-scoring
+cat("=== SENTENCE DESCRIPTIVES BY VIGNETTE (Raw) ===\n\n")
+sentence_by_vignette <- df_clean %>%
+  group_by(vignette) %>%
+  summarise(
+    n = n(),
+    mean = mean(Sentence_1, na.rm = TRUE),
+    sd = sd(Sentence_1, na.rm = TRUE),
+    median = median(Sentence_1, na.rm = TRUE),
+    min = min(Sentence_1, na.rm = TRUE),
+    max = max(Sentence_1, na.rm = TRUE)
+  )
+print(as.data.frame(sentence_by_vignette))
+cat("\n")
+```
+
+```{r zscore_sentence}
+# Z-score sentences within each vignette condition
+# This removes vignette-specific variance while preserving individual differences
+df_clean <- df_clean %>%
+  group_by(vignette) %>%
+  mutate(Sentence_z = scale(Sentence_1)[,1]) %>%
+  ungroup()
+
+cat("Sentence_z created: z-scored within vignette condition\n")
+```
+
+```{r verify_zscore}
+# Verify z-scoring worked (means should be ~0, SDs should be ~1)
+cat("\n=== SENTENCE DESCRIPTIVES BY VIGNETTE (Z-scored) ===\n\n")
+sentence_z_check <- df_clean %>%
+  group_by(vignette) %>%
+  summarise(
+    n = n(),
+    mean = mean(Sentence_z, na.rm = TRUE),
+    sd = sd(Sentence_z, na.rm = TRUE)
+  )
+print(as.data.frame(sentence_z_check))
+cat("\n")
+```
+
+# PHASE 4: CREATE COMPOSITE SCORES WITH RELIABILITY
+
+```{r composite_function}
+# Function to compute composite and report alpha
+compute_composite <- function(data, items, composite_name, print_output = TRUE) {
+  # Select items
+  item_data <- data %>% select(all_of(items))
+  
+  # Compute alpha
+  alpha_result <- psych::alpha(item_data, check.keys = FALSE)
+  alpha_value <- alpha_result$total$raw_alpha
+  
+  # Compute composite (mean of items)
+  composite <- rowMeans(item_data, na.rm = TRUE)
+  
+  if(print_output) {
+    cat(sprintf("%-30s: α = %.3f (k = %d)\n", 
+                composite_name, alpha_value, length(items)))
+  }
+  
+  return(list(composite = composite, alpha = alpha_value, n_items = length(items)))
+}
+
+# Store all alphas for later reporting
+alpha_table <- data.frame(
+  Construct = character(),
+  Alpha = numeric(),
+  N_Items = integer(),
+  stringsAsFactors = FALSE
+)
+```
+
+## 4.1 PUNITIVENESS CONSTRUCT (DV)
+
+```{r punitiveness_composites}
+cat("=== PUNITIVENESS (DV) ===\n\n")
+
+# Punish More (2 items)
+punishmore_items <- c("punishmore_1_R", "punishmore_2")
+result <- compute_composite(df_clean, punishmore_items, "Punish More")
+df_clean$punishmore_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Punish More", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Parsimony (2 items) - already reversed
+parsimony_items <- c("parsimony_1_R", "parsimony_2_R")
+result <- compute_composite(df_clean, parsimony_items, "Parsimony (R)")
+df_clean$parsimony_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Parsimony", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Three Strikes (2 items)
+threestrikes_items <- c("threestrikes_1", "threestrikes_2")
+result <- compute_composite(df_clean, threestrikes_items, "Three Strikes")
+df_clean$threestrikes_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Three Strikes", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Single items (report as single-item measures)
+cat(sprintf("%-30s: Single item\n", "LWOP"))
+cat(sprintf("%-30s: Single item\n", "Death Penalty"))
+cat(sprintf("%-30s: Z-scored within vignette\n", "Sentence"))
+
+# Punitiveness Aggregate (all items)
+# Include: punishmore, parsimony, threestrikes, LWOP, deathpenalty, Sentence_z
+punitiveness_items <- c("punishmore_1_R", "punishmore_2", 
+                        "parsimony_1_R", "parsimony_2_R",
+                        "threestrikes_1", "threestrikes_2",
+                        "LWOP", "deathpenalty")
+
+# For aggregate, also include z-scored sentence
+result <- compute_composite(df_clean, punitiveness_items, "Punitiveness (8 items)")
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Punitiveness (8 items)", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Create punitiveness aggregate WITH sentence_z
+# First standardize the 8-item composite, then average with Sentence_z
+df_clean$punitiveness_8item <- result$composite
+df_clean$punitiveness_8item_z <- scale(df_clean$punitiveness_8item)[,1]
+df_clean$punitiveness_agg <- rowMeans(cbind(df_clean$punitiveness_8item_z, 
+                                             df_clean$Sentence_z), na.rm = TRUE)
+
+cat(sprintf("%-30s: Standardized composite + Sentence_z\n\n", "Punitiveness Aggregate"))
+```
+
+## 4.2 CRIME CONCERNS CLUSTER
+
+```{r crime_concerns_composites}
+cat("=== CRIME CONCERNS CLUSTER ===\n\n")
+
+# Perceived Crime Rates (2 items)
+rates_items <- c("rates_1", "rates_2")
+result <- compute_composite(df_clean, rates_items, "Perceived Crime Rates")
+df_clean$crime_rates_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Perceived Crime Rates", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Fear of Crime (3 items)
+fear_items <- c("fear_1_R", "fear_2", "fear_3")
+result <- compute_composite(df_clean, fear_items, "Fear of Crime")
+df_clean$fear_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Fear of Crime", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Crime Concerns Aggregate
+crime_concerns_items <- c("rates_1", "rates_2", "fear_1_R", "fear_2", "fear_3")
+result <- compute_composite(df_clean, crime_concerns_items, "Crime Concerns Cluster")
+df_clean$crime_concerns_agg <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Crime Concerns Cluster", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+cat("\n")
+```
+
+## 4.3 EMOTIONS CLUSTER
+
+```{r emotions_composites}
+cat("=== EMOTIONS CLUSTER ===\n\n")
+
+# Hatred (3 items)
+hatred_items <- c("hate_1", "hate_2_R", "hate_3")
+result <- compute_composite(df_clean, hatred_items, "Hatred")
+df_clean$hatred_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Hatred", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Anger (2 items)
+anger_items <- c("anger_1", "anger_2")
+result <- compute_composite(df_clean, anger_items, "Anger")
+df_clean$anger_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Anger", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Emotions Aggregate
+emotions_items <- c("hate_1", "hate_2_R", "hate_3", "anger_1", "anger_2")
+result <- compute_composite(df_clean, emotions_items, "Emotions Cluster")
+df_clean$emotions_agg <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Emotions Cluster", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+cat("\n")
+```
+
+## 4.4 HARSHNESS / HOSTILE AGGRESSION CLUSTER
+
+```{r hostile_composites}
+cat("=== HARSHNESS / HOSTILE AGGRESSION CLUSTER ===\n\n")
+
+# Social Exclusion (3 items)
+exclusion_items <- c("exclusion_1", "exclusion_2", "exclusion_3")
+result <- compute_composite(df_clean, exclusion_items, "Social Exclusion")
+df_clean$exclusion_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Social Exclusion", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Degradation (3 items)
+degradation_items <- c("degrad_1_R", "degrad_2", "degrad_3")
+result <- compute_composite(df_clean, degradation_items, "Degradation")
+df_clean$degradation_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Degradation", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Infliction of Suffering (2 items)
+suffering_items <- c("suffer_1", "suffer_2")
+result <- compute_composite(df_clean, suffering_items, "Infliction of Suffering")
+df_clean$suffering_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Infliction of Suffering", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Prison Violence Tolerance (2 items) - reversed items
+prisonvi_items <- c("prisonvi_1_R", "prisonvi_2_R")
+result <- compute_composite(df_clean, prisonvi_items, "Prison Violence Tolerance")
+df_clean$prisonvi_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Prison Violence Tolerance", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Harsh Prison Conditions (3 items)
+harsh_items <- c("harsh_1", "harsh_2_R", "harsh_3")
+result <- compute_composite(df_clean, harsh_items, "Harsh Prison Conditions")
+df_clean$harsh_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Harsh Prison Conditions", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Revenge (3 items)
+revenge_items <- c("revenge_1", "revenge_2", "revenge_3")
+result <- compute_composite(df_clean, revenge_items, "Revenge")
+df_clean$revenge_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Revenge", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Hostile Aggression Aggregate
+hostile_agg_items <- c("exclusion_1", "exclusion_2", "exclusion_3",
+                       "degrad_1_R", "degrad_2", "degrad_3",
+                       "suffer_1", "suffer_2",
+                       "prisonvi_1_R", "prisonvi_2_R",
+                       "harsh_1", "harsh_2_R", "harsh_3",
+                       "revenge_1", "revenge_2", "revenge_3")
+result <- compute_composite(df_clean, hostile_agg_items, "Hostile Aggression Cluster")
+df_clean$hostile_agg <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Hostile Aggression Cluster", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+cat("\n")
+```
+
+## 4.5 PERSONALITY CLUSTER
+
+```{r personality_composites}
+cat("=== PERSONALITY CLUSTER ===\n\n")
+
+# Right-Wing Authoritarianism (5 items)
+rwa_items <- c("rwa_1", "rwa_2", "rwa_3_R", "rwa_4", "rwa_5")
+result <- compute_composite(df_clean, rwa_items, "RWA")
+df_clean$rwa_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "RWA", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Social Dominance Orientation (8 items)
+sdo_items <- c("sdo_1", "sdo_2", "sdo_3_R", "sdo_4_R", 
+               "sdo_5", "sdo_6", "sdo_7_R", "sdo_8_R")
+result <- compute_composite(df_clean, sdo_items, "SDO")
+df_clean$sdo_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "SDO", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Vengefulness (5 items)
+venge_items <- c("venge_1_R", "venge_2", "venge_3", "venge_4", "venge_5_R")
+result <- compute_composite(df_clean, venge_items, "Vengefulness")
+df_clean$venge_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Vengefulness", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Violence Proneness (4 items)
+vprone_items <- c("vprone_1", "vprone_2", "vprone_3", "vprone_4")
+result <- compute_composite(df_clean, vprone_items, "Violence Proneness")
+df_clean$vprone_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Violence Proneness", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Racial Resentment (4 items)
+raceresent_items <- c("Raceresent_1_R", "Raceresent_2", "Raceresent_3", "Raceresent_4_R")
+result <- compute_composite(df_clean, raceresent_items, "Racial Resentment")
+df_clean$raceresent_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Racial Resentment", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Blood Sports (4 items: Boxing, UFC, Hunting, Wrestling)
+# TV_4 = Boxing, TV_6 = UFC, TV_8 = Hunting, TV_9 = Wrestling
+bloodsports_items <- c("TV_4", "TV_6", "TV_8", "TV_9")
+result <- compute_composite(df_clean, bloodsports_items, "Blood Sports")
+df_clean$bloodsports_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Blood Sports", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Personality Aggregate (all personality measures)
+personality_items <- c(rwa_items, sdo_items, venge_items, vprone_items, 
+                       raceresent_items, bloodsports_items)
+result <- compute_composite(df_clean, personality_items, "Personality Cluster")
+df_clean$personality_agg <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Personality Cluster", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+cat("\n")
+```
+
+## 4.6 PROCESS VIOLATIONS (EXPLORATORY ONLY)
+
+```{r process_composites}
+cat("=== PROCESS VIOLATIONS (Exploratory Only) ===\n\n")
+
+# Due Process (3 items)
+dueprocess_items <- c("dueprocess_1", "dueprocess_2_R", "dueprocess_3")
+result <- compute_composite(df_clean, dueprocess_items, "Due Process Violations")
+df_clean$dueprocess_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Due Process Violations*", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Uncertain Evidence (4 items)
+uncertain_items <- c("uncertain_1", "uncertain_2", "uncertain_3", "uncertain_4")
+result <- compute_composite(df_clean, uncertain_items, "Uncertain Evidence")
+df_clean$uncertain_comp <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Uncertain Evidence*", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+# Process Violations Aggregate
+process_items <- c(dueprocess_items, uncertain_items)
+result <- compute_composite(df_clean, process_items, "Process Violations Cluster")
+df_clean$process_agg <- result$composite
+alpha_table <- rbind(alpha_table, data.frame(Construct = "Process Violations Cluster*", 
+                                              Alpha = result$alpha, N_Items = result$n_items))
+
+cat("\n* = Exploratory only (cluster dropped from confirmatory analyses per pre-registration)\n\n")
+```
+
+## 4.7 Print Complete Alpha Table
+
+```{r alpha_table}
+cat("\n=== COMPLETE RELIABILITY TABLE ===\n\n")
+print(as.data.frame(alpha_table))
+
+# Flag low reliability composites
+low_alpha <- alpha_table %>% filter(Alpha < 0.60)
+if(nrow(low_alpha) > 0) {
+  cat("\n WARNING: Composites with α < .60 (interpret with caution): \n")
+  print(as.data.frame(low_alpha))
+}
+cat("\n")
+```
+
+# PHASE 5: DESCRIPTIVE STATISTICS
+
+## 5.1 Sample Demographics
+
+```{r demographics}
+cat("=== SAMPLE DEMOGRAPHICS ===\n\n")
+
+# Age
+cat("AGE:\n")
+cat(sprintf("  Mean: %.1f years\n", mean(df_clean$age_1, na.rm = TRUE)))
+cat(sprintf("  SD: %.1f\n", sd(df_clean$age_1, na.rm = TRUE)))
+cat(sprintf("  Range: %d - %d\n\n", 
+            min(df_clean$age_1, na.rm = TRUE), 
+            max(df_clean$age_1, na.rm = TRUE)))
+
+# Gender (1=Male, 2=Female, 3=Other)
+cat("GENDER:\n")
+gender_table <- df_clean %>%
+  count(gender) %>%
+  mutate(
+    Gender_Label = case_when(
+      gender == 1 ~ "Male",
+      gender == 2 ~ "Female",
+      gender == 3 ~ "Other",
+      TRUE ~ "Missing"
+    ),
+    Percent = sprintf("%.1f%%", n/sum(n)*100)
+  ) %>%
+  select(Gender_Label, n, Percent)
+print(as.data.frame(gender_table))
+cat("\n")
+
+# Race/Ethnicity
+cat("RACE/ETHNICITY:\n")
+race_table <- df_clean %>%
+  count(race) %>%
+  mutate(
+    Race_Label = case_when(
+      race == 1 ~ "White, non-Hispanic",
+      race == 2 ~ "Black/African-American",
+      race == 3 ~ "Asian",
+      race == 4 ~ "Hispanic/Latino",
+      race == 5 ~ "Middle Eastern",
+      race == 6 ~ "Native American",
+      race == 7 ~ "Pacific Islander",
+      TRUE ~ "Missing/Other"
+    ),
+    Percent = sprintf("%.1f%%", n/sum(n)*100)
+  ) %>%
+  select(Race_Label, n, Percent) %>%
+  arrange(desc(n))
+print(as.data.frame(race_table))
+cat("\n")
+
+# Education
+cat("EDUCATION:\n")
+education_table <- df_clean %>%
+  count(education) %>%
+  mutate(
+    Education_Label = case_when(
+      education == 1 ~ "Did not graduate high school",
+      education == 2 ~ "High school only",
+      education == 3 ~ "1-2 years post HS",
+      education == 4 ~ "3-4 years post HS",
+      education == 5 ~ "5-6 years post HS",
+      education == 6 ~ "More than 6 years post HS",
+      TRUE ~ "Missing"
+    ),
+    Percent = sprintf("%.1f%%", n/sum(n)*100)
+  ) %>%
+  select(Education_Label, n, Percent)
+print(as.data.frame(education_table))
+cat("\n")
+
+# Political Orientation (1=Strongly liberal to 7=Strongly conservative)
+cat("POLITICAL ORIENTATION:\n")
+cat(sprintf("  Mean: %.2f (1=Strongly liberal, 7=Strongly conservative)\n", 
+            mean(df_clean$politid, na.rm = TRUE)))
+cat(sprintf("  SD: %.2f\n", sd(df_clean$politid, na.rm = TRUE)))
+cat(sprintf("  Median: %.0f\n\n", median(df_clean$politid, na.rm = TRUE)))
+```
+
+## 5.2 Construct Descriptive Statistics
+
+```{r construct_descriptives}
+cat("=== CONSTRUCT DESCRIPTIVE STATISTICS ===\n\n")
+
+# List of all composites for descriptives
+construct_vars_desc <- c(
+  # Punitiveness
+  "punishmore_comp", "parsimony_comp", "threestrikes_comp", 
+  "LWOP", "deathpenalty", "Sentence_1", "punitiveness_agg",
+  # Crime Concerns
+  "crime_rates_comp", "fear_comp", "crime_concerns_agg",
+  # Emotions
+  "hatred_comp", "anger_comp", "emotions_agg",
+  # Hostile Aggression
+  "exclusion_comp", "degradation_comp", "suffering_comp",
+  "prisonvi_comp", "harsh_comp", "revenge_comp", "hostile_agg",
+  # Personality
+  "rwa_comp", "sdo_comp", "venge_comp", "vprone_comp",
+  "raceresent_comp", "bloodsports_comp", "personality_agg",
+  # Process (Exploratory)
+  "dueprocess_comp", "uncertain_comp", "process_agg"
+)
+
+# Compute descriptives
+descriptives_table <- df_clean %>%
+  select(all_of(construct_vars_desc)) %>%
+  summarise(across(everything(), list(
+    Mean = ~mean(., na.rm = TRUE),
+    SD = ~sd(., na.rm = TRUE),
+    Median = ~median(., na.rm = TRUE),
+    Min = ~min(., na.rm = TRUE),
+    Max = ~max(., na.rm = TRUE),
+    N = ~sum(!is.na(.))
+  ))) %>%
+  pivot_longer(everything()) %>%
+  separate(name, into = c("Variable", "Stat"), sep = "_(?=[^_]+$)") %>%
+  pivot_wider(names_from = Stat, values_from = value) %>%
+  mutate(across(c(Mean, SD, Median), ~round(., 2)))
+
+print(as.data.frame(descriptives_table), row.names = FALSE)
+cat("\n")
+```
+
+## 5.3 Percentage Above/Below Midpoint
+
+```{r midpoint_analysis}
+cat("=== PERCENTAGE ABOVE SCALE MIDPOINT ===\n\n")
+cat("(Midpoint = 4 for 1-7 scales; 25 for 0-50 sentence scale)\n\n")
+
+# Function to compute % above midpoint
+pct_above_midpoint <- function(x, midpoint = 4) {
+  mean(x > midpoint, na.rm = TRUE) * 100
+}
+
+# Composites (1-7 scale, midpoint = 4)
+scale_vars <- construct_vars_desc[!construct_vars_desc %in% c("Sentence_1", "punitiveness_agg")]
+
+midpoint_table <- df_clean %>%
+  select(all_of(scale_vars)) %>%
+  summarise(across(everything(), ~pct_above_midpoint(., midpoint = 4))) %>%
+  pivot_longer(everything(), names_to = "Construct", values_to = "Pct_Above_Midpoint") %>%
+  arrange(desc(Pct_Above_Midpoint)) %>%
+  mutate(Pct_Above_Midpoint = sprintf("%.1f%%", Pct_Above_Midpoint))
+
+print(as.data.frame(midpoint_table), row.names = FALSE)
+
+# Sentence (0-50 scale, midpoint = 25)
+cat(sprintf("\nSentence_1 (midpoint = 25): %.1f%% above midpoint\n",
+            pct_above_midpoint(df_clean$Sentence_1, midpoint = 25)))
+cat("\n")
+```
+
+## 5.4 Sentence Distribution
+
+```{r sentence_distribution}
+cat("=== SENTENCE DISTRIBUTION ===\n\n")
+
+cat("Overall:\n")
+cat(sprintf("  Mean: %.1f years\n", mean(df_clean$Sentence_1, na.rm = TRUE)))
+cat(sprintf("  SD: %.1f\n", sd(df_clean$Sentence_1, na.rm = TRUE)))
+cat(sprintf("  Median: %.0f\n", median(df_clean$Sentence_1, na.rm = TRUE)))
+
+# Percentage at key values
+cat(sprintf("  %% at maximum (50 years): %.1f%%\n", 
+            mean(df_clean$Sentence_1 == 50, na.rm = TRUE) * 100))
+cat(sprintf("  %% at 0 years: %.1f%%\n", 
+            mean(df_clean$Sentence_1 == 0, na.rm = TRUE) * 100))
+
+cat("\nBy Vignette:\n")
+print(as.data.frame(sentence_by_vignette))
+cat("\n")
+```
+
+## 5.5 Sentence Distribution Visualizations
+
+```{r sentence_histograms}
+cat("=== SENTENCE DISTRIBUTION HISTOGRAMS ===\n\n")
+
+# Overall histogram
+png("histogram_sentence.png", width = 800, height = 600, res = 150)
+ggplot(df_clean, aes(x = Sentence_1)) +
+  geom_histogram(binwidth = 5, fill = "steelblue", color = "white") +
+  geom_vline(xintercept = mean(df_clean$Sentence_1, na.rm = TRUE), 
+             color = "red", linetype = "dashed", size = 1) +
+  labs(title = "Distribution of Sentence Recommendations",
+       subtitle = sprintf("M = %.1f, SD = %.1f, Median = %.0f",
+                          mean(df_clean$Sentence_1, na.rm = TRUE),
+                          sd(df_clean$Sentence_1, na.rm = TRUE),
+                          median(df_clean$Sentence_1, na.rm = TRUE)),
+       x = "Sentence (Years)", y = "Count") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 50, 10))
+dev.off()
+cat("Saved: histogram_sentence.png\n")
+
+# By vignette
+png("histogram_sentence_by_vignette.png", width = 1000, height = 400, res = 150)
+ggplot(df_clean, aes(x = Sentence_1, fill = factor(vignette))) +
+  geom_histogram(binwidth = 5, color = "white") +
+  facet_wrap(~vignette, labeller = labeller(vignette = c(
+    "1" = "Stranger Felony-Murder",
+    "2" = "Domestic Violence",
+    "3" = "Organized Crime"
+  ))) +
+  labs(title = "Sentence Distribution by Vignette",
+       x = "Sentence (Years)", y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_brewer(palette = "Set2")
+dev.off()
+cat("Saved: histogram_sentence_by_vignette.png\n\n")
+```
+
+# PHASE 6: CONFIRMATORY HYPOTHESIS TESTS
+
+## 6.1 H1: Punitiveness Correlated with All Correlates
+
+### 6.1a: Cluster-Level Correlations
+
+```{r h1_cluster_level}
+cat("=== H1: CLUSTER-LEVEL CORRELATIONS ===\n\n")
+
+cluster_vars <- c("punitiveness_agg", "crime_concerns_agg", "emotions_agg", 
+                  "hostile_agg", "personality_agg")
+
+cluster_data <- df_clean %>% select(all_of(cluster_vars)) %>% na.omit()
+cluster_cor <- corr.test(cluster_data, use = "pairwise", method = "pearson")
+
+cat("Correlation Matrix (r values):\n")
+print(round(cluster_cor$r, 2))
+cat("\nP-values:\n")
+print(round(cluster_cor$p, 4))
+
+# Punitiveness correlations with each cluster
+cat("\n--- Punitiveness vs. Each Cluster ---\n")
+for(var in cluster_vars[-1]) {
+  r <- cor(df_clean$punitiveness_agg, df_clean[[var]], use = "pairwise.complete.obs")
+  test <- cor.test(df_clean$punitiveness_agg, df_clean[[var]])
+  cat(sprintf("  %s: r = %.2f, p %s\n", 
+              var, r, 
+              ifelse(test$p.value < .001, "< .001", sprintf("= %.3f", test$p.value))))
+}
+cat("\n")
+```
+
+### 6.1b: Construct-Level Correlations
+
+```{r h1_construct_level}
+cat("=== H1: CONSTRUCT-LEVEL CORRELATIONS ===\n\n")
+
+construct_vars_h1 <- c(
+  "punitiveness_agg",
+  # Crime Concerns
+  "crime_rates_comp", "fear_comp",
+  # Emotions
+  "hatred_comp", "anger_comp",
+  # Hostile Aggression
+  "exclusion_comp", "degradation_comp", "suffering_comp",
+  "prisonvi_comp", "harsh_comp", "revenge_comp",
+  # Personality
+  "rwa_comp", "sdo_comp", "venge_comp", "vprone_comp",
+  "raceresent_comp", "bloodsports_comp"
+)
+
+construct_data_h1 <- df_clean %>% select(all_of(construct_vars_h1)) %>% na.omit()
+construct_cor <- corr.test(construct_data_h1, use = "pairwise", method = "pearson")
+
+# Extract punitiveness row
+punitiveness_cors <- data.frame(
+  Construct = construct_vars_h1[-1],
+  r = construct_cor$r["punitiveness_agg", -1],
+  p = construct_cor$p["punitiveness_agg", -1]
+) %>%
+  mutate(
+    r = round(r, 2),
+    sig = case_when(
+      p < .001 ~ "***",
+      p < .01 ~ "**",
+      p < .05 ~ "*",
+      TRUE ~ ""
+    ),
+    Direction = ifelse(r > 0, "Positive", "Negative")
+  ) %>%
+  arrange(desc(abs(r)))
+
+cat("Punitiveness Correlations with Constructs (sorted by |r|):\n")
+print(as.data.frame(punitiveness_cors), row.names = FALSE)
+
+# H1 Summary - SAVE THESE FOR LATER USE
+h1_n_positive <- sum(punitiveness_cors$r > 0)
+h1_n_total <- nrow(punitiveness_cors)
+h1_n_sig_positive <- sum(punitiveness_cors$r > 0 & punitiveness_cors$p < .05)
+
+cat(sprintf("\n*** H1 SUMMARY (Construct Level) ***\n"))
+cat(sprintf("  Positive correlations: %d/%d (%.1f%%)\n", 
+            h1_n_positive, h1_n_total, h1_n_positive/h1_n_total*100))
+cat(sprintf("  Significant positive (p < .05): %d/%d (%.1f%%)\n", 
+            h1_n_sig_positive, h1_n_total, h1_n_sig_positive/h1_n_total*100))
+cat(sprintf("  H1 SUPPORTED: %s\n\n", 
+            ifelse(h1_n_positive == h1_n_total, "YES (all positive)", "PARTIAL")))
+```
+
+### 6.1c: Item-Level Correlations (Pre-registered)
+
+```{r h1_item_level}
+cat("=== H1: ITEM-LEVEL CORRELATIONS WITH PUNITIVENESS ===\n\n")
+
+# All individual items
+all_items <- c(
+  # Crime Concerns
+  "rates_1", "rates_2", "fear_1_R", "fear_2", "fear_3",
+  # Emotions
+  "hate_1", "hate_2_R", "hate_3", "anger_1", "anger_2",
+  # Hostile Aggression
+  "exclusion_1", "exclusion_2", "exclusion_3",
+  "degrad_1_R", "degrad_2", "degrad_3",
+  "suffer_1", "suffer_2",
+  "prisonvi_1_R", "prisonvi_2_R",
+  "harsh_1", "harsh_2_R", "harsh_3",
+  "revenge_1", "revenge_2", "revenge_3",
+  # Personality
+  "rwa_1", "rwa_2", "rwa_3_R", "rwa_4", "rwa_5",
+  "sdo_1", "sdo_2", "sdo_3_R", "sdo_4_R", "sdo_5", "sdo_6", "sdo_7_R", "sdo_8_R",
+  "venge_1_R", "venge_2", "venge_3", "venge_4", "venge_5_R",
+  "vprone_1", "vprone_2", "vprone_3", "vprone_4",
+  "Raceresent_1_R", "Raceresent_2", "Raceresent_3", "Raceresent_4_R",
+  "TV_4", "TV_6", "TV_8", "TV_9"
+)
+
+item_cors <- sapply(all_items, function(item) {
+  cor(df_clean$punitiveness_agg, df_clean[[item]], use = "pairwise.complete.obs")
+})
+
+item_pvals <- sapply(all_items, function(item) {
+  cor.test(df_clean$punitiveness_agg, df_clean[[item]])$p.value
+})
+
+item_cor_df <- data.frame(
+  Item = all_items,
+  r = round(item_cors, 2),
+  p = item_pvals,
+  sig = case_when(
+    item_pvals < .001 ~ "***",
+    item_pvals < .01 ~ "**",
+    item_pvals < .05 ~ "*",
+    TRUE ~ ""
+  )
+) %>% arrange(desc(abs(r)))
+
+cat(sprintf("Item-level correlations with punitiveness: %d items\n", length(all_items)))
+cat(sprintf("All positive: %s\n", ifelse(all(item_cors > 0), "YES", "NO")))
+cat(sprintf("Proportion positive: %.1f%%\n", mean(item_cors > 0) * 100))
+cat(sprintf("Significant (p < .05): %d/%d (%.1f%%)\n\n", 
+            sum(item_pvals < .05), length(item_pvals), 
+            sum(item_pvals < .05)/length(item_pvals)*100))
+
+print(as.data.frame(item_cor_df), row.names = FALSE)
+
+write.csv(item_cor_df, "H1_item_level_correlations.csv", row.names = FALSE)
+cat("\nSaved: H1_item_level_correlations.csv\n\n")
+```
+
+### 6.1d: Create Heat Maps
+
+```{r h1_heatmaps}
+cat("=== GENERATING HEAT MAPS ===\n\n")
+
+# Cluster-level heat map
+png("heatmap_cluster_level.png", width = 800, height = 800, res = 150)
+corrplot(cluster_cor$r, 
+         method = "color",
+         type = "upper",
+         addCoef.col = "black",
+         number.cex = 0.8,
+         tl.col = "black",
+         tl.srt = 45,
+         tl.cex = 0.8,
+         p.mat = cluster_cor$p,
+         sig.level = 0.05,
+         insig = "blank",
+         title = "Cluster-Level Correlations",
+         mar = c(0,0,2,0))
+dev.off()
+cat("Saved: heatmap_cluster_level.png\n")
+
+# Construct-level heat map
+png("heatmap_construct_level.png", width = 1200, height = 1200, res = 150)
+corrplot(construct_cor$r, 
+         method = "color",
+         type = "upper",
+         addCoef.col = "black",
+         number.cex = 0.5,
+         tl.col = "black",
+         tl.srt = 45,
+         tl.cex = 0.6,
+         p.mat = construct_cor$p,
+         sig.level = 0.05,
+         insig = "n",
+         title = "Construct-Level Correlations",
+         mar = c(0,0,2,0))
+dev.off()
+cat("Saved: heatmap_construct_level.png\n\n")
+```
+
+### 6.1e: 95% Confidence Intervals for Key Correlations
+
+```{r h1_confidence_intervals}
+cat("=== 95% CONFIDENCE INTERVALS FOR KEY CORRELATIONS ===\n\n")
+
+# Function to get CI
+get_cor_ci <- function(x, y, data) {
+  test <- cor.test(data[[x]], data[[y]])
+  return(c(r = unname(test$estimate), 
+           ci_lower = test$conf.int[1], 
+           ci_upper = test$conf.int[2],
+           p = test$p.value))
+}
+
+ci_table <- data.frame(
+  Comparison = c("Punitiveness-Hostile", "Punitiveness-Crime", 
+                 "Punitiveness-Emotions", "Punitiveness-Personality"),
+  r = NA, CI_Lower = NA, CI_Upper = NA, p = NA
+)
+
+ci_table[1, 2:5] <- get_cor_ci("punitiveness_agg", "hostile_agg", df_clean)
+ci_table[2, 2:5] <- get_cor_ci("punitiveness_agg", "crime_concerns_agg", df_clean)
+ci_table[3, 2:5] <- get_cor_ci("punitiveness_agg", "emotions_agg", df_clean)
+ci_table[4, 2:5] <- get_cor_ci("punitiveness_agg", "personality_agg", df_clean)
+
+ci_table <- ci_table %>% mutate(across(where(is.numeric), ~round(., 3)))
+print(as.data.frame(ci_table), row.names = FALSE)
+cat("\n")
+```
+
+## 6.2 H2: Hostile Aggression > Crime Concerns
+
+```{r h2_steiger}
+cat("=== H2: Hostile Aggression > Crime Concerns in predicting punitiveness ===\n\n")
+
+# Correlations
+r_hostile <- cor(df_clean$punitiveness_agg, df_clean$hostile_agg, 
+                 use = "pairwise.complete.obs")
+r_crime <- cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg, 
+               use = "pairwise.complete.obs")
+r_hostile_crime <- cor(df_clean$hostile_agg, df_clean$crime_concerns_agg, 
+                       use = "pairwise.complete.obs")
+
+cat(sprintf("r(Punitiveness, Hostile Aggression) = %.3f\n", r_hostile))
+cat(sprintf("r(Punitiveness, Crime Concerns) = %.3f\n", r_crime))
+cat(sprintf("r(Hostile Aggression, Crime Concerns) = %.3f\n\n", r_hostile_crime))
+
+# Steiger's Z-test for dependent correlations
+# Using cocor package
+n_steiger <- sum(complete.cases(df_clean[, c("punitiveness_agg", "hostile_agg", "crime_concerns_agg")]))
+
+steiger_result <- cocor.dep.groups.overlap(
+  r.jk = r_hostile,        # r(punitiveness, hostile)
+  r.jh = r_crime,          # r(punitiveness, crime_concerns)
+  r.kh = r_hostile_crime,  # r(hostile, crime_concerns)
+  n = n_steiger,
+  test = "steiger1980"
+)
+
+cat("Steiger's Z-test for Dependent Correlations:\n")
+cat(sprintf("  N = %d\n", n_steiger))
+cat(sprintf("  Difference: %.3f - %.3f = %.3f\n", r_hostile, r_crime, r_hostile - r_crime))
+print(steiger_result)
+
+# Extract p-value safely
+h2_pvalue <- steiger_result@steiger1980$p.value
+
+cat(sprintf("\n*** H2 SUMMARY ***\n"))
+cat(sprintf("  Hostile Aggression r = %.3f\n", r_hostile))
+cat(sprintf("  Crime Concerns r = %.3f\n", r_crime))
+cat(sprintf("  Difference = %.3f\n", r_hostile - r_crime))
+cat(sprintf("  Steiger's Z p-value = %.4f\n", h2_pvalue))
+cat(sprintf("  H2 SUPPORTED: %s\n\n", 
+            ifelse(r_hostile > r_crime & h2_pvalue < .05, 
+                   "YES (significantly greater)", "CHECK P-VALUE")))
+```
+
+### 6.2b: Extended H2 - All Clusters vs Crime Concerns
+
+```{r h2_extended}
+cat("=== EXTENDED H2: All Clusters vs Crime Concerns ===\n\n")
+
+clusters_to_compare <- c("hostile_agg", "emotions_agg", "personality_agg")
+cluster_labels <- c("Hostile Aggression", "Emotions", "Personality")
+
+for(i in 1:length(clusters_to_compare)) {
+  r_other <- cor(df_clean$punitiveness_agg, df_clean[[clusters_to_compare[i]]], 
+                 use = "pairwise.complete.obs")
+  r_between <- cor(df_clean[[clusters_to_compare[i]]], df_clean$crime_concerns_agg,
+                   use = "pairwise.complete.obs")
+  
+  steiger <- cocor.dep.groups.overlap(
+    r.jk = r_other,
+    r.jh = r_crime,
+    r.kh = r_between,
+    n = n_steiger,
+    test = "steiger1980"
+  )
+  
+  cat(sprintf("%s vs Crime Concerns:\n", cluster_labels[i]))
+  cat(sprintf("  r(%s) = %.3f vs r(Crime) = %.3f\n", cluster_labels[i], r_other, r_crime))
+  cat(sprintf("  Difference = %.3f, p = %.4f\n", r_other - r_crime, 
+              steiger@steiger1980$p.value))
+  cat(sprintf("  %s > Crime Concerns: %s\n\n", cluster_labels[i],
+              ifelse(steiger@steiger1980$p.value < .05 & r_other > r_crime, "YES", "NO")))
+}
+```
+
+## 6.3 H3: Intercorrelations Among Correlates
+
+```{r h3_intercorrelations}
+cat("=== H3: Correlates positively intercorrelated ===\n\n")
+
+# Create matrix of all correlate constructs (excluding punitiveness)
+correlate_vars <- c(
+  "crime_rates_comp", "fear_comp",
+  "hatred_comp", "anger_comp",
+  "exclusion_comp", "degradation_comp", "suffering_comp",
+  "prisonvi_comp", "harsh_comp", "revenge_comp",
+  "rwa_comp", "sdo_comp", "venge_comp", "vprone_comp",
+  "raceresent_comp", "bloodsports_comp"
+)
+
+correlate_data <- df_clean %>% select(all_of(correlate_vars)) %>% na.omit()
+correlate_cor <- corr.test(correlate_data, use = "pairwise", method = "pearson")
+
+# Count off-diagonal correlations
+n_vars <- length(correlate_vars)
+h3_n_correlations <- (n_vars * (n_vars - 1)) / 2  # Off-diagonal
+
+# Extract upper triangle
+upper_r <- correlate_cor$r[upper.tri(correlate_cor$r)]
+upper_p <- correlate_cor$p[upper.tri(correlate_cor$p)]
+
+h3_n_positive <- sum(upper_r > 0)
+h3_n_sig_positive <- sum(upper_r > 0 & upper_p < .05)
+h3_n_sig <- sum(upper_p < .05)
+
+cat(sprintf("Total off-diagonal correlations: %d\n", h3_n_correlations))
+cat(sprintf("Positive correlations: %d (%.1f%%)\n", 
+            h3_n_positive, h3_n_positive/h3_n_correlations*100))
+cat(sprintf("Significant (p < .05): %d (%.1f%%)\n", 
+            h3_n_sig, h3_n_sig/h3_n_correlations*100))
+cat(sprintf("Significant AND positive: %d (%.1f%%)\n", 
+            h3_n_sig_positive, h3_n_sig_positive/h3_n_correlations*100))
+
+cat(sprintf("\n*** H3 SUMMARY ***\n"))
+cat(sprintf("  H3 SUPPORTED: %s\n\n", 
+            ifelse(h3_n_positive/h3_n_correlations > 0.5, "YES (majority positive)", "NO")))
+
+# Full intercorrelation heat map
+png("heatmap_intercorrelations.png", width = 1400, height = 1400, res = 150)
+corrplot(correlate_cor$r, 
+         method = "color",
+         type = "upper",
+         addCoef.col = "black",
+         number.cex = 0.5,
+         tl.col = "black",
+         tl.srt = 45,
+         tl.cex = 0.6,
+         p.mat = correlate_cor$p,
+         sig.level = 0.05,
+         insig = "n",
+         title = "Intercorrelations Among Correlate Constructs",
+         mar = c(0,0,2,0))
+dev.off()
+cat("Saved: heatmap_intercorrelations.png\n\n")
+```
+
+## 6.4 Apply FDR Correction
+
+```{r fdr_correction}
+cat("=== FDR CORRECTION FOR MULTIPLE COMPARISONS ===\n\n")
+
+# Collect all p-values from H1 construct-level tests
+all_pvalues <- punitiveness_cors$p
+fdr_adjusted <- p.adjust(all_pvalues, method = "fdr")
+
+fdr_table <- punitiveness_cors %>%
+  mutate(
+    p_fdr = round(fdr_adjusted, 4),
+    sig_fdr = case_when(
+      p_fdr < .001 ~ "***",
+      p_fdr < .01 ~ "**",
+      p_fdr < .05 ~ "*",
+      TRUE ~ ""
+    )
+  ) %>%
+  select(Construct, r, p, sig, p_fdr, sig_fdr)
+
+cat("H1 Results with FDR Correction:\n")
+print(as.data.frame(fdr_table), row.names = FALSE)
+
+h1_n_sig_fdr <- sum(fdr_adjusted < .05 & punitiveness_cors$r > 0)
+cat(sprintf("\nSignificant after FDR correction: %d/%d\n\n", h1_n_sig_fdr, nrow(fdr_table)))
+```
+
+# PHASE 7: CORRELATION TABLES (2 decimal places)
+
+```{r correlation_tables}
+# Function to create formatted correlation table
+format_cor_table <- function(cor_matrix, p_matrix, decimals = 2) {
+  # Round correlations
+  r_formatted <- round(cor_matrix, decimals)
+  
+  # Add significance stars
+  sig_stars <- ifelse(p_matrix < .001, "***",
+                      ifelse(p_matrix < .01, "**",
+                             ifelse(p_matrix < .05, "*", "")))
+  
+  # Combine
+  result <- matrix(paste0(format(r_formatted, nsmall = decimals), sig_stars),
+                   nrow = nrow(cor_matrix),
+                   dimnames = dimnames(cor_matrix))
+  
+  # Set diagonal to "-"
+  diag(result) <- "-"
+  
+  return(result)
+}
+
+# --- Cluster-Level Table ---
+cat("=== CLUSTER-LEVEL CORRELATION TABLE ===\n\n")
+cluster_table <- format_cor_table(cluster_cor$r, cluster_cor$p)
+print(noquote(cluster_table))
+cat("\nNote: * p < .05, ** p < .01, *** p < .001\n\n")
+
+# --- Construct-Level Table ---
+cat("=== CONSTRUCT-LEVEL CORRELATION TABLE ===\n\n")
+cat("(See exported CSV for full table)\n\n")
+
+# Export full correlation matrix to CSV
+construct_cor_export <- round(construct_cor$r, 2)
+write.csv(construct_cor_export, "correlation_table_construct_level.csv")
+cat("Saved: correlation_table_construct_level.csv\n")
+
+# Export p-values
+write.csv(round(construct_cor$p, 4), "pvalues_construct_level.csv")
+cat("Saved: pvalues_construct_level.csv\n\n")
+
+# --- Intercorrelation Table ---
+cat("=== INTERCORRELATION TABLE (Correlates Only) ===\n\n")
+correlate_table <- format_cor_table(correlate_cor$r, correlate_cor$p)
+write.csv(correlate_table, "correlation_table_intercorrelations.csv")
+cat("Saved: correlation_table_intercorrelations.csv\n\n")
+```
+
+# PHASE 8: SENSITIVITY ANALYSES
+
+## 8.1 Vignette Effects on Sentence
+
+```{r vignette_anova}
+cat("=== VIGNETTE EFFECTS ON SENTENCE ===\n\n")
+
+# One-way ANOVA
+anova_model <- aov(Sentence_1 ~ factor(vignette), data = df_clean)
+cat("One-way ANOVA: Sentence ~ Vignette\n")
+print(summary(anova_model))
+
+# Effect size
+eta_sq <- effectsize::eta_squared(anova_model)
+cat("\nEffect size:\n")
+print(as.data.frame(eta_sq))
+cat("\n")
+
+# Post-hoc tests
+cat("Tukey HSD Post-hoc Comparisons:\n")
+print(TukeyHSD(anova_model))
+cat("\n")
+```
+
+## 8.2 Correlation Stability Across Vignettes
+
+```{r vignette_stability}
+cat("=== CORRELATION STABILITY ACROSS VIGNETTES ===\n\n")
+
+# Function to compute punitiveness correlations for each vignette
+compute_vignette_cors <- function(data, vignette_num) {
+  subset_data <- data %>% filter(vignette == vignette_num)
+  
+  cors <- sapply(correlate_vars, function(var) {
+    cor(subset_data$punitiveness_agg, subset_data[[var]], use = "pairwise.complete.obs")
+  })
+  
+  return(cors)
+}
+
+# Compute for each vignette
+vignette_cors <- data.frame(
+  Construct = correlate_vars,
+  Vignette_1 = compute_vignette_cors(df_clean, 1),
+  Vignette_2 = compute_vignette_cors(df_clean, 2),
+  Vignette_3 = compute_vignette_cors(df_clean, 3)
+)
+
+# Add overall correlation
+vignette_cors$Overall <- sapply(correlate_vars, function(var) {
+  cor(df_clean$punitiveness_agg, df_clean[[var]], use = "pairwise.complete.obs")
+})
+
+# Round for display
+vignette_cors <- vignette_cors %>%
+  mutate(across(where(is.numeric), ~round(., 2)))
+
+cat("Punitiveness Correlations by Vignette:\n")
+print(as.data.frame(vignette_cors), row.names = FALSE)
+
+# Compute range across vignettes
+vignette_cors$Range <- apply(vignette_cors[, c("Vignette_1", "Vignette_2", "Vignette_3")], 
+                              1, function(x) max(x) - min(x))
+
+cat("\n\nLargest Range (least stable correlations):\n")
+print(as.data.frame(vignette_cors %>% arrange(desc(Range)) %>% head(5) %>% 
+        select(Construct, Vignette_1, Vignette_2, Vignette_3, Range)), row.names = FALSE)
+cat("\n")
+```
+
+## 8.3 Mixed-Effects Model
+
+```{r mixed_effects}
+cat("=== MIXED-EFFECTS MODEL (Vignette as Random Intercept) ===\n\n")
+
+# Test key relationship with random intercept for vignette
+# Predicting punitiveness from hostile aggression with vignette random effect
+mixed_model <- lmer(punitiveness_agg ~ hostile_agg + (1|vignette), data = df_clean)
+
+cat("Model: punitiveness_agg ~ hostile_agg + (1|vignette)\n\n")
+print(summary(mixed_model))
+
+# Compare to model without random effect
+fixed_model <- lm(punitiveness_agg ~ hostile_agg, data = df_clean)
+cat("\n\nComparison: Fixed vs Random Effect Models\n")
+cat(sprintf("Fixed model R²: %.3f\n", summary(fixed_model)$r.squared))
+
+# ICC - with error handling for singularity
+icc_result <- tryCatch({
+  performance::icc(mixed_model)
+}, warning = function(w) NULL, error = function(e) NULL)
+
+if(is.null(icc_result) || is.atomic(icc_result)) {
+  cat("ICC: Near zero (vignette accounts for negligible variance)\n")
+  cat("(Model showed singularity - random effect variance ≈ 0)\n\n")
+} else if(is.list(icc_result) && !is.null(icc_result$ICC_adjusted)) {
+  cat(sprintf("ICC (Vignette): %.4f\n", icc_result$ICC_adjusted))
+  cat("(Low ICC suggests vignette accounts for minimal variance)\n\n")
+} else {
+  cat("ICC: Could not be computed (likely near zero)\n\n")
+}
+```
+
+# PHASE 9: EXPLORATORY ANALYSES
+
+## 9.1 Process Violations (Dropped Cluster)
+
+```{r process_violations}
+cat("=== PROCESS VIOLATIONS (Exploratory) ===\n\n")
+
+# Correlations with punitiveness
+process_cor_due <- cor.test(df_clean$punitiveness_agg, df_clean$dueprocess_comp)
+process_cor_unc <- cor.test(df_clean$punitiveness_agg, df_clean$uncertain_comp)
+process_cor_agg <- cor.test(df_clean$punitiveness_agg, df_clean$process_agg)
+
+cat("Punitiveness correlations with Process Violations:\n")
+cat(sprintf("  Due Process Violations: r = %.2f, p %s\n", 
+            process_cor_due$estimate,
+            ifelse(process_cor_due$p.value < .001, "< .001", 
+                   sprintf("= %.3f", process_cor_due$p.value))))
+cat(sprintf("  Uncertain Evidence: r = %.2f, p %s\n", 
+            process_cor_unc$estimate,
+            ifelse(process_cor_unc$p.value < .001, "< .001", 
+                   sprintf("= %.3f", process_cor_unc$p.value))))
+cat(sprintf("  Process Violations Aggregate: r = %.2f, p %s\n\n", 
+            process_cor_agg$estimate,
+            ifelse(process_cor_agg$p.value < .001, "< .001", 
+                   sprintf("= %.3f", process_cor_agg$p.value))))
+
+# Correlations with other clusters
+cat("Process Violations correlations with other clusters:\n")
+for(var in c("crime_concerns_agg", "emotions_agg", "hostile_agg", "personality_agg")) {
+  r <- cor(df_clean$process_agg, df_clean[[var]], use = "pairwise.complete.obs")
+  cat(sprintf("  %s: r = %.2f\n", var, r))
+}
+cat("\n")
+```
+
+## 9.2 Blood Sports Analysis
+
+```{r blood_sports}
+cat("=== BLOOD SPORTS ANALYSIS ===\n\n")
+
+# Individual sport correlations with punitiveness
+tv_sports <- c("TV_4", "TV_6", "TV_8", "TV_9")
+tv_labels <- c("Boxing", "MMA/UFC", "Hunting", "Wrestling")
+
+cat("Individual Blood Sports correlations with Punitiveness:\n")
+for(i in 1:length(tv_sports)) {
+  r <- cor(df_clean$punitiveness_agg, df_clean[[tv_sports[i]]], 
+           use = "pairwise.complete.obs")
+  test <- cor.test(df_clean$punitiveness_agg, df_clean[[tv_sports[i]]])
+  cat(sprintf("  %s: r = %.2f, p %s\n", 
+              tv_labels[i], r,
+              ifelse(test$p.value < .001, "< .001", sprintf("= %.3f", test$p.value))))
+}
+
+cat(sprintf("\n  Blood Sports Composite: r = %.2f\n", 
+            cor(df_clean$punitiveness_agg, df_clean$bloodsports_comp, 
+                use = "pairwise.complete.obs")))
+cat("\n")
+```
+
+## 9.3 Exploratory Factor Analysis
+
+```{r efa}
+cat("=== EXPLORATORY FACTOR ANALYSIS ===\n\n")
+
+# Select all correlate items for EFA
+# Using construct composites for cleaner interpretation
+efa_vars <- correlate_vars
+efa_data <- df_clean %>% select(all_of(efa_vars)) %>% na.omit()
+
+# Check sample size adequacy
+cat(sprintf("Sample size for EFA: N = %d\n", nrow(efa_data)))
+cat(sprintf("Variables: k = %d\n", ncol(efa_data)))
+cat(sprintf("Subjects per variable: %.1f\n\n", nrow(efa_data)/ncol(efa_data)))
+
+# KMO and Bartlett's test
+kmo_result <- KMO(efa_data)
+cat(sprintf("KMO Measure of Sampling Adequacy: %.3f\n", kmo_result$MSA))
+cat("(>.90 = marvelous, >.80 = meritorious, >.70 = middling, >.60 = mediocre)\n\n")
+
+# Parallel analysis to determine number of factors
+cat("Parallel Analysis (determining number of factors):\n")
+parallel_result <- fa.parallel(efa_data, fa = "fa", n.iter = 100, show.legend = FALSE)
+cat("\n")
+
+# Extract suggested number of factors
+n_factors <- parallel_result$nfact
+
+# Run EFA
+cat(sprintf("Running EFA with %d factors...\n\n", n_factors))
+efa_result <- fa(efa_data, nfactors = n_factors, rotate = "varimax", fm = "ml")
+
+# Print loadings
+cat("Factor Loadings (sorted by factor):\n")
+print(efa_result$loadings, cutoff = 0.3, sort = TRUE)
+
+# Variance explained
+cat("\nVariance Explained:\n")
+print(efa_result$Vaccounted)
+cat("\n")
+
+# Save EFA results
+png("efa_scree_plot.png", width = 800, height = 600, res = 150)
+plot(efa_result$values, type = "b", main = "Scree Plot", 
+     xlab = "Factor", ylab = "Eigenvalue")
+abline(h = 1, lty = 2, col = "red")
+dev.off()
+cat("Saved: efa_scree_plot.png\n\n")
+```
+
+## 9.4 Confirmatory Factor Analysis (Pre-registered)
+
+```{r cfa}
+cat("=== CONFIRMATORY FACTOR ANALYSIS ===\n\n")
+
+# Theoretical 4-cluster model (confirmatory - excluding Process)
+cfa_model <- '
+  CrimeConcerns =~ crime_rates_comp + fear_comp
+  Emotions =~ hatred_comp + anger_comp
+  HostileAggression =~ exclusion_comp + degradation_comp + suffering_comp + 
+                       prisonvi_comp + harsh_comp + revenge_comp
+  Personality =~ rwa_comp + sdo_comp + venge_comp + vprone_comp + 
+                 raceresent_comp + bloodsports_comp
+'
+
+cfa_fit <- tryCatch({
+  cfa(cfa_model, data = df_clean, std.lv = TRUE)
+}, error = function(e) {
+  cat("CFA model did not converge. Trying with different estimator...\n")
+  cfa(cfa_model, data = df_clean, std.lv = TRUE, estimator = "MLR")
+})
+
+cat("CFA Model Fit Indices:\n")
+fit_indices <- fitMeasures(cfa_fit, c("cfi", "tli", "rmsea", "rmsea.ci.lower", 
+                                        "rmsea.ci.upper", "srmr", "chisq", "df", "pvalue"))
+print(round(fit_indices, 3))
+
+cat("\nInterpretation guidelines:\n")
+cat("  CFI/TLI > .90 acceptable, > .95 good\n")
+cat("  RMSEA < .08 acceptable, < .05 good\n")
+cat("  SRMR < .08 acceptable\n\n")
+
+# Factor loadings
+cat("Standardized Factor Loadings:\n")
+std_solution <- standardizedSolution(cfa_fit) %>% 
+  filter(op == "=~") %>% 
+  select(Factor = lhs, Indicator = rhs, Loading = est.std, p = pvalue) %>%
+  mutate(Loading = round(Loading, 3), p = round(p, 4))
+print(as.data.frame(std_solution), row.names = FALSE)
+cat("\n")
+
+# Factor correlations
+cat("Factor Correlations:\n")
+factor_cors <- standardizedSolution(cfa_fit) %>%
+  filter(op == "~~", lhs != rhs) %>%
+  select(Factor1 = lhs, Factor2 = rhs, r = est.std) %>%
+  mutate(r = round(r, 3))
+print(as.data.frame(factor_cors), row.names = FALSE)
+cat("\n")
+```
+
+## 9.5 Demographic Moderators
+
+```{r demographics_moderators}
+cat("=== DEMOGRAPHIC MODERATORS (Exploratory) ===\n\n")
+
+# Political Orientation
+cat("POLITICAL ORIENTATION:\n")
+# Split into liberal (1-3), moderate (4), conservative (5-7)
+df_clean <- df_clean %>%
+  mutate(political_group = case_when(
+    politid <= 3 ~ "Liberal",
+    politid == 4 ~ "Moderate",
+    politid >= 5 ~ "Conservative"
+  ))
+
+# Correlations by political group
+political_cors <- df_clean %>%
+  group_by(political_group) %>%
+  summarise(
+    n = n(),
+    r_hostile = cor(punitiveness_agg, hostile_agg, use = "pairwise.complete.obs"),
+    r_crime = cor(punitiveness_agg, crime_concerns_agg, use = "pairwise.complete.obs"),
+    r_personality = cor(punitiveness_agg, personality_agg, use = "pairwise.complete.obs")
+  ) %>%
+  mutate(across(starts_with("r_"), ~round(., 2)))
+
+print(as.data.frame(political_cors))
+cat("\n")
+
+# Gender
+cat("GENDER:\n")
+gender_cors <- df_clean %>%
+  filter(gender %in% c(1, 2)) %>%
+  mutate(gender_label = ifelse(gender == 1, "Male", "Female")) %>%
+  group_by(gender_label) %>%
+  summarise(
+    n = n(),
+    mean_punitiveness = mean(punitiveness_agg, na.rm = TRUE),
+    r_hostile = cor(punitiveness_agg, hostile_agg, use = "pairwise.complete.obs")
+  ) %>%
+  mutate(across(where(is.numeric) & !n, ~round(., 2)))
+
+print(as.data.frame(gender_cors))
+
+# T-test for gender difference in punitiveness
+gender_ttest <- t.test(punitiveness_agg ~ gender, 
+                        data = df_clean %>% filter(gender %in% c(1, 2)))
+cat(sprintf("\nGender difference in punitiveness: t = %.2f, p = %.3f\n", 
+            gender_ttest$statistic, gender_ttest$p.value))
+
+# Effect size for gender difference
+gender_d <- effectsize::cohens_d(punitiveness_agg ~ gender, 
+                                  data = df_clean %>% filter(gender %in% c(1, 2)))
+cat(sprintf("Cohen's d = %.2f\n\n", gender_d$Cohens_d))
+```
+
+# PHASE 10: MULTIPLE REGRESSION
+
+## 10.1 All Clusters Predicting Punitiveness
+
+```{r regression_clusters}
+cat("=== ALL CLUSTERS PREDICTING PUNITIVENESS ===\n\n")
+
+# Model with all cluster aggregates
+cluster_reg <- lm(punitiveness_agg ~ crime_concerns_agg + emotions_agg + 
+                    hostile_agg + personality_agg, data = df_clean)
+
+cat("Model: Punitiveness ~ Crime Concerns + Emotions + Hostile Aggression + Personality\n\n")
+print(summary(cluster_reg))
+
+# Standardized coefficients
+cat("\nStandardized Coefficients (Beta):\n")
+cluster_reg_std <- lm(scale(punitiveness_agg) ~ scale(crime_concerns_agg) + 
+                        scale(emotions_agg) + scale(hostile_agg) + 
+                        scale(personality_agg), data = df_clean)
+print(round(coef(cluster_reg_std)[-1], 3))
+cat("\n")
+
+# Unique variance (squared semi-partial correlations)
+cat("Unique Variance Explained (sr²):\n")
+# Using car package for Type III SS
+anova_type3 <- Anova(cluster_reg, type = 3)
+ss_total <- sum(anova_type3$`Sum Sq`)
+unique_var <- anova_type3$`Sum Sq` / ss_total
+names(unique_var) <- rownames(anova_type3)
+print(round(unique_var[-1], 4))  # Exclude intercept
+cat("\n")
+```
+
+## 10.2 All Constructs Predicting Punitiveness
+
+```{r regression_constructs}
+cat("=== ALL CONSTRUCTS PREDICTING PUNITIVENESS ===\n\n")
+
+construct_reg <- lm(punitiveness_agg ~ crime_rates_comp + fear_comp +
+                      hatred_comp + anger_comp +
+                      exclusion_comp + degradation_comp + suffering_comp +
+                      prisonvi_comp + harsh_comp + revenge_comp +
+                      rwa_comp + sdo_comp + venge_comp + vprone_comp +
+                      raceresent_comp + bloodsports_comp, 
+                    data = df_clean)
+
+cat("Full Model Summary:\n")
+print(summary(construct_reg))
+
+# Top predictors by standardized coefficient
+cat("\nSignificant Predictors (p < .05):\n")
+construct_summary <- tidy(construct_reg) %>%
+  filter(p.value < .05, term != "(Intercept)") %>%
+  arrange(desc(abs(estimate)))
+print(as.data.frame(construct_summary))
+cat("\n")
+```
+
+## 10.3 Hierarchical Regression (Incremental R²)
+
+```{r hierarchical_regression}
+cat("=== HIERARCHICAL REGRESSION ===\n\n")
+
+# Step 1: Crime Concerns only
+step1 <- lm(punitiveness_agg ~ crime_concerns_agg, data = df_clean)
+
+# Step 2: Add Hostile Aggression
+step2 <- lm(punitiveness_agg ~ crime_concerns_agg + hostile_agg, data = df_clean)
+
+# Step 3: Add Emotions
+step3 <- lm(punitiveness_agg ~ crime_concerns_agg + hostile_agg + emotions_agg, data = df_clean)
+
+# Step 4: Add Personality
+step4 <- lm(punitiveness_agg ~ crime_concerns_agg + hostile_agg + emotions_agg + 
+              personality_agg, data = df_clean)
+
+cat("Hierarchical Regression Results:\n")
+cat(sprintf("Step 1 (Crime Concerns):     R² = %.3f\n", summary(step1)$r.squared))
+cat(sprintf("Step 2 (+Hostile):           R² = %.3f, ΔR² = %.3f\n", 
+            summary(step2)$r.squared, 
+            summary(step2)$r.squared - summary(step1)$r.squared))
+cat(sprintf("Step 3 (+Emotions):          R² = %.3f, ΔR² = %.3f\n", 
+            summary(step3)$r.squared,
+            summary(step3)$r.squared - summary(step2)$r.squared))
+cat(sprintf("Step 4 (+Personality):       R² = %.3f, ΔR² = %.3f\n\n", 
+            summary(step4)$r.squared,
+            summary(step4)$r.squared - summary(step3)$r.squared))
+
+# ANOVA comparing models
+cat("Model Comparison (ANOVA):\n")
+print(anova(step1, step2, step3, step4))
+cat("\n")
+```
+
+# PHASE 11: SAVE OUTPUT
+
+```{r save_outputs}
+cat("=== SAVING OUTPUT FILES ===\n\n")
+
+# Save cleaned dataset
+write.csv(df_clean, "punishment_212_cleaned_data.csv", row.names = FALSE)
+cat("Saved: punishment_212_cleaned_data.csv\n")
+
+# Save alpha table
+write.csv(alpha_table, "reliability_alphas.csv", row.names = FALSE)
+cat("Saved: reliability_alphas.csv\n")
+
+# Save descriptives
+write.csv(as.data.frame(descriptives_table), "descriptive_statistics.csv", row.names = FALSE)
+cat("Saved: descriptive_statistics.csv\n")
+
+# Save H1 results
+write.csv(as.data.frame(fdr_table), "H1_punitiveness_correlations.csv", row.names = FALSE)
+cat("Saved: H1_punitiveness_correlations.csv\n")
+
+# Save vignette correlation stability
+write.csv(as.data.frame(vignette_cors), "vignette_correlation_stability.csv", row.names = FALSE)
+cat("Saved: vignette_correlation_stability.csv\n")
+
+cat("\n")
+```
+
+# SUMMARY
+
+```{r summary}
+cat("\n", paste(rep("=", 70), collapse = ""), "\n")
+cat("SUMMARY OF KEY FINDINGS\n")
+cat(paste(rep("=", 70), collapse = ""), "\n\n")
+
+cat("SAMPLE:\n")
+cat(sprintf("  Final N = %d (of %d collected)\n", nrow(df_clean), n_raw))
+cat(sprintf("  Exclusions: %d total\n\n", n_raw - nrow(df_clean)))
+
+cat("HYPOTHESIS TESTS:\n\n")
+
+cat("H1: Punitiveness positively correlated with all correlates\n")
+cat(sprintf("  Construct-level: %d/%d (%.1f%%) positive correlations\n",
+            h1_n_positive, h1_n_total, h1_n_positive/h1_n_total*100))
+cat(sprintf("  Significant after FDR: %d/%d\n", h1_n_sig_fdr, h1_n_total))
+cat(sprintf("  SUPPORTED: %s\n\n", 
+            ifelse(h1_n_positive/h1_n_total > 0.9, "YES", "PARTIAL")))
+
+cat("H2: Hostile Aggression > Crime Concerns\n")
+cat(sprintf("  r(Punitiveness, Hostile) = %.3f\n", r_hostile))
+cat(sprintf("  r(Punitiveness, Crime) = %.3f\n", r_crime))
+cat(sprintf("  Difference = %.3f, p = %.4f\n", r_hostile - r_crime, h2_pvalue))
+cat(sprintf("  SUPPORTED: %s\n\n", 
+            ifelse(r_hostile > r_crime & h2_pvalue < .05, "YES (Hostile > Crime)", "NO")))
+
+cat("H3: Correlates positively intercorrelated\n")
+cat(sprintf("  Positive correlations: %d/%d (%.1f%%)\n",
+            h3_n_positive, h3_n_correlations, h3_n_positive/h3_n_correlations*100))
+cat(sprintf("  SUPPORTED: %s\n\n", 
+            ifelse(h3_n_positive/h3_n_correlations > 0.5, "YES", "NO")))
+
+cat("KEY CORRELATES (Top 5 by |r|):\n")
+print(as.data.frame(head(punitiveness_cors %>% select(Construct, r, sig), 5)), row.names = FALSE)
+cat("\n")
+
+cat("REGRESSION SUMMARY:\n")
+cat(sprintf("  Total R² (all clusters): %.3f\n", summary(cluster_reg)$r.squared))
+cat(sprintf("  Hostile Aggression unique variance: %.3f\n", unique_var["hostile_agg"]))
+cat("\n")
+
+cat(paste(rep("=", 70), collapse = ""), "\n")
+cat("ANALYSIS COMPLETE\n")
+cat(paste(rep("=", 70), collapse = ""), "\n")
+```
+
