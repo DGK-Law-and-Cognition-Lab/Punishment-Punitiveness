@@ -285,12 +285,9 @@ PunishmentPunitiveness/
 │
 ├── materials/
 │   ├── stimuli/              # Survey stimuli
-│   │   ├── PUNISHMENT__STIMULUS__2_7_--_MASTER.docx
-│   │   ├── PUNISHMENT__STIMULUS__3_1_--_Pro-Social__clean.docx
-│   │   └── vignettes/
+│   │   └──PUNISHMENT_21_-__Pro-Social.docx
 │   └── preregistration/      # Pre-registration documents
-│       ├── Punishment_2_1_2_--_Pre-registration__pro-social.docx
-│       └── Punishment_3_1_--_Pre-registration__pro-social.docx
+│       └──Punishment_2_1_2_--_Pre-registration__pro-social.docx
 │
 ├── docs/
 │   ├── ANALYSIS_PLAN.md      # Five-phase analysis approach
