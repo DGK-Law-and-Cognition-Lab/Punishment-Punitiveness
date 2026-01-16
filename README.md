@@ -22,15 +22,15 @@
 
 | Figure | Description | Link |
 |--------|-------------|------|
-| 🔥 **Construct-Level Heatmap** | Correlations between punitiveness and all 16 constructs | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_construct_level.png) |
-| 🔥 **Cluster-Level Heatmap** | High-level view of cluster relationships | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_cluster_level.png) |
-| 🔗 **Intercorrelations** | Correlations among all correlate measures (H3) | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_intercorrelations.png) |
-| 📊 **Sentence Distribution** | Distribution of recommended sentences by vignette | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/histogram_sentence_by_vignette.png) |
-| 📈 **EFA Scree Plot** | Factor analysis eigenvalues | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/efa_scree_plot.png) |
-| 🔤 **NLP Correlation Heatmap** | Text features × psychological measures | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/nlp_correlation_heatmap.png) |
-| 🔤 **Facade Scatter Plot** | Hostile aggression vs. prosocial language | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/facade_scatter_plot.png) |
-| 🔤 **Facade Visualizations** | UMAP embeddings and distributions | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/facade_visualizations.png) |
-| ☁️ **Word Clouds** | High vs. low hostile aggression language | [All](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_all.png) / [High](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_high_hostile.png) / [Low](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_low_hostile.png) |
+| **Construct-Level Heatmap** | Correlations between punitiveness and all 16 constructs | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_construct_level.png) |
+| **Cluster-Level Heatmap** | High-level view of cluster relationships | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_cluster_level.png) |
+| **Intercorrelations** | Correlations among all correlate measures (H3) | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_intercorrelations.png) |
+| **Sentence Distribution** | Distribution of recommended sentences by vignette | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/histogram_sentence_by_vignette.png) |
+| **EFA Scree Plot** | Factor analysis eigenvalues | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/efa_scree_plot.png) |
+| **NLP Correlation Heatmap** | Text features × psychological measures | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/nlp_correlation_heatmap.png) |
+| **Facade Scatter Plot** | Hostile aggression vs. prosocial language | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/facade_scatter_plot.png) |
+| **Facade Visualizations** | UMAP embeddings and distributions | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/facade_visualizations.png) |
+| **Word Clouds** | High vs. low hostile aggression language | [All](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_all.png) / [High](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_high_hostile.png) / [Low](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_low_hostile.png) |
 
 ### Data Tables
 
@@ -231,8 +231,9 @@ PunishmentPunitiveness/
 │
 ├── data/
 │   ├── raw/                  # Original data files
-│   │   └── Data_Final.csv
+│   │   └── Data_Raw.csv
 │   ├── processed/            # Cleaned and transformed data
+│   │   ├── Data_Final.csv    # Slightly Cleaned
 │   │   ├── punishment_212_cleaned_data.csv
 │   │   └── punishment_212_nlp_features.csv
 │   └── codebook/             # Variable documentation
