@@ -12,6 +12,7 @@
 ## Quick Access to Results
 
 ### Full Analysis Reports
+
 | Report | Description |
 |--------|-------------|
 | **[Main Confirmatory Analysis](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/Punishment_2_1_2_Final_Script.html)** | Core hypothesis tests, reliability, regression |
