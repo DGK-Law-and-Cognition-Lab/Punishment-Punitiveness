@@ -44,7 +44,7 @@
 | **Vignette Stability** | Cross-vignette correlation consistency | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/vignette_correlation_stability.csv) |
 | **NLP Facade Correlations** | Text features × psychological measures | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/nlp_facade_correlations.csv) |
 | **NLP Sentence Correlations** | Text features predicting sentencing | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/nlp_sentence_correlations.csv) |
-| **BERTopic Topics** | Topic modeling results | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/bertopic_topics.csv) |
+| **BERTopic Topics** | Topic modeling results | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/bertopic_topics.csv) |
 
 ---
 
