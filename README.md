@@ -238,7 +238,8 @@ PunishmentPunitiveness/
 │   │   ├── punishment_212_cleaned_data.csv
 │   │   └── punishment_212_nlp_features.csv
 │   └── codebook/             # Variable documentation
-│       └── CODEBOOK.md
+│       ├── CODEBOOK.md
+|       └── NLP_CODEBOOK.md
 │
 ├── analysis/
 │   ├── r/                    # R analysis scripts
