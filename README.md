@@ -15,35 +15,35 @@
 
 | Report | Description |
 |--------|-------------|
-| **[Main Confirmatory Analysis](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/Punishment_2_1_2_Final_Script.html)** | Core hypothesis tests, reliability, regression |
-| **[Supplementary Analyses](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/Punishment_2_1_2_Supplementary_Analyses.html)** | Bootstrap CIs, political moderation |
-| **[NLP Integration Analysis](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/Punishment_2_1_2_NLP_Integration.html)** | Text analysis of punishment justifications |
+| **[Main Confirmatory Analysis](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Final_Script.html)** | Core hypothesis tests, reliability, regression |
+| **[Supplementary Analyses](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Supplementary_Analyses.html)** | Bootstrap CIs, political moderation |
+| **[NLP Integration Analysis](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_NLP_Integration.html)** | Text analysis of punishment justifications |
 
 ### Key Visualizations
 
 | Figure | Description | Link |
 |--------|-------------|------|
-| **Construct-Level Heatmap** | Correlations between punitiveness and all 16 constructs | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_construct_level.png) |
-| **Cluster-Level Heatmap** | High-level view of cluster relationships | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_cluster_level.png) |
-| **Intercorrelations** | Correlations among all correlate measures (H3) | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/heatmap_intercorrelations.png) |
-| **Sentence Distribution** | Distribution of recommended sentences by vignette | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/histogram_sentence_by_vignette.png) |
-| **EFA Scree Plot** | Factor analysis eigenvalues | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/efa_scree_plot.png) |
-| **NLP Correlation Heatmap** | Text features × psychological measures | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/nlp_correlation_heatmap.png) |
-| **Facade Scatter Plot** | Hostile aggression vs. prosocial language | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/facade_scatter_plot.png) |
-| **Facade Visualizations** | UMAP embeddings and distributions | [View](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/facade_visualizations.png) |
-| **Word Clouds** | High vs. low hostile aggression language | [All](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_all.png) / [High](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_high_hostile.png) / [Low](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/figures/wordcloud_low_hostile.png) |
+| **Construct-Level Heatmap** | Correlations between punitiveness and all 16 constructs | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/heatmap_construct_level.png) |
+| **Cluster-Level Heatmap** | High-level view of cluster relationships | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/heatmap_cluster_level.png) |
+| **Intercorrelations** | Correlations among all correlate measures (H3) | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/heatmap_intercorrelations.png) |
+| **Sentence Distribution** | Distribution of recommended sentences by vignette | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/histogram_sentence_by_vignette.png) |
+| **EFA Scree Plot** | Factor analysis eigenvalues | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/efa_scree_plot.png) |
+| **NLP Correlation Heatmap** | Text features × psychological measures | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/nlp_correlation_heatmap.png) |
+| **Facade Scatter Plot** | Hostile aggression vs. prosocial language | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/facade_scatter_plot.png) |
+| **Facade Visualizations** | UMAP embeddings and distributions | [View](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/facade_visualizations.png) |
+| **Word Clouds** | High vs. low hostile aggression language | [All](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/wordcloud_all.png) / [High](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/wordcloud_high_hostile.png) / [Low](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/figures/wordcloud_low_hostile.png) |
 
 ### Data Tables
 
 | Table | Description | Link |
 |-------|-------------|------|
-| **H1 Results** | All punitiveness correlations with FDR correction | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/H1_punitiveness_correlations.csv) |
-| **Reliability** | Cronbach's α for all scales | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/reliability_alphas.csv) |
-| **Descriptives** | Means, SDs, ranges for all variables | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/descriptive_statistics.csv) |
-| **Full Correlation Matrix** | Complete construct-level correlations | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/correlation_table_construct_level.csv) |
-| **Vignette Stability** | Cross-vignette correlation consistency | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/vignette_correlation_stability.csv) |
-| **NLP Facade Correlations** | Text features × psychological measures | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/nlp_facade_correlations.csv) |
-| **NLP Sentence Correlations** | Text features predicting sentencing | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/nlp_sentence_correlations.csv) |
+| **H1 Results** | All punitiveness correlations with FDR correction | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/H1_punitiveness_correlations.csv) |
+| **Reliability** | Cronbach's α for all scales | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/reliability_alphas.csv) |
+| **Descriptives** | Means, SDs, ranges for all variables | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/descriptive_statistics.csv) |
+| **Full Correlation Matrix** | Complete construct-level correlations | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/correlation_table_construct_level.csv) |
+| **Vignette Stability** | Cross-vignette correlation consistency | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/vignette_correlation_stability.csv) |
+| **NLP Facade Correlations** | Text features × psychological measures | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/nlp_facade_correlations.csv) |
+| **NLP Sentence Correlations** | Text features predicting sentencing | [CSV](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/output/tables/nlp_sentence_correlations.csv) |
 | **BERTopic Topics** | Topic modeling results | [CSV](https://dgk-law-and-cognition-lab.github.io/PunishmentPunitiveness/analysis/output/tables/bertopic_topics.csv) |
 
 ---
