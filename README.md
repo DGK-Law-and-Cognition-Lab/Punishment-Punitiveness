@@ -1,4 +1,4 @@
-# PunishmentPunitiveness
+# Punishment - Punitiveness
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OSF](https://img.shields.io/badge/OSF-Pre--registered-blue)](https://osf.io/kr7y2/overview?view_only=d312013b176a411c8cf6c126d7f54617)
