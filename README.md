@@ -253,6 +253,7 @@ PunishmentPunitiveness/
 │   │   └── Punishment_2_1_2_NLP_Integration.html
 │   │
 │   ├── python/               # Python NLP analysis
+│   │   ├── Punishment_212_NLP_Analysis.html
 │   │   └── Punishment_212_NLP_Analysis.ipynb
 │   │
 │   └── output/               # Generated tables and figures
