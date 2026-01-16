@@ -9,7 +9,7 @@
 
 ---
 
-## 📊 Quick Access to Results
+## Quick Access to Results
 
 ### Full Analysis Reports
 | Report | Description |
