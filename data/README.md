@@ -7,8 +7,9 @@ This directory contains data files for the PunishmentPunitiveness research proje
 ```
 data/
 ├── raw/                    # Original, unmodified data
-│   └── Data_Final.csv      # Raw Qualtrics export
+│      └── Data_Raw.csv     # Raw Qualtrics export
 ├── processed/              # Cleaned and transformed data
+│   ├── Data_Final.csv      # Slightly Cleaned
 │   ├── punishment_212_cleaned_data.csv
 │   └── punishment_212_nlp_features.csv
 └── codebook/               # Documentation
