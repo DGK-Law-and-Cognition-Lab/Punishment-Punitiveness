@@ -7,27 +7,20 @@ This directory contains study materials including survey stimuli and pre-registr
 ```
 materials/
 ├── stimuli/                # Survey instruments
-│   ├── PUNISHMENT__STIMULUS__2_7_--_MASTER.docx
-│   └── PUNISHMENT__STIMULUS__3_1_--_Pro-Social__clean.docx
+│   └──PUNISHMENT_21_-__Pro-Social.docx
 └── preregistration/        # Pre-registration documents
-    ├── Punishment_2_1_2_--_Pre-registration__pro-social.docx
-    └── Punishment_3_1_--_Pre-registration__pro-social.docx
+    └──Punishment_2_1_2_--_Pre-registration__pro-social.docx
 ```
 
 ## Study Materials
 
 ### Survey Stimuli
 
-**`PUNISHMENT__STIMULUS__2_7_--_MASTER.docx`**
+**`PUNISHMENT_21_-__Pro-Social.docx`**
 - Complete survey instrument
 - All scales and items
 - Three vignette conditions
 - Response format specifications
-
-**`PUNISHMENT__STIMULUS__3_1_--_Pro-Social__clean.docx`**
-- Updated version for Study 3.1
-- Refined item wording
-- Additional measures
 
 ### Pre-registration
 
@@ -36,9 +29,6 @@ materials/
 - Hypotheses H1, H2, H3
 - Statistical approach
 - Exclusion criteria
-
-**`Punishment_3_1_--_Pre-registration__pro-social.docx`**
-- Pre-registration for planned Study 3.1
 
 ## Vignette Content
 
