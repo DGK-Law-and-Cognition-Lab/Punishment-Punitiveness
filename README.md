@@ -106,7 +106,7 @@ If you use this data, code, or materials in your research, please cite:
 - **N = 496** (after exclusions)
 - Recruited via Prolific
 - US adult residents
-- Balanced gender distribution
+- Balanced for Age, Ethnicity, and Political Affiliation
 
 ### Punitiveness Measures
 Our composite punitiveness construct (α = .84) includes:
