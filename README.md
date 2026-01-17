@@ -17,6 +17,7 @@
 |--------|-------------|
 | **[Main Confirmatory Analysis](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Final_Script.html)** | Core hypothesis tests, reliability, regression |
 | **[Supplementary Analyses](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Supplementary_Analyses.html)** | Bootstrap CIs, political moderation |
+| **[Parsimony Followup Analyses](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Parsimony_Analysis.html)** | Closer look at parsimony measure |
 | **[NLP Integration Analysis](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_NLP_Integration.html)** | Text analysis of punishment justifications |
 
 ### Key Visualizations
