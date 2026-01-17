@@ -19,7 +19,7 @@
 | **[Supplementary Analyses](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Supplementary_Analyses.html)** | Bootstrap CIs, political moderation |
 | **[Parsimony Followup Analyses](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_Parsimony_Analysis.html)** | Closer look at parsimony measure |
 | **[NLP Analysis Pipline](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/python/Punishment_212_NLP_Analysis.html)** | Text analysis on punishment justifications |
-| **[NLP Integration Analysis](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_NLP_Integration.html)** | Text analysis combined with psychological data punishment justifications |
+| **[NLP Integration Analysis](https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/analysis/Punishment_2_1_2_NLP_Integration.html)** | Text analysis combined with psychological data |
 
 ### Key Visualizations
 
