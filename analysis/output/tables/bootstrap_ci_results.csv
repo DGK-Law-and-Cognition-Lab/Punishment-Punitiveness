@@ -1,4 +1,0 @@
-"Cluster","Observed_Diff","Boot_Mean","Boot_SE","CI_Lower","CI_Upper","Excludes_Zero"
-"Hostile Aggression",0.264,0.263,0.049,0.177,0.369,"YES"
-"Emotions",0.213,0.212,0.053,0.115,0.321,"YES"
-"Personality",0.153,0.153,0.051,0.057,0.259,"YES"
