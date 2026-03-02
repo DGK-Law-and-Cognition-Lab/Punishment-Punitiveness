@@ -1,0 +1,144 @@
+\appendix
+\section{Supplementary Materials}
+
+\subsection{Full Item Wordings}
+
+All items were rated on a 7-point scale (1 = \textit{Strongly disagree} to 7 = \textit{Strongly agree}) unless otherwise noted. Reverse-scored items are marked with (R).
+
+\subsubsection{Punitiveness Measures}
+
+\textbf{Punish More (2 items).} ``People who commit violent crimes should be punished more harshly than they currently are''; ``The sentences given to violent criminals are too lenient'' (R: ``People who commit violent crimes should be punished \textit{less} harshly than they currently are'').
+
+\textbf{Parsimony (2 items).} ``Courts should impose the minimum sentence necessary to achieve justice'' (R); ``Judges should err on the side of shorter rather than longer sentences when the appropriate punishment is unclear'' (R).
+
+\textbf{Three Strikes (2 items).} ``Three strikes laws (which mandate life sentences for a third felony conviction) are a good idea''; ``Three strikes laws help keep society safe.''
+
+\textbf{LWOP (1 item).} ``Life in prison without the possibility of parole is an appropriate sentence for the most serious crimes.''
+
+\textbf{Death Penalty (1 item).} ``The death penalty is an appropriate punishment for the most serious crimes.''
+
+\textbf{Sentencing Decision.} ``Based on the case you just read, how many years in prison would you sentence Darryl Smith to?'' (0--50 year scale).
+
+\subsubsection{Crime Concerns}
+
+\textbf{Crime Rates (2 items).} ``Crime in America is at an all-time high''; ``Crime rates in the United States have been increasing in recent years.''
+
+\textbf{Fear of Crime (3 items).} ``I am afraid of becoming a victim of a violent crime'' (R: recoded); ``I feel safe walking alone at night in my neighborhood''; ``I worry about being robbed or attacked.''
+
+\subsubsection{Emotional Reactions}
+
+\textbf{Hatred (3 items).} ``I hate people who commit violent crimes''; ``People who commit violent crimes don't deserve to be hated'' (R); ``I feel hatred toward convicted criminals.''
+
+\textbf{Anger (2 items).} ``I feel angry when I hear about violent crimes''; ``Stories about violent crimes make my blood boil.''
+
+\subsubsection{Hostile Aggression}
+
+\textbf{Exclusion (3 items).} Endorsement of civic and social exclusion of offenders (e.g., ``People who commit serious crimes should lose their right to vote'').
+
+\textbf{Degradation (3 items).} Acceptance of shaming and degrading treatment of offenders (e.g., ``It is acceptable for prisons to use humiliating punishments''; R: ``Prisoners should be treated with dignity'').
+
+\textbf{Suffering (2 items).} Endorsement of suffering as appropriate (e.g., ``Criminals should suffer for what they have done'').
+
+\textbf{Prison Violence (2 items).} Tolerance of violence in prisons (R: ``It is the responsibility of the prison system to protect inmates from violence''; R: ``Prison violence is a serious problem that needs to be addressed'').
+
+\textbf{Harsh Conditions (3 items).} Endorsement of harsh incarceration conditions (e.g., ``Prisons should be tough, uncomfortable places''; R: ``Prisoners should have access to educational and recreational programs'').
+
+\textbf{Revenge (3 items).} Endorsement of retaliatory punishment (e.g., ``An eye for an eye is a good principle for the justice system'').
+
+\subsubsection{Personality and Ideology}
+
+\textbf{RWA (5 items).} Adapted from \citet{AltmeyerRWA}. Sample item: ``What our country really needs is a strong, determined leader who will crush evil and take us back to our true path'' (R: ``There is nothing wrong with premarital sexual intercourse'').
+
+\textbf{SDO (8 items).} Adapted from \citet{Pratto1994}. Sample items: ``Some groups of people are simply inferior to other groups''; ``Group equality should be our ideal'' (R).
+
+\textbf{Vengefulness (5 items).} Dispositional tendency to seek revenge. Sample item: ``I tend to hold grudges'' (R: ``I can usually forgive and forget when someone does me wrong'').
+
+\textbf{Violence Proneness (4 items).} Tendency to endorse or engage in violence. Sample item: ``I have threatened people I know.''
+
+\textbf{Racial Resentment (4 items).} Adapted from \citet{HenrySears2002}. Sample items: ``It's really a matter of some people not trying hard enough; if blacks would only try harder they could be just as well off as whites'' (R: ``Generations of slavery and discrimination have created conditions that make it difficult for blacks to work their way out of the lower class'').
+
+\textbf{Blood Sports (4 items).} Frequency of watching violent sports content: boxing, MMA/UFC, professional wrestling, and hunting (rated on 7-point frequency scale from \textit{Never} to \textit{Very often}). Extracted from a broader 9-item media consumption matrix.
+
+\subsubsection{Exploratory Measures}
+
+\textbf{Due Process (3 items).} Tolerance for due process violations (e.g., ``It is more important to convict the guilty than to protect the rights of the accused''; R: ``I would rather see a guilty person go free than an innocent person be convicted'').
+
+\textbf{Uncertain Evidence (4 items).} Willingness to convict on uncertain evidence (e.g., ``If the police arrest someone, that person is probably guilty'').
+
+\subsection{NLP Pipeline Details}
+
+\subsubsection{Dictionary Construction}
+
+Custom dictionaries were constructed for ten justification categories. The prosocial categories were deterrence (e.g., \textit{deter, prevent, discourage, example, lesson}), incapacitation (e.g., \textit{protect, remove, dangerous, threat, isolate}), rehabilitation (e.g., \textit{reform, change, treatment, program, help}), retribution (e.g., \textit{deserve, fair, proportional, fitting, earned}), and norm expression (e.g., \textit{wrong, unacceptable, standard, values, society}). The dark categories were revenge (e.g., \textit{payback, avenge, retaliate, score, taste}), suffering (e.g., \textit{suffer, pain, agony, misery, harsh}), degradation (e.g., \textit{shame, humiliate, strip, debase, degrade}), exclusion (e.g., \textit{banish, exile, outcast, remove, expel}), and victim focus (e.g., \textit{victim, family, closure, justice for, loss}).
+
+\subsubsection{Zero-Shot Classification}
+
+We used the \texttt{facebook/bart-large-mnli} model \citep{lewis2020bart} via the HuggingFace Transformers library. The eight candidate labels were: proportional justice, victim closure, rehabilitation and reform, deterrence and prevention, public safety and protection, societal condemnation (prosocial), and punishment and suffering, revenge and payback (dark). In the multi-label condition, all eight label probabilities were returned for each response. In the forced-choice condition, the single highest-probability label was assigned.
+
+\subsubsection{Sentence-BERT Semantic Similarity}
+
+We used the \texttt{all-MiniLM-L6-v2} model \citep{reimers2019sentence} to encode each response and a set of prototype sentences into dense vector representations. Prototype sentences represented canonical expressions of each justification category. For example, the deterrence prototype was ``This sentence will deter others from committing similar crimes and will serve as an example to the community.'' Cosine similarity was computed between each response and each prototype, and responses were classified by the category with the highest similarity score.
+
+\subsubsection{Prototype Sensitivity Analysis}
+
+To ensure that the dark-closer finding was not an artifact of specific prototype wording, we re-estimated the classification using two alternative prototype sets. The ``formal'' set used academic framings (e.g., ``The incarceration serves a deterrent function by signaling to potential offenders that criminal behavior carries severe consequences''). The ``colloquial'' set used everyday language (e.g., ``Lock him up so other people think twice before doing something like this''). Results were consistent across all three sets: 67.5\% (original), 73.0\% (formal), and 89.7\% (colloquial) of responses were closer to dark prototypes. The retribution classification sensitivity analysis (see above) further confirmed robustness: the dark-closer rate ranged from 67.5\% to 83.5\% depending on whether retribution was prosocial, removed, or reclassified as dark.
+
+\subsubsection{BERTopic Analysis}
+
+Emergent topics were discovered using BERTopic \citep{grootendorst2022bertopic} with UMAP dimensionality reduction and HDBSCAN clustering. The analysis identified three main topic clusters in the response corpus.
+
+\subsection{Additional Analyses}
+
+\subsubsection{Tautology Sensitivity Analysis}
+
+Some hostile aggression constructs---particularly suffering (``Criminals should suffer for what they have done''), harsh conditions (``Prisons should be tough, uncomfortable places''), prison violence tolerance, and degradation---share conceptual territory with punitiveness measures. To ensure that H2 does not depend on this overlap, we conducted sensitivity analyses that progressively removed the most tautology-prone constructs from the hostile aggression composite.
+
+Three levels were tested. (a) \textit{Original} (all 6 constructs): $r_{\text{hostile}} = .59$, $r_{\text{crime}} = .32$, $Z = 6.26$, $p < .001$. (b) \textit{Conservative} (4 constructs: exclusion, degradation, prison violence, revenge): $r = .55$ vs.\ $r = .32$, $Z = 5.07$, $p < .001$. (c) \textit{Strictest} (2 constructs: exclusion and revenge only): $r = .54$ vs.\ $r = .32$, $Z = 5.05$, $p < .001$. Bootstrapped 95\% CIs for the hostile--crime difference excluded zero at all three levels.
+
+At the individual punitiveness measure level, the strictest specification (exclusion $+$ revenge) yielded significant Steiger's $Z$ for five of six measures: Punish More ($Z = 5.90$), Three Strikes ($Z = 3.18$), LWOP ($Z = 2.91$), Death Penalty ($Z = 5.96$), and Parsimony ($Z = 4.60$); the exception was the sentencing decision ($Z = 1.89$, $p = .059$).
+
+We also tested sensitivity to the low-reliability parsimony scale ($\alpha = .48$) by removing it from the punitiveness composite. Results were virtually unchanged ($r = .58$ vs.\ $r = .33$, $Z = 5.87$, $p < .001$). Even in the most conservative specification---only exclusion and revenge, without parsimony---the hostile aggression advantage remained significant ($r = .55$ vs.\ $r = .33$, $Z = 5.02$, $p < .001$).
+
+\subsubsection{TOST Equivalence Testing}
+
+To strengthen the interpretation of null correlations between hostile aggression and text features, we conducted Two One-Sided Tests (TOST) equivalence testing \citep{lakens2017equivalence} with equivalence bounds of $\Delta = \pm .15$ (representing a small effect). Results confirmed formal equivalence to zero for four of five correlations: prosocial similarity ($r = -.04$, $p_{\text{TOST}} = .008$), dark similarity ($r = -.01$, $p_{\text{TOST}} < .001$), the prosocial--dark gap ($r = -.03$, $p_{\text{TOST}} = .005$), and sentiment ($r = -.05$, $p_{\text{TOST}} = .014$). Dictionary-coded prosocial content fell marginally outside the equivalence bounds ($r = -.08$, $p_{\text{TOST}} = .055$). A supplementary crime concerns test confirmed that the prosocial--dark gap was also equivalent to zero for crime concerns ($r = .06$, $p_{\text{TOST}} = .019$).
+
+\subsubsection{Confirmatory Factor Analysis}
+
+We tested the four-cluster structure (hostile aggression, crime concerns, personality, and emotions) using confirmatory factor analysis. The four-factor model yielded $\chi^2(98) = 699.10$, CFI $= .858$, TLI $= .826$, RMSEA $= .111$ [.104, .119], SRMR $= .069$. A five-factor model separating due process from crime concerns provided marginally different fit (CFI $= .858$, TLI $= .826$, RMSEA $= .105$). Both models fell below conventional fit thresholds (CFI $> .90$, RMSEA $< .08$), indicating that the clusters are best understood as conceptual groupings rather than empirically validated latent factors. Standardized factor loadings ranged from .38 to .89, and all were significant at $p < .001$. Factor correlations ranged from $r = .49$ to $r = .81$, consistent with the strong intercorrelations reported in the main text.
+
+\subsubsection{Retribution Classification Sensitivity}
+
+In the primary Sentence-BERT analysis, retribution was classified as prosocial alongside deterrence, incapacitation, and rehabilitation, while revenge, suffering, and exclusion were classified as dark. Because retribution is philosophically ambiguous---sharing conceptual territory with both proportional justice and revenge---we tested two alternative specifications. Removing retribution from the prosocial set (yielding a balanced 3 vs.\ 3 comparison) increased the dark-closer rate to 78.6\%. Moving retribution to the dark side (3 prosocial vs.\ 4 dark) increased it further to 83.5\%. The facade-relevant null correlations were unaffected: hostile aggression remained uncorrelated with both prosocial similarity (all $r < |.04|$, $p > .37$) and the prosocial--dark gap (all $r < |.04|$, $p > .44$) under all three specifications.
+
+\subsubsection{Vignette Stability}
+
+Correlations between punitiveness and the 18 correlate constructs were examined separately within each of the three vignette conditions to assess the stability of findings across crime types. The pattern of results was highly consistent across vignettes, with a mean absolute range of $r = .13$ across the three conditions. No construct showed a qualitatively different pattern in any vignette condition, supporting the generalizability of the findings.
+
+\subsubsection{Political Moderation}
+
+We tested whether political orientation moderated the relationship between hostile aggression and punitiveness, and between hostile aggression and language features. Participants were classified as liberal ($n = 190$), moderate ($n = 116$), or conservative ($n = 190$) based on a single political identification item. Using hierarchical regression with an interaction term (hostile aggression $\times$ political group), none of the interactions were statistically significant (all $p > .24$), indicating that the psychological correlates of punitiveness operate similarly across the political spectrum. The dark-closer percentage was similar across groups: 67.9\% (liberal), 71.6\% (moderate), and 64.7\% (conservative).
+
+\subsubsection{Cross-Method Convergence}
+
+Pairwise agreement rates across the four NLP classification methods ranged from 50.1\% to 90.5\% for raw agreement, with Cohen's $\kappa$ values ranging from .03 to .66. The two BART-based methods (multi-label and forced-choice) showed the highest agreement (90.5\%, $\kappa = .66$), as expected given their shared underlying model. Agreement between BART-based methods and the dictionary or Sentence-BERT similarity methods was more modest ($\kappa = .03$--.11), reflecting the fundamentally different principles of operation---keyword matching, zero-shot entailment, and dense semantic similarity capture different aspects of meaning. Importantly, all methods converged on the central finding: prosocial categories dominated the surface-level classifications (80--88\% prosocial by three methods), while Sentence-BERT semantic similarity revealed that 67.5\% of responses were closer to dark prototypes at the deeper semantic level.
+
+\subsubsection{Item-Level Correlations}
+
+Item-level correlations between individual survey items and the punitiveness composite are available in the online supplementary materials at \url{https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/}. All 56 items showed the expected direction of correlation, and 52 of 56 were statistically significant at $p < .05$.
+
+\subsection{Supplementary Figures}
+
+The following supplementary figures are available at the online materials page:
+
+\textbf{Figure S1.} Full intercorrelation heatmap showing all 153 pairwise correlations among the 18 correlate constructs.
+
+\textbf{Figure S2.} UMAP visualization of the response corpus. Four-panel figure showing (a) responses colored by punitiveness, (b) responses colored by prosocial--dark language gap, (c) hostile aggression vs.\ prosocial language similarity, and (d) distribution of facade residuals.
+
+\textbf{Figure S3.} Word clouds for the top and bottom tertiles of hostile aggression, illustrating the similarity of language used across groups.
+
+\textbf{Figure S4.} Prototype sensitivity analysis: distributions of prosocial--dark similarity difference under four prototype specifications (original, formal, colloquial, and data-driven).
+
+\textbf{Figure S5.} NLP feature correlation heatmap showing relationships among all text-based features and psychological measures.
+
+\textbf{Figure S6.} TOST equivalence testing visualization. All five hostile aggression $\times$ text feature correlations and their 95\% CIs, plotted against equivalence bounds of $\pm .15$. All CIs fall within the green equivalence region.

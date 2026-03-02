@@ -1,0 +1,61 @@
+\section{Method}
+
+This study was preregistered on the Open Science Framework prior to data collection (\url{https://osf.io/kr7y2/}). All data, materials, analysis code, and an interactive results website are publicly available at \url{https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/}. We report how we determined our sample size, all data exclusions, all manipulations, and all measures \citep{simmons2012false}. The quantitative analyses were conducted in R \citep{Rcore2024}; the NLP pipeline was implemented in Python.
+
+\subsection{Participants}
+
+A sample of 496 U.S. adults was recruited through Prolific, using Prolific's nationally representative sampling feature, which applies quota balancing on age, sex, and ethnicity. The preregistered target was 480, following the sample size of a preliminary version of the study \citep{SimonMelnikoff2025}. From an initial pool of 538 respondents, we excluded those who did not complete the survey ($n = 8$) and those who failed either of two embedded attention checks ($n = 34$). Participants were compensated at Prolific's standard rate. The study was approved by the Institutional Review Board at the University of Southern California.
+
+The final sample had a mean age of 46.2 years ($SD = 16.2$, range: 19--85). Gender composition was 49.2\% male, 50.2\% female, and 0.6\% other. Racial and ethnic composition was 65.3\% White, 13.3\% Black, 10.7\% Hispanic/Latino, 7.9\% Asian, and 2.8\% other. Political identification was evenly distributed, with 38.3\% liberal, 23.4\% moderate, and 38.3\% conservative.
+
+\subsection{Design and Procedure}
+
+The study employed a correlational design. All participants completed the same battery of measures in a fixed order, with one exception: for the sentencing task, each participant was randomly assigned to one of three criminal vignettes, designed to enhance the generalizability of the findings across crime types. The survey began with punitiveness attitude measures, followed by crime concern measures, hostile aggression and emotion measures, personality and ideology measures, the randomly assigned criminal vignette with a sentencing decision, an open-ended sentencing justification, and demographics.
+
+\subsection{Criminal Vignettes}
+
+Each participant read one of three vignettes describing a second-degree murder case involving a defendant named ``Darryl Smith.'' The vignettes varied the circumstances while holding constant the legal charge and defendant. In Vignette A (Stranger Felony-Murder, $n = 168$), Darryl, recently unemployed, attempts a purse-snatching; the victim resists, a struggle ensues, Darryl strikes her, and she falls over a railing to her death. In Vignette B (Domestic Violence, $n = 176$), Darryl violates a restraining order, confronts his ex-partner, and a physical altercation results in her death. In Vignette C (Organized Crime, $n = 152$), Darryl is involved in a car theft operation and assaults a rival, who dies from the injuries.
+
+After reading the assigned vignette, participants provided a sentencing recommendation on a 0--50 year scale and then responded to the open-ended prompt: ``In your own words, please explain why you recommended this sentence for Darryl. What was your reasoning?'' A follow-up prompt encouraged elaboration, and the two responses were concatenated for analysis.
+
+\subsection{Measures}
+
+All quantitative measures used 7-point Likert scales (1 = \textit{Strongly disagree} to 7 = \textit{Strongly agree}) unless otherwise noted. Reliability estimates for all scales are reported in Table~\ref{tab:reliability}. Full item wordings are available in the supplementary materials.
+
+\subsubsection{Punitiveness}
+
+The primary dependent variable was a standardized composite capturing three distinct operationalizations of punitive attitudes. Penological attitudes were assessed with four items measuring endorsement of more punishment (2 items) and rejection of the parsimony principle (2 items). Policy preferences were assessed with four items tapping support for three-strikes laws (2 items), life without parole (1 item), and the death penalty (1 item). These eight items formed a reliable composite ($\alpha = .84$). The sentencing decision---the number of years assigned to the defendant---was $z$-scored within each vignette condition to account for cross-vignette differences in mean sentence length, and then combined with the $z$-scored 8-item attitude composite to produce the overall punitiveness aggregate.
+
+\subsubsection{Correlate Measures}
+
+The correlate measures were organized into four thematic clusters. The \textit{crime concerns} cluster comprised perceived crime rates (2 items, $\alpha = .85$; e.g., ``Crime in America is at an all-time high'') and fear of crime (3 items, $\alpha = .78$; e.g., ``I am afraid of becoming a victim of a violent crime''). The \textit{emotional reactions} cluster comprised hatred of criminals (3 items, $\alpha = .78$; e.g., ``I hate people who commit violent crimes'') and anger toward criminals (2 items, $\alpha = .83$).
+
+The \textit{hostile aggression} cluster, which is central to this study's hypotheses, comprised six constructs: social exclusion (3 items, $\alpha = .76$; endorsement of civic exclusion of offenders), degradation (3 items, $\alpha = .67$; acceptance of shaming and degrading treatment), infliction of suffering (2 items, $\alpha = .79$; endorsement of suffering as an appropriate consequence), tolerance of prison violence (2 items, $\alpha = .56$), endorsement of harsh prison conditions (3 items, $\alpha = .82$), and revenge (3 items, $\alpha = .67$; endorsement of retaliatory punishment). The composite of all six constructs showed excellent reliability ($\alpha = .92$). Two constructs in this cluster---prison violence tolerance and degradation---had reliabilities below .70 and are interpreted with appropriate caution.
+
+The \textit{personality and ideology} cluster comprised right-wing authoritarianism (RWA; 5 items, $\alpha = .87$; adapted from \citealt{AltmeyerRWA}), social dominance orientation (SDO; 8 items, $\alpha = .92$; adapted from \citealt{Pratto1994}), vengefulness (5 items, $\alpha = .88$; dispositional tendency to seek revenge), violence proneness (4 items, $\alpha = .73$), racial resentment (4 items, $\alpha = .90$; adapted from \citealt{HenrySears2002}), and blood sports viewership (4 items, $\alpha = .84$; frequency of watching boxing, MMA/UFC, wrestling, and hunting, extracted from a broader 9-item media diet matrix).
+
+Two additional constructs were collected for exploratory purposes and are not included in the primary cluster framework: tolerance of due process violations (3 items, $\alpha = .60$) and willingness to convict on uncertain evidence (4 items, $\alpha = .67$).
+
+\subsection{Natural Language Processing Pipeline}
+
+We applied four independent computational methods to classify and quantify the thematic content of participants' open-ended sentencing justifications. The concatenated responses had a mean word count of $M = 48.3$ ($SD = 35.9$).
+
+\subsubsection{Classification Methods}
+
+The first method used custom dictionaries constructed for ten justification categories spanning prosocial themes (deterrence, incapacitation, rehabilitation, retribution, norm expression) and dark themes (revenge, suffering, degradation, exclusion, victim focus). Each response was scored by the proportion of words matching each dictionary and classified by its highest-scoring category.
+
+The second method employed BART-large-MNLI \citep{lewis2020bart} for zero-shot multi-label classification against eight candidate labels: proportional justice, victim closure, rehabilitation and reform, deterrence and prevention, public safety and protection, and societal condemnation (prosocial), as well as punishment and suffering, and revenge and payback (dark). The third method used the same model in a forced-choice format, assigning each response to a single best-fitting category.
+
+The fourth method computed Sentence-BERT \citep{reimers2019sentence} cosine similarity between each response and prototype embeddings representing seven justification themes. Prototype sentences were constructed to represent canonical expressions of each justification (e.g., ``This sentence will deter others from committing similar crimes'' for deterrence; ``He deserves to suffer for what he did'' for suffering). Prosocial and dark similarity composites were computed as the mean of the respective category similarities.
+
+\subsubsection{Validation and Additional Measures}
+
+We validated the pipeline in three ways: benchmark accuracy was assessed using 40 hand-crafted sentences with known ground-truth labels; cross-method convergence was quantified through pairwise agreement and Cohen's $\kappa$ across all four methods; and a prototype sensitivity analysis re-estimated the dark-closer percentage using two alternative sets of prototype sentences (formal academic framings and colloquial framings) to ensure robustness to prototype wording.
+
+We also computed VADER sentiment scores \citep{hutto2014vader} for each response, scored responses on 25 thematic categories using the Empath lexicon \citep{fast2016empath}, and applied BERTopic \citep{grootendorst2022bertopic} to discover emergent thematic clusters in the corpus.
+
+\subsection{Analytic Strategy}
+
+The correlational analyses used Pearson correlations between punitiveness and all correlate constructs. To test whether hostile aggression outpredicts crime concerns (H2), we applied Steiger's $Z$-test for comparing dependent correlations \citep{steiger1980tests} and computed bootstrapped 95\% confidence intervals (10,000 iterations). False discovery rate correction was applied for construct-level tests.
+
+The NLP analyses proceeded in three stages. First, we characterized the distribution of justification themes across the four classification methods. Second, we tested the individual-level facade hypothesis by correlating text features with hostile aggression, crime concerns, and punitiveness. Third, we adjudicated among three competing interpretations of any observed mismatch between prosocial language and psychological profiles: individual facade (deception), sincerity (genuine crime concerns), and cultural default (shared rhetorical script).
