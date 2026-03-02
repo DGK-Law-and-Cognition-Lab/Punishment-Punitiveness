@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\caption{Correlations Between Text Features and Psychological Measures: Testing the Prosocial Facade Hypothesis}
+\label{tab:nlp_facade}
+\begin{threeparttable}
+\small
+\begin{tabular}{lccccc}
+\toprule
+ & \multicolumn{5}{c}{Psychological Measure} \\
+\cmidrule(lr){2-6}
+Text Feature & Punitiveness & Hostile Agg. & Crime Conc. & Hatred & Revenge \\
+\midrule
+Prosocial Similarity    & $-.13$** & $-.04$    & .02       & $-.04$    & $-.05$    \\
+Dark Similarity         & .03      & $-.01$    & $-.03$    & $-.07$    & .03       \\
+Pro--Dark Gap           & $-.17$***& $-.03$    & .06       & .04       & $-.09$*   \\
+Dict.\ Prosocial        & $-.10$*  & $-.08$    & $-.11$*   & $-.08$    & $-.06$    \\
+Sentiment               & $-.19$***& $-.05$    & $-.08$    & $-.09$*   & $-.02$    \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\small
+\item \textit{Note.} $N = 496$. Prosocial and Dark Similarity from Sentence-BERT; Pro--Dark Gap = Prosocial minus Dark similarity; Dict.\ Prosocial = dictionary-coded prosocial proportion; Sentiment = VADER compound score. * $p < .05$, ** $p < .01$, *** $p < .001$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

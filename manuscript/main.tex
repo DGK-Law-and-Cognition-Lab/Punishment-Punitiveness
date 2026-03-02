@@ -1,0 +1,91 @@
+\documentclass[man,12pt,natbib,floatsintext,nolmodern]{apa7}
+
+% === PACKAGES ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}          % Times New Roman (APA 7 / L&HB requirement)
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{threeparttable}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{csquotes}
+
+% === HYPERLINK SETUP ===
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    pdfauthor={David G. Kamper, David E. Melnikoff, Dan Simon},
+    pdftitle={Is Criminal Punishment Prosocial?}
+}
+
+% === GRAPHICS PATH ===
+\graphicspath{{figures/}}
+
+% === DOCUMENT METADATA ===
+\title{Is Criminal Punishment Prosocial?}
+
+\authorsnames[1,2,3]{David G. Kamper, David E. Melnikoff, Dan Simon}
+\authorsaffiliations{
+    {Department of Psychology, University of California, Los Angeles},
+    {Graduate School of Business, Stanford University},
+    {Gould School of Law and Department of Psychology, University of Southern California}
+}
+
+\leftheader{Kamper, Melnikoff, \& Simon}
+\shorttitle{Is Criminal Punishment Prosocial?}
+
+\abstract{Criminal punishment is said to be justified by its promotion of desirable societal goals: restoring justice, reducing crime, reinforcing societal norms, and rehabilitating offenders. Yet these lofty goals are hard to reconcile with the massive and racialized incarceration regimen that prevails in the United States. We explore this tension by probing popular punitiveness, a major driver of punishment policy. Specifically, we examine whether punitiveness may be influenced by goals that diverge from punishment's purported prosociality. Testing a sample of 496 U.S. respondents, we measured how eighteen psychological constructs interact with punitiveness and with one another. We then extended this analysis by applying natural language processing (NLP) to participants' open-ended sentencing justifications, comparing what people \textit{say} motivates their punishment preferences against their psychological profiles. The correlational findings reveal that punitiveness is a highly complex yet cohesive psychological mindset that correlates strongly with beliefs, emotions, attitudes, personality traits, and ideologies---most of which are orthogonal, if not inimical, to its avowed prosociality. Hostile aggression measures (hatred, revenge, degradation, endorsement of suffering) correlate far more strongly with punitiveness than do legitimate crime concerns. The NLP analyses reveal that participants overwhelmingly invoke prosocial language---citing deterrence, public safety, and rehabilitation---regardless of whether they score high or low on hostile aggression. Across four independent classification methods, 67.5\% of sentencing justifications are semantically closer to revenge and suffering themes than to deterrence and rehabilitation. This prosocial framing functions not as individual-level deception but as a collective cultural default: a shared rhetorical script that obscures the darker psychological drivers of punitiveness. These findings call for a shift in the prevailing discourse to include a frank acknowledgment that criminal punishment serves also to satisfy the punishing public's own---often unsavory---psychological needs.}
+
+\keywords{punitiveness, criminal punishment, prosocial facade, hostile aggression, natural language processing, sentencing, mass incarceration}
+
+% Corresponding author
+\authornote{
+    \addORCIDlink{David G. Kamper}{} 
+    \addORCIDlink{David E. Melnikoff}{}
+    \addORCIDlink{Dan Simon}{}
+    
+    David G. Kamper, Department of Psychology, University of California, Los Angeles. David E. Melnikoff, Graduate School of Business, Stanford University. Dan Simon, Gould School of Law and Department of Psychology, University of Southern California.
+    
+    This study was preregistered on the Open Science Framework (\url{https://osf.io/kr7y2/}). Data, materials, and analysis code are publicly available at \url{https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/}.
+    
+    Correspondence concerning this article should be addressed to Dan Simon, USC Gould School of Law, University of Southern California, Los Angeles, CA 90089. E-mail: dsimon@law.usc.edu
+}
+
+\begin{document}
+
+\maketitle
+
+% === MAIN TEXT SECTIONS ===
+\input{sections/introduction}
+\input{sections/method}
+\input{sections/results_correlational}
+\input{sections/results_nlp}
+\input{sections/discussion}
+
+% === TABLES AND FIGURES ===
+% Note: In APA man mode with floatsintext, these appear inline.
+% For submission, tables/figures can also be placed at end.
+
+\input{tables/H1_correlations}
+\input{tables/steiger}
+\input{tables/fig_heatmap_construct}
+\input{tables/fig_bootstrap}
+\input{tables/fig_facade_scatter}
+\input{tables/reliability}
+\input{tables/descriptives}
+\input{tables/nlp_facade}
+\input{tables/political_moderation}
+
+
+% === REFERENCES ===
+\bibliography{references}
+
+% === APPENDICES / SUPPLEMENTARY ===
+\input{sections/supplementary}
+
+\end{document}
