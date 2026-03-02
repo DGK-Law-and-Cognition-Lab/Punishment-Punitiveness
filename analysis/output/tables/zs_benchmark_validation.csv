@@ -1,0 +1,41 @@
+true_label,predicted_label,correct_top1,true_label_score,true_label_rank,pred_confidence,sentence
+deterrence and prevention,deterrence and prevention,True,0.9995032548904419,1,0.9995032548904419,This sentence will make others think twice before committing crimes.
+deterrence and prevention,deterrence and prevention,True,0.9980779886245728,1,0.9980779886245728,The punishment should send a clear warning to would-be offenders.
+deterrence and prevention,deterrence and prevention,True,0.9991800785064697,1,0.9991800785064697,"By punishing this crime severely, we prevent future crimes from happening."
+deterrence and prevention,deterrence and prevention,True,0.9986240863800049,1,0.9986240863800049,Others who might consider committing a crime will be scared straight.
+deterrence and prevention,deterrence and prevention,True,0.9965595602989197,1,0.9965595602989197,A strong punishment deters criminal behavior in the community.
+public safety and protection,deterrence and prevention,False,0.9965551495552063,2,0.9967088103294373,We need to keep this dangerous person away from the public.
+public safety and protection,public safety and protection,True,0.9967620372772217,1,0.9967620372772217,Society is safer when violent offenders are behind bars.
+public safety and protection,deterrence and prevention,False,0.9968001842498779,2,0.9975627064704895,This sentence protects innocent people from a threat.
+public safety and protection,public safety and protection,True,0.9935298562049866,1,0.9935298562049866,The community needs to be shielded from criminals like this.
+public safety and protection,deterrence and prevention,False,0.9980726838111877,2,0.999156653881073,Keeping offenders locked up prevents them from hurting anyone else.
+rehabilitation and reform,rehabilitation and reform,True,0.9882704615592957,1,0.9882704615592957,Prison should give this person a chance to turn their life around.
+rehabilitation and reform,rehabilitation and reform,True,0.9960026144981384,1,0.9960026144981384,"With proper therapy and education, this offender can become a better person."
+rehabilitation and reform,rehabilitation and reform,True,0.9709319472312927,1,0.9709319472312927,Everyone deserves a second chance to reform and reenter society.
+rehabilitation and reform,rehabilitation and reform,True,0.917790949344635,1,0.917790949344635,The goal of prison should be helping offenders become productive citizens.
+rehabilitation and reform,rehabilitation and reform,True,0.982354462146759,1,0.982354462146759,I hope this person receives treatment and learns from their mistakes.
+proportional justice,proportional justice,True,0.9625250101089478,1,0.9625250101089478,The punishment should fit the severity of the crime committed.
+proportional justice,proportional justice,True,0.9986328482627869,1,0.9986328482627869,This is a fair and proportionate sentence for what was done.
+proportional justice,proportional justice,True,0.9528409838676453,1,0.9528409838676453,Justice demands that the consequence match the offense.
+proportional justice,proportional justice,True,0.9943457841873169,1,0.9943457841873169,This sentence appropriately reflects how serious the crime was.
+proportional justice,proportional justice,True,0.9938770532608032,1,0.9938770532608032,The offender deserves a punishment that is neither too harsh nor too lenient.
+revenge and payback,punishment and suffering,False,0.9953449368476868,2,0.9957947134971619,He should get a taste of his own medicine.
+revenge and payback,proportional justice,False,0.9973294734954834,2,0.9990426898002625,An eye for an eye. He needs to pay for what he did.
+revenge and payback,revenge and payback,True,0.9988940954208374,1,0.9988940954208374,This is payback for the suffering he caused.
+revenge and payback,proportional justice,False,0.987748384475708,3,0.9931476712226868,I want him to feel the same pain he inflicted on others.
+revenge and payback,revenge and payback,True,0.997906506061554,1,0.997906506061554,He deserves vengeance for the harm he brought upon his victim.
+punishment and suffering,punishment and suffering,True,0.9955168962478638,1,0.9955168962478638,I want him to suffer every day in prison.
+punishment and suffering,punishment and suffering,True,0.9969131946563721,1,0.9969131946563721,Prison should be as painful and miserable as possible for him.
+punishment and suffering,punishment and suffering,True,0.9964791536331177,1,0.9964791536331177,Let him rot and experience agony behind bars.
+punishment and suffering,punishment and suffering,True,0.9978871941566467,1,0.9978871941566467,He deserves to feel torment for the rest of his life.
+punishment and suffering,punishment and suffering,True,0.9987097382545471,1,0.9987097382545471,Prison should be a living hell for someone who did this.
+victim closure,victim closure,True,0.7458897829055786,1,0.7458897829055786,The victim's family deserves to see justice served.
+victim closure,victim closure,True,0.9911207556724548,1,0.9911207556724548,This sentence provides some peace to the loved ones affected.
+victim closure,victim closure,True,0.9683203101158142,1,0.9683203101158142,The family needs closure after what happened to them.
+victim closure,victim closure,True,0.9847807884216309,1,0.9847807884216309,Seeing the offender punished can help the victims begin to heal.
+victim closure,victim closure,True,0.9140176773071289,1,0.9140176773071289,This is for the family who lost someone they loved.
+societal condemnation,deterrence and prevention,False,0.9910497665405273,2,0.9965115785598755,Society needs to show that this behavior is completely unacceptable.
+societal condemnation,deterrence and prevention,False,0.008656405843794346,4,0.5498045682907104,This sentence sends a moral message about our values.
+societal condemnation,societal condemnation,True,0.9991535544395447,1,0.9991535544395447,We as a society condemn this kind of violence.
+societal condemnation,societal condemnation,True,0.9993703365325928,1,0.9993703365325928,The punishment expresses our collective disapproval of murder.
+societal condemnation,proportional justice,False,0.0035948927979916334,6,0.9589672684669495,This conviction upholds the moral standards of our community.

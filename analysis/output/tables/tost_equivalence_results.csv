@@ -1,0 +1,7 @@
+"Psych_Variable","Text_Variable","r","CI_95","p_NHST","p_TOST","Equivalent"
+"Hostile Aggression","Prosocial Similarity (SBERT)",-0.042,"[-0.129, 0.046]","0.354","0.008","Yes"
+"Hostile Aggression","Dark Similarity (SBERT)",-0.009,"[-0.097, 0.079]","0.836","< .001","Yes"
+"Hostile Aggression","Prosocial−Dark Gap (SBERT)",-0.034,"[-0.122, 0.054]","0.448","0.005","Yes"
+"Hostile Aggression","Dict. Prosocial Score",-0.079,"[-0.166, 0.009]","0.078","0.055","No"
+"Hostile Aggression","Sentiment (VADER)",-0.052,"[-0.139, 0.036]","0.248","0.014","Yes"
+"Crime Concerns","Prosocial−Dark Gap (SBERT)",0.057,"[-0.031, 0.145]","0.203","0.019","Yes"

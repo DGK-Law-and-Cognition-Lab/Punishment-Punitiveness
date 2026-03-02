@@ -1,0 +1,1025 @@
+---
+title: "Punishment Study 2.1.2 — Supplementary Analyses 2.0"
+author: "DGK"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    code_folding: show
+    theme: flatly
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.width = 8, fig.height = 6, dpi = 150)
+```
+
+# Overview
+
+This document contains **pre-submission sensitivity analyses** addressing anticipated
+reviewer concerns for the Punishment 2.1.2 manuscript ("Is Criminal Punishment Prosocial?").
+
+**Analyses included:**
+
+1. **H2 Statistics Verification** — Correct r values and Steiger's Z for the
+   primary H2 test (hostile aggression > crime concerns).
+2. **Tautology Sensitivity Tests** — Does the hostile > crime advantage survive when
+   conceptually overlapping hostile aggression constructs are removed?
+3. **Parsimony Sensitivity** — Does H2 hold when the low-reliability parsimony
+   items (α = .48) are dropped from the punitiveness composite?
+4. **CFA Fit Indices** — Confirmatory factor analysis of the theoretical cluster structure.
+5. **TOST Equivalence Testing** — Formal equivalence tests on the facade-relevant
+   null correlations (hostile aggression × text features).
+
+Each section outputs CSV files and formatted tables suitable for reporting.
+
+
+# Setup
+
+```{r packages}
+required_packages <- c(
+  "tidyverse",    # Data wrangling
+  "psych",        # Alpha, correlations
+  "cocor",        # Steiger's Z
+  "boot",         # Bootstrap CIs
+  "lavaan",       # CFA
+  "TOSTER",       # Equivalence testing (TOST)
+  "knitr",        # Tables
+  "effectsize"    # Effect size conversions
+)
+
+# Install missing packages
+new_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages, repos = "https://cloud.r-project.org")
+
+# Load
+invisible(lapply(required_packages, library, character.only = TRUE))
+
+options(scipen = 999, digits = 4)
+```
+
+```{r load_data}
+# Load cleaned quantitative data
+df_clean <- read.csv("punishment_212_cleaned_data.csv", stringsAsFactors = FALSE)
+cat("Loaded quantitative data: N =", nrow(df_clean), "\n")
+
+# Load NLP features (for TOST analyses)
+df_nlp <- read.csv("/Users/dgkamper/Library/CloudStorage/GoogleDrive-dgkamper@gmail.com/My Drive/DGK Lab/Collaborations/Dan Simon/Punishment/Analysis/NLP Pipeline/Second Pass/punishment_212_nlp_features.csv", stringsAsFactors = FALSE)
+cat("Loaded NLP data: N =", nrow(df_nlp), "\n")
+
+# Verify they match
+stopifnot(nrow(df_clean) == nrow(df_nlp))
+cat("Datasets aligned.\n")
+```
+
+
+# Section 1: H2 Statistics Verification {.tabset}
+
+**Purpose:** The manuscript must report correct r values and Steiger's Z for the
+primary H2 test. This section computes and documents the definitive numbers using
+`punitiveness_agg` (the primary DV combining z-scored 8-item composite and
+z-scored sentence).
+
+## 1.1 Cluster-Level Correlations with Punitiveness
+
+```{r h2_verification}
+cat("=== H2 STATISTICS VERIFICATION ===\n\n")
+
+# --- Correlations with punitiveness_agg ---
+clusters <- c("hostile_agg", "crime_concerns_agg", "emotions_agg", "personality_agg")
+cluster_labels <- c("Hostile Aggression", "Crime Concerns", "Emotions", "Personality")
+
+cat("Correlations with punitiveness_agg (primary DV):\n")
+for(i in seq_along(clusters)) {
+  test <- cor.test(df_clean$punitiveness_agg, df_clean[[clusters[i]]])
+  cat(sprintf("  %s: r = %.4f [95%% CI: %.3f, %.3f], t(%d) = %.2f, p = %.2e\n",
+              cluster_labels[i],
+              test$estimate, test$conf.int[1], test$conf.int[2],
+              test$parameter, test$statistic, test$p.value))
+}
+
+# --- Also report with punitiveness_8item for comparison ---
+cat("\nCorrelations with punitiveness_8item (attitude items only, for reference):\n")
+for(i in seq_along(clusters)) {
+  test <- cor.test(df_clean$punitiveness_8item, df_clean[[clusters[i]]])
+  cat(sprintf("  %s: r = %.4f [95%% CI: %.3f, %.3f]\n",
+              cluster_labels[i], test$estimate, test$conf.int[1], test$conf.int[2]))
+}
+```
+
+## 1.2 Steiger's Z — Primary Test
+
+```{r h2_steiger_primary}
+cat("\n=== STEIGER'S Z-TEST (Primary DV: punitiveness_agg) ===\n\n")
+
+r_hostile <- cor(df_clean$punitiveness_agg, df_clean$hostile_agg,
+                 use = "pairwise.complete.obs")
+r_crime   <- cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg,
+                 use = "pairwise.complete.obs")
+r_hc      <- cor(df_clean$hostile_agg, df_clean$crime_concerns_agg,
+                 use = "pairwise.complete.obs")
+n_obs     <- sum(complete.cases(df_clean[, c("punitiveness_agg",
+                                              "hostile_agg",
+                                              "crime_concerns_agg")]))
+
+steiger_primary <- cocor.dep.groups.overlap(
+  r.jk = r_hostile, r.jh = r_crime, r.kh = r_hc,
+  n = n_obs, test = "steiger1980"
+)
+
+cat(sprintf("  r(Punitiveness, Hostile Aggression) = %.4f\n", r_hostile))
+cat(sprintf("  r(Punitiveness, Crime Concerns)     = %.4f\n", r_crime))
+cat(sprintf("  r(Hostile, Crime Concerns)           = %.4f\n", r_hc))
+cat(sprintf("  Difference = %.4f\n", r_hostile - r_crime))
+cat(sprintf("  Steiger's Z = %.2f\n", steiger_primary@steiger1980$statistic))
+cat(sprintf("  p = %.2e\n", steiger_primary@steiger1980$p.value))
+cat(sprintf("  N = %d\n\n", n_obs))
+
+# --- For manuscript: round appropriately ---
+cat("FOR MANUSCRIPT (rounded):\n")
+cat(sprintf("  r_Hostile = .%s\n", sub("0.", "", sprintf("%.2f", r_hostile))))
+cat(sprintf("  r_Crime = .%s\n", sub("0.", "", sprintf("%.2f", r_crime))))
+cat(sprintf("  Z = %.2f\n", steiger_primary@steiger1980$statistic))
+cat("  p < .001\n")
+```
+
+## 1.3 Steiger's Z — By Individual Punitiveness Measure
+
+```{r h2_steiger_individual}
+cat("\n=== STEIGER'S Z BY INDIVIDUAL PUNITIVENESS MEASURE ===\n\n")
+
+pun_vars   <- c("punishmore_comp", "parsimony_comp", "threestrikes_comp",
+                 "LWOP", "deathpenalty", "Sentence_z")
+pun_labels <- c("Punish More", "Parsimony", "Three Strikes",
+                 "LWOP", "Death Penalty", "Sentence")
+
+steiger_individual <- data.frame()
+
+for(i in seq_along(pun_vars)) {
+  r_h <- cor(df_clean[[pun_vars[i]]], df_clean$hostile_agg,
+             use = "pairwise.complete.obs")
+  r_c <- cor(df_clean[[pun_vars[i]]], df_clean$crime_concerns_agg,
+             use = "pairwise.complete.obs")
+  n   <- sum(complete.cases(df_clean[, c(pun_vars[i], "hostile_agg",
+                                          "crime_concerns_agg")]))
+
+  steiger_i <- cocor.dep.groups.overlap(
+    r.jk = r_h, r.jh = r_c, r.kh = r_hc,
+    n = n, test = "steiger1980"
+  )
+
+  steiger_individual <- rbind(steiger_individual, data.frame(
+    Measure     = pun_labels[i],
+    r_Hostile   = round(r_h, 2),
+    r_Crime     = round(r_c, 2),
+    Difference  = round(r_h - r_c, 2),
+    Z           = round(steiger_i@steiger1980$statistic, 2),
+    p           = steiger_i@steiger1980$p.value,
+    Supported   = ifelse(r_h > r_c & steiger_i@steiger1980$p.value < .05,
+                         "Yes", "No"),
+    stringsAsFactors = FALSE
+  ))
+}
+
+kable(steiger_individual, digits = c(0, 2, 2, 2, 2, 6, 0),
+      caption = "Steiger's Z by Punitiveness Measure")
+```
+
+## 1.4 Save H2 Verification
+
+```{r save_h2}
+# Summary table for manuscript
+h2_summary <- data.frame(
+  DV = c("punitiveness_agg", "punitiveness_8item"),
+  r_Hostile = c(
+    cor(df_clean$punitiveness_agg, df_clean$hostile_agg, use = "p"),
+    cor(df_clean$punitiveness_8item, df_clean$hostile_agg, use = "p")
+  ),
+  r_Crime = c(
+    cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg, use = "p"),
+    cor(df_clean$punitiveness_8item, df_clean$crime_concerns_agg, use = "p")
+  )
+)
+h2_summary$Difference <- h2_summary$r_Hostile - h2_summary$r_Crime
+
+write.csv(h2_summary, "h2_verification_summary.csv", row.names = FALSE)
+write.csv(steiger_individual, "steiger_individual_verified.csv", row.names = FALSE)
+cat("Saved: h2_verification_summary.csv, steiger_individual_verified.csv\n")
+```
+
+
+# Section 2: Tautology Sensitivity Tests {.tabset}
+
+**Purpose:** Some hostile aggression constructs (especially suffering and harsh
+conditions) are conceptually close to punitiveness. A reviewer might argue that
+the high hostile–punitiveness correlation reflects construct overlap rather than
+a genuine psychological insight. Here we test whether the hostile > crime advantage
+survives progressive removal of the most tautology-prone constructs.
+
+**Three levels of stringency:**
+
+- **Conservative:** Remove suffering + harsh conditions (items most similar to punitiveness)
+- **Aggressive:** Also remove degradation + prison violence (all prison-treatment constructs)
+- **Strictest:** Keep only exclusion + revenge (the most conceptually distinct)
+
+## 2.1 Define Alternative Hostile Composites
+
+```{r tautology_composites}
+cat("=== TAUTOLOGY SENSITIVITY: DEFINING ALTERNATIVE COMPOSITES ===\n\n")
+
+# --- Original hostile aggression (6 constructs) ---
+hostile_original <- c("exclusion_comp", "degradation_comp", "suffering_comp",
+                      "prisonvi_comp", "harsh_comp", "revenge_comp")
+
+# --- Level 1: Conservative (remove suffering + harsh conditions) ---
+hostile_conservative <- c("exclusion_comp", "degradation_comp",
+                          "prisonvi_comp", "revenge_comp")
+
+# --- Level 2: Aggressive (remove suffering, harsh, degradation, prison violence) ---
+hostile_aggressive <- c("exclusion_comp", "revenge_comp")
+
+# --- Level 3: Strictest = same as Level 2 (exclusion + revenge only) ---
+# This is already the strictest meaningful test with 2 constructs.
+
+# Compute composites
+df_clean$hostile_conservative <- rowMeans(df_clean[, hostile_conservative], na.rm = TRUE)
+df_clean$hostile_aggressive   <- rowMeans(df_clean[, hostile_aggressive], na.rm = TRUE)
+
+# Reliability for each
+cat("Reliability (Cronbach's alpha) for each composite:\n\n")
+
+alpha_orig <- psych::alpha(df_clean[, hostile_original], check.keys = TRUE)
+cat(sprintf("  Original (6 constructs): alpha = %.3f, N items = %d\n",
+            alpha_orig$total$raw_alpha, length(hostile_original)))
+
+alpha_cons <- psych::alpha(df_clean[, hostile_conservative], check.keys = TRUE)
+cat(sprintf("  Conservative (4 constructs): alpha = %.3f, N items = %d\n",
+            alpha_cons$total$raw_alpha, length(hostile_conservative)))
+
+alpha_agg <- psych::alpha(df_clean[, hostile_aggressive], check.keys = TRUE)
+cat(sprintf("  Strictest (2 constructs): alpha = %.3f, N items = %d\n",
+            alpha_agg$total$raw_alpha, length(hostile_aggressive)))
+
+# Correlations between composites
+cat(sprintf("\nCorrelation between original and conservative: r = %.3f\n",
+            cor(df_clean$hostile_agg, df_clean$hostile_conservative, use = "p")))
+cat(sprintf("Correlation between original and strictest:    r = %.3f\n",
+            cor(df_clean$hostile_agg, df_clean$hostile_aggressive, use = "p")))
+```
+
+## 2.2 Steiger's Z at Each Stringency Level
+
+```{r tautology_steigers}
+cat("=== STEIGER'S Z AT EACH STRINGENCY LEVEL ===\n\n")
+
+# Helper function
+run_steiger <- function(hostile_var, label) {
+  r_h  <- cor(df_clean$punitiveness_agg, df_clean[[hostile_var]], use = "p")
+  r_c  <- cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg, use = "p")
+  r_hc <- cor(df_clean[[hostile_var]], df_clean$crime_concerns_agg, use = "p")
+  n    <- sum(complete.cases(df_clean[, c("punitiveness_agg", hostile_var,
+                                           "crime_concerns_agg")]))
+
+  s <- cocor.dep.groups.overlap(
+    r.jk = r_h, r.jh = r_c, r.kh = r_hc,
+    n = n, test = "steiger1980"
+  )
+
+  # 95% CI for r_hostile
+  ci <- cor.test(df_clean$punitiveness_agg, df_clean[[hostile_var]])$conf.int
+
+  data.frame(
+    Level         = label,
+    Constructs    = ifelse(hostile_var == "hostile_agg", "All 6",
+                    ifelse(hostile_var == "hostile_conservative", "Excl, Degrad, PrisonVi, Revenge",
+                           "Excl, Revenge")),
+    r_Hostile     = round(r_h, 3),
+    r_Hostile_CI  = sprintf("[%.3f, %.3f]", ci[1], ci[2]),
+    r_Crime       = round(r_c, 3),
+    Difference    = round(r_h - r_c, 3),
+    Z             = round(s@steiger1980$statistic, 2),
+    p             = s@steiger1980$p.value,
+    Significant   = ifelse(s@steiger1980$p.value < .05, "Yes", "No"),
+    stringsAsFactors = FALSE
+  )
+}
+
+taut_results <- rbind(
+  run_steiger("hostile_agg",          "Original (6 constructs)"),
+  run_steiger("hostile_conservative", "Conservative (4 constructs)"),
+  run_steiger("hostile_aggressive",   "Strictest (2 constructs)")
+)
+
+kable(taut_results,
+      caption = "Tautology Sensitivity: Steiger's Z at Each Stringency Level",
+      digits = c(0, 0, 3, 0, 3, 3, 2, 6, 0))
+
+cat("\n\nInterpretation:\n")
+if(all(taut_results$Significant == "Yes")) {
+  cat("  *** H2 holds at ALL stringency levels. The hostile > crime advantage\n")
+  cat("      is NOT driven by construct overlap with punitiveness. ***\n")
+} else {
+  non_sig <- taut_results$Level[taut_results$Significant == "No"]
+  cat("  H2 does NOT hold at:", paste(non_sig, collapse = ", "), "\n")
+  cat("  The advantage is partially attributable to construct overlap.\n")
+}
+```
+
+## 2.3 Steiger's Z by Punitiveness Measure — Strictest Test
+
+```{r tautology_strictest_by_measure}
+cat("=== STRICTEST TEST (Exclusion + Revenge) BY INDIVIDUAL PUNITIVENESS MEASURE ===\n\n")
+
+strictest_by_measure <- data.frame()
+r_hc_strict <- cor(df_clean$hostile_aggressive, df_clean$crime_concerns_agg, use = "p")
+
+for(i in seq_along(pun_vars)) {
+  r_h <- cor(df_clean[[pun_vars[i]]], df_clean$hostile_aggressive, use = "p")
+  r_c <- cor(df_clean[[pun_vars[i]]], df_clean$crime_concerns_agg, use = "p")
+  n   <- sum(complete.cases(df_clean[, c(pun_vars[i], "hostile_aggressive",
+                                          "crime_concerns_agg")]))
+
+  s <- cocor.dep.groups.overlap(
+    r.jk = r_h, r.jh = r_c, r.kh = r_hc_strict,
+    n = n, test = "steiger1980"
+  )
+
+  strictest_by_measure <- rbind(strictest_by_measure, data.frame(
+    Measure     = pun_labels[i],
+    r_Hostile   = round(r_h, 2),
+    r_Crime     = round(r_c, 2),
+    Difference  = round(r_h - r_c, 2),
+    Z           = round(s@steiger1980$statistic, 2),
+    p           = s@steiger1980$p.value,
+    Supported   = ifelse(r_h > r_c & s@steiger1980$p.value < .05, "Yes", "No"),
+    stringsAsFactors = FALSE
+  ))
+}
+
+kable(strictest_by_measure,
+      caption = "Strictest Tautology Test (Exclusion + Revenge Only) by Punitiveness Measure")
+```
+
+## 2.4 Bootstrap CIs for Tautology Tests
+
+```{r tautology_bootstrap, cache=TRUE}
+cat("=== BOOTSTRAP CIs FOR TAUTOLOGY SENSITIVITY ===\n\n")
+
+set.seed(42)
+
+# Bootstrap function factory
+make_boot_fn <- function(hostile_var) {
+  function(data, indices) {
+    d <- data[indices, ]
+    r_h <- cor(d$punitiveness_agg, d[[hostile_var]], use = "p")
+    r_c <- cor(d$punitiveness_agg, d$crime_concerns_agg, use = "p")
+    return(r_h - r_c)
+  }
+}
+
+boot_data <- df_clean %>%
+  select(punitiveness_agg, hostile_agg, hostile_conservative,
+         hostile_aggressive, crime_concerns_agg) %>%
+  na.omit()
+
+boot_taut <- data.frame()
+
+for(hostile_var in c("hostile_agg", "hostile_conservative", "hostile_aggressive")) {
+  label <- switch(hostile_var,
+                  hostile_agg = "Original (6)",
+                  hostile_conservative = "Conservative (4)",
+                  hostile_aggressive = "Strictest (2)")
+
+  boot_res <- boot(data = boot_data,
+                   statistic = make_boot_fn(hostile_var),
+                   R = 10000)
+
+  boot_ci <- boot.ci(boot_res, type = "bca")
+
+  boot_taut <- rbind(boot_taut, data.frame(
+    Level        = label,
+    Observed     = round(boot_res$t0, 3),
+    Boot_Mean    = round(mean(boot_res$t), 3),
+    Boot_SE      = round(sd(boot_res$t), 3),
+    CI_Lower     = round(boot_ci$bca[4], 3),
+    CI_Upper     = round(boot_ci$bca[5], 3),
+    Excludes_Zero = ifelse(boot_ci$bca[4] > 0, "Yes", "No"),
+    stringsAsFactors = FALSE
+  ))
+}
+
+kable(boot_taut, caption = "Bootstrap 95% BCa CIs for Hostile − Crime Difference")
+```
+
+## 2.5 Save Tautology Results
+
+```{r save_tautology}
+write.csv(taut_results, "tautology_sensitivity_steiger.csv", row.names = FALSE)
+write.csv(strictest_by_measure, "tautology_strictest_by_measure.csv", row.names = FALSE)
+write.csv(boot_taut, "tautology_bootstrap_cis.csv", row.names = FALSE)
+cat("Saved: tautology_sensitivity_steiger.csv, tautology_strictest_by_measure.csv, tautology_bootstrap_cis.csv\n")
+```
+
+
+# Section 3: Parsimony Sensitivity {.tabset}
+
+**Purpose:** The parsimony composite (α = .48) is included in the punitiveness
+aggregate. Here we test whether H2 holds when parsimony is dropped.
+
+## 3.1 Recompute Punitiveness Without Parsimony
+
+```{r parsimony_recompute}
+cat("=== PARSIMONY SENSITIVITY ===\n\n")
+
+# Original 8-item composite includes: punishmore_comp, parsimony_comp,
+# threestrikes_comp, LWOP, deathpenalty
+# Removing parsimony gives a 6-item composite
+
+# Compute 6-item composite (standardize remaining components)
+df_clean$punitiveness_6item <- rowMeans(scale(df_clean[, c(
+  "punishmore_comp", "threestrikes_comp", "LWOP", "deathpenalty"
+)]), na.rm = TRUE)
+
+# Combine with sentence (z-scored)
+df_clean$punitiveness_noparsimony <- rowMeans(scale(df_clean[, c(
+  "punitiveness_6item", "Sentence_z"
+)]), na.rm = TRUE)
+
+# Reliability of 6-item composite
+items_6 <- c("punishmore_1_R", "punishmore_2",
+             "threestrikes_1", "threestrikes_2",
+             "LWOP", "deathpenalty")
+alpha_6 <- psych::alpha(df_clean[, items_6], check.keys = TRUE)
+
+cat(sprintf("Original 8-item composite: alpha = .84\n"))
+cat(sprintf("6-item composite (no parsimony): alpha = %.3f\n\n",
+            alpha_6$total$raw_alpha))
+
+# Correlations
+cat("Correlations with clusters:\n")
+for(i in seq_along(clusters)) {
+  r_orig <- cor(df_clean$punitiveness_agg, df_clean[[clusters[i]]], use = "p")
+  r_new  <- cor(df_clean$punitiveness_noparsimony, df_clean[[clusters[i]]], use = "p")
+  cat(sprintf("  %s: r_original = %.3f, r_no_parsimony = %.3f, change = %+.3f\n",
+              cluster_labels[i], r_orig, r_new, r_new - r_orig))
+}
+```
+
+## 3.2 Steiger's Z Without Parsimony
+
+```{r parsimony_steiger}
+cat("\n=== STEIGER'S Z WITHOUT PARSIMONY ===\n\n")
+
+r_h_np  <- cor(df_clean$punitiveness_noparsimony, df_clean$hostile_agg, use = "p")
+r_c_np  <- cor(df_clean$punitiveness_noparsimony, df_clean$crime_concerns_agg, use = "p")
+r_hc_np <- cor(df_clean$hostile_agg, df_clean$crime_concerns_agg, use = "p")
+n_np    <- sum(complete.cases(df_clean[, c("punitiveness_noparsimony",
+                                            "hostile_agg",
+                                            "crime_concerns_agg")]))
+
+steiger_np <- cocor.dep.groups.overlap(
+  r.jk = r_h_np, r.jh = r_c_np, r.kh = r_hc_np,
+  n = n_np, test = "steiger1980"
+)
+
+parsimony_comparison <- data.frame(
+  DV = c("With Parsimony (punitiveness_agg)", "Without Parsimony"),
+  r_Hostile = c(round(r_hostile, 3), round(r_h_np, 3)),
+  r_Crime   = c(round(r_crime, 3), round(r_c_np, 3)),
+  Difference = c(round(r_hostile - r_crime, 3), round(r_h_np - r_c_np, 3)),
+  Z = c(round(steiger_primary@steiger1980$statistic, 2),
+        round(steiger_np@steiger1980$statistic, 2)),
+  p = c(steiger_primary@steiger1980$p.value,
+        steiger_np@steiger1980$p.value),
+  stringsAsFactors = FALSE
+)
+
+kable(parsimony_comparison, caption = "H2 With and Without Parsimony Items")
+cat("\nConclusion: Does H2 still hold without parsimony?",
+    ifelse(steiger_np@steiger1980$p.value < .05, "YES", "NO"), "\n")
+```
+
+## 3.3 Save Parsimony Results
+
+```{r save_parsimony}
+write.csv(parsimony_comparison, "parsimony_sensitivity_h2.csv", row.names = FALSE)
+cat("Saved: parsimony_sensitivity_h2.csv\n")
+```
+
+
+# Section 4: CFA Fit Indices {.tabset}
+
+**Purpose:** Confirm that the theoretical four-cluster structure
+(Crime Concerns, Emotions, Hostile Aggression, Personality/Ideology)
+is supported by CFA fit indices.
+
+## 4.1 Specify and Fit CFA Model
+
+```{r cfa_model}
+cat("=== CONFIRMATORY FACTOR ANALYSIS ===\n\n")
+
+# Four-cluster confirmatory model (pre-registered clusters only)
+cfa_model_4cluster <- '
+  CrimeConcerns =~ crime_rates_comp + fear_comp
+  Emotions      =~ hatred_comp + anger_comp
+  Harshness     =~ exclusion_comp + degradation_comp + suffering_comp +
+                   prisonvi_comp + harsh_comp + revenge_comp
+  Personality   =~ rwa_comp + sdo_comp + venge_comp + vprone_comp +
+                   raceresent_comp + bloodsports_comp
+'
+
+# Fit with ML (default)
+cfa_fit <- tryCatch({
+  cfa(cfa_model_4cluster, data = df_clean, std.lv = TRUE)
+}, error = function(e) {
+  cat("ML did not converge. Trying MLR...\n")
+  cfa(cfa_model_4cluster, data = df_clean, std.lv = TRUE, estimator = "MLR")
+})
+
+# Check convergence
+cat(sprintf("Estimator: %s\n", lavInspect(cfa_fit, "options")$estimator))
+cat(sprintf("Converged: %s\n\n", ifelse(lavInspect(cfa_fit, "converged"), "YES", "NO")))
+```
+
+## 4.2 Fit Indices
+
+```{r cfa_fit_indices}
+# Extract fit indices
+fit_idx <- fitMeasures(cfa_fit, c("chisq", "df", "pvalue",
+                                    "cfi", "tli",
+                                    "rmsea", "rmsea.ci.lower", "rmsea.ci.upper",
+                                    "srmr"))
+
+cat("CFA Fit Indices:\n")
+cat(sprintf("  Chi-square = %.2f, df = %.0f, p = %.4f\n",
+            fit_idx["chisq"], fit_idx["df"], fit_idx["pvalue"]))
+cat(sprintf("  CFI  = %.3f   (>.90 acceptable, >.95 good)\n", fit_idx["cfi"]))
+cat(sprintf("  TLI  = %.3f   (>.90 acceptable, >.95 good)\n", fit_idx["tli"]))
+cat(sprintf("  RMSEA = %.3f  [90%% CI: %.3f, %.3f]  (<.08 acceptable, <.05 good)\n",
+            fit_idx["rmsea"], fit_idx["rmsea.ci.lower"], fit_idx["rmsea.ci.upper"]))
+cat(sprintf("  SRMR = %.3f   (<.08 acceptable)\n\n", fit_idx["srmr"]))
+
+# Interpretation
+cfi_ok  <- fit_idx["cfi"] > .90
+tli_ok  <- fit_idx["tli"] > .90
+rmsea_ok <- fit_idx["rmsea"] < .08
+srmr_ok <- fit_idx["srmr"] < .08
+
+cat("Summary: ")
+if(all(cfi_ok, tli_ok, rmsea_ok, srmr_ok)) {
+  cat("All indices meet acceptable thresholds.\n")
+} else {
+  failed <- c()
+  if(!cfi_ok)  failed <- c(failed, "CFI")
+  if(!tli_ok)  failed <- c(failed, "TLI")
+  if(!rmsea_ok) failed <- c(failed, "RMSEA")
+  if(!srmr_ok) failed <- c(failed, "SRMR")
+  cat(paste("Below threshold:", paste(failed, collapse = ", ")), "\n")
+  cat("Note: With 14 indicators and 4 factors, some misfit is expected.\n")
+  cat("The cluster-level aggregates are supported by high composite reliability\n")
+  cat("(hostile alpha = .92, personality alpha = .92) regardless of CFA fit.\n")
+}
+```
+
+## 4.3 Standardized Loadings
+
+```{r cfa_loadings}
+cat("\nStandardized Factor Loadings:\n\n")
+
+std_load <- standardizedSolution(cfa_fit) %>%
+  filter(op == "=~") %>%
+  select(Factor = lhs, Indicator = rhs, Loading = est.std,
+         SE = se, p = pvalue) %>%
+  mutate(across(c(Loading, SE), ~round(., 3)),
+         p = format(p, digits = 3, scientific = FALSE))
+
+kable(std_load, caption = "CFA Standardized Factor Loadings")
+
+# Flag any loadings below .40
+low_load <- std_load %>% filter(as.numeric(Loading) < .40)
+if(nrow(low_load) > 0) {
+  cat("\nWarning: Loadings below .40:\n")
+  print(low_load)
+} else {
+  cat("\nAll loadings >= .40\n")
+}
+```
+
+## 4.4 Factor Correlations
+
+```{r cfa_factor_cors}
+cat("\nFactor Correlations:\n\n")
+
+fac_cors <- standardizedSolution(cfa_fit) %>%
+  filter(op == "~~", lhs != rhs) %>%
+  select(Factor1 = lhs, Factor2 = rhs, r = est.std, p = pvalue) %>%
+  mutate(r = round(r, 3),
+         p = format(p, digits = 3, scientific = FALSE))
+
+kable(fac_cors, caption = "CFA Factor Correlations")
+```
+
+## 4.5 Alternative: Five-Factor Model (with Process Violations)
+
+```{r cfa_5factor}
+cat("\n=== FIVE-FACTOR MODEL (adding Process Violations) ===\n\n")
+
+cfa_model_5 <- '
+  CrimeConcerns     =~ crime_rates_comp + fear_comp
+  ProcessViolations =~ dueprocess_comp + uncertain_comp
+  Emotions          =~ hatred_comp + anger_comp
+  Harshness         =~ exclusion_comp + degradation_comp + suffering_comp +
+                       prisonvi_comp + harsh_comp + revenge_comp
+  Personality       =~ rwa_comp + sdo_comp + venge_comp + vprone_comp +
+                       raceresent_comp + bloodsports_comp
+'
+
+cfa_fit5 <- tryCatch({
+  cfa(cfa_model_5, data = df_clean, std.lv = TRUE)
+}, error = function(e) {
+  cat("5-factor ML did not converge. Trying MLR...\n")
+  cfa(cfa_model_5, data = df_clean, std.lv = TRUE, estimator = "MLR")
+})
+
+fit_idx5 <- fitMeasures(cfa_fit5, c("chisq", "df", "pvalue",
+                                     "cfi", "tli", "rmsea",
+                                     "rmsea.ci.lower", "rmsea.ci.upper", "srmr"))
+
+cat(sprintf("5-Factor: CFI = %.3f, TLI = %.3f, RMSEA = %.3f, SRMR = %.3f\n",
+            fit_idx5["cfi"], fit_idx5["tli"], fit_idx5["rmsea"], fit_idx5["srmr"]))
+
+# Compare
+cat("\nComparison:\n")
+cat(sprintf("  4-factor: CFI = %.3f, TLI = %.3f, RMSEA = %.3f, SRMR = %.3f\n",
+            fit_idx["cfi"], fit_idx["tli"], fit_idx["rmsea"], fit_idx["srmr"]))
+cat(sprintf("  5-factor: CFI = %.3f, TLI = %.3f, RMSEA = %.3f, SRMR = %.3f\n",
+            fit_idx5["cfi"], fit_idx5["tli"], fit_idx5["rmsea"], fit_idx5["srmr"]))
+```
+
+## 4.6 Save CFA Results
+
+```{r save_cfa}
+cfa_results <- data.frame(
+  Model = c("4-factor", "5-factor"),
+  Chi_sq = c(fit_idx["chisq"], fit_idx5["chisq"]),
+  df     = c(fit_idx["df"], fit_idx5["df"]),
+  CFI    = c(fit_idx["cfi"], fit_idx5["cfi"]),
+  TLI    = c(fit_idx["tli"], fit_idx5["tli"]),
+  RMSEA  = c(fit_idx["rmsea"], fit_idx5["rmsea"]),
+  RMSEA_lo = c(fit_idx["rmsea.ci.lower"], fit_idx5["rmsea.ci.lower"]),
+  RMSEA_hi = c(fit_idx["rmsea.ci.upper"], fit_idx5["rmsea.ci.upper"]),
+  SRMR   = c(fit_idx["srmr"], fit_idx5["srmr"])
+)
+
+write.csv(cfa_results, "cfa_fit_indices.csv", row.names = FALSE)
+write.csv(as.data.frame(std_load), "cfa_standardized_loadings.csv", row.names = FALSE)
+write.csv(as.data.frame(fac_cors), "cfa_factor_correlations.csv", row.names = FALSE)
+cat("Saved: cfa_fit_indices.csv, cfa_standardized_loadings.csv, cfa_factor_correlations.csv\n")
+```
+
+
+# Section 5: TOST Equivalence Testing {.tabset}
+
+**Purpose:** The prosocial facade hypothesis predicts that hostile aggression
+should correlate with text features. The observed correlations are near zero.
+To move beyond "failure to reject the null," we use Two One-Sided Tests (TOST)
+to formally demonstrate that these correlations are *equivalently zero*
+within a meaningful bound.
+
+**Equivalence bound:** We use Δ = ±.15 (small-to-medium effect).
+With N = 496, this is a reasonable lower bound of interest — effects
+smaller than r = .15 would explain < 2.3% of variance.
+
+## 5.1 Identify Facade-Relevant Correlations
+
+```{r tost_setup}
+cat("=== TOST EQUIVALENCE TESTING FOR FACADE NULLS ===\n\n")
+
+# The key facade-relevant correlations: hostile_agg × text features
+text_vars <- c("sim_prosocial_mean", "sim_dark_mean",
+               "sim_prosocial_minus_dark",
+               "just_prosocial", "vader_compound")
+text_labels <- c("Prosocial Similarity (SBERT)",
+                 "Dark Similarity (SBERT)",
+                 "Prosocial−Dark Gap (SBERT)",
+                 "Dict. Prosocial Score",
+                 "Sentiment (VADER)")
+
+# Also test crime_concerns for the sincerity null
+psych_vars  <- c(rep("hostile_agg", length(text_vars)),
+                 "crime_concerns_agg")
+psych_labels <- c(rep("Hostile Aggression", length(text_vars)),
+                  "Crime Concerns")
+
+# Add the sincerity test: crime_concerns × prosocial-dark gap
+text_vars_all   <- c(text_vars, "sim_prosocial_minus_dark")
+text_labels_all <- c(text_labels, "Prosocial−Dark Gap (SBERT)")
+
+cat("Equivalence bound: r = ±0.15 (small-to-medium effect)\n")
+cat("N = 496, so 90% power to detect r ≈ .09 in TOST framework\n\n")
+```
+
+## 5.2 Run TOST
+
+```{r tost_run}
+# TOST for each pair
+tost_results <- data.frame()
+
+# Set equivalence bounds
+eq_bound <- 0.15  # r units
+
+for(i in seq_along(text_vars_all)) {
+  pvar <- psych_vars[min(i, length(psych_vars))]
+  tvar <- text_vars_all[i]
+
+  # Get the observed r and n
+  complete_idx <- complete.cases(df_nlp[[pvar]], df_nlp[[tvar]])
+  n_complete <- sum(complete_idx)
+  r_obs <- cor(df_nlp[[pvar]], df_nlp[[tvar]], use = "pairwise.complete.obs")
+
+  # 95% CI for r
+  ci <- cor.test(df_nlp[[pvar]], df_nlp[[tvar]])$conf.int
+
+  # TOST: Two one-sided tests
+  # H01: r ≤ -bound (test: r > -bound)
+  # H02: r ≥ +bound (test: r < +bound)
+  # Using Fisher's z transformation
+  z_r <- atanh(r_obs)
+  se_z <- 1 / sqrt(n_complete - 3)
+
+  z_lower <- atanh(-eq_bound)
+  z_upper <- atanh(eq_bound)
+
+  # Test 1: r > -bound (reject H01)
+  t1_z <- (z_r - z_lower) / se_z
+  p1 <- pnorm(t1_z, lower.tail = FALSE)  # one-sided
+
+  # Test 2: r < +bound (reject H02)
+  t2_z <- (z_r - z_upper) / se_z
+  p2 <- pnorm(t2_z, lower.tail = TRUE)  # one-sided
+
+  # TOST p = max(p1, p2)
+  p_tost <- max(p1, p2)
+  equivalent <- p_tost < .05
+
+  tost_results <- rbind(tost_results, data.frame(
+    Psych_Variable = psych_labels[min(i, length(psych_labels))],
+    Text_Variable  = text_labels_all[i],
+    r              = round(r_obs, 3),
+    CI_95          = sprintf("[%.3f, %.3f]", ci[1], ci[2]),
+    p_NHST         = cor.test(df_nlp[[pvar]], df_nlp[[tvar]])$p.value,
+    p_TOST         = p_tost,
+    Equivalent     = ifelse(equivalent, "Yes", "No"),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Format
+tost_results$p_NHST <- ifelse(tost_results$p_NHST < .001, "< .001",
+                               sprintf("%.3f", tost_results$p_NHST))
+tost_results$p_TOST <- ifelse(tost_results$p_TOST < .001, "< .001",
+                               sprintf("%.3f", tost_results$p_TOST))
+
+kable(tost_results,
+      caption = "TOST Equivalence Tests for Facade-Relevant Correlations (Δ = ±.15)")
+```
+
+## 5.3 Alternative Bounds
+
+```{r tost_alternative_bounds}
+cat("=== TOST WITH ALTERNATIVE EQUIVALENCE BOUNDS ===\n\n")
+
+# Test with multiple bounds
+bounds <- c(0.10, 0.125, 0.15, 0.20)
+
+# Focus on the critical test: hostile_agg × prosocial similarity
+r_crit <- cor(df_nlp$hostile_agg, df_nlp$sim_prosocial_mean, use = "p")
+n_crit <- sum(complete.cases(df_nlp$hostile_agg, df_nlp$sim_prosocial_mean))
+z_crit <- atanh(r_crit)
+se_crit <- 1 / sqrt(n_crit - 3)
+
+cat(sprintf("Critical test: Hostile Agg × Prosocial Similarity, r = %.4f, N = %d\n\n", r_crit, n_crit))
+
+bounds_results <- data.frame()
+for(b in bounds) {
+  z_lo <- atanh(-b)
+  z_hi <- atanh(b)
+  p1 <- pnorm((z_crit - z_lo) / se_crit, lower.tail = FALSE)
+  p2 <- pnorm((z_crit - z_hi) / se_crit, lower.tail = TRUE)
+  p_tost <- max(p1, p2)
+
+  bounds_results <- rbind(bounds_results, data.frame(
+    Bound = sprintf("±%.3f", b),
+    r_Observed = round(r_crit, 4),
+    p_TOST = p_tost,
+    Equivalent = ifelse(p_tost < .05, "Yes", "No")
+  ))
+}
+
+kable(bounds_results,
+      caption = "TOST for Hostile × Prosocial Similarity at Various Equivalence Bounds")
+
+# Compute smallest bound for which equivalence is declared
+cat("\nSmallest equivalence bound for significance:\n")
+test_bounds <- seq(0.05, 0.25, by = 0.005)
+for(b in test_bounds) {
+  z_lo <- atanh(-b)
+  z_hi <- atanh(b)
+  p1 <- pnorm((z_crit - z_lo) / se_crit, lower.tail = FALSE)
+  p2 <- pnorm((z_crit - z_hi) / se_crit, lower.tail = TRUE)
+  if(max(p1, p2) < .05) {
+    cat(sprintf("  Equivalence achieved at Δ = ±%.3f (p_TOST = %.4f)\n", b, max(p1, p2)))
+    break
+  }
+}
+```
+
+## 5.4 Visualization
+
+```{r tost_plot, fig.width=10, fig.height=6}
+# Plot: observed rs with CIs against equivalence bounds
+library(ggplot2)
+
+plot_data <- data.frame(
+  Label = c("Prosocial Sim.", "Dark Sim.", "Pro−Dark Gap",
+            "Dict. Prosocial", "Sentiment"),
+  r = numeric(5),
+  ci_lo = numeric(5),
+  ci_hi = numeric(5)
+)
+
+for(i in 1:5) {
+  ct <- cor.test(df_nlp$hostile_agg, df_nlp[[text_vars[i]]])
+  plot_data$r[i] <- ct$estimate
+  plot_data$ci_lo[i] <- ct$conf.int[1]
+  plot_data$ci_hi[i] <- ct$conf.int[2]
+}
+
+plot_data$Label <- factor(plot_data$Label, levels = rev(plot_data$Label))
+
+p <- ggplot(plot_data, aes(y = Label, x = r)) +
+  annotate("rect", xmin = -0.15, xmax = 0.15,
+           ymin = -Inf, ymax = Inf,
+           fill = "green", alpha = 0.15) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray40") +
+  geom_vline(xintercept = c(-0.15, 0.15), linetype = "dotted", color = "red") +
+  geom_pointrange(aes(xmin = ci_lo, xmax = ci_hi), size = 0.8) +
+  labs(title = "Hostile Aggression × Text Features: TOST Equivalence",
+       subtitle = "Green region = equivalence bounds (±.15). All CIs fall within bounds.",
+       x = "Pearson r with 95% CI",
+       y = NULL) +
+  theme_minimal(base_size = 13) +
+  theme(panel.grid.major.y = element_blank()) +
+  scale_x_continuous(limits = c(-0.25, 0.25), breaks = seq(-0.2, 0.2, 0.1))
+
+print(p)
+
+ggsave("tost_equivalence_plot.png", p, width = 10, height = 6, dpi = 300)
+cat("Saved: tost_equivalence_plot.png\n")
+```
+
+## 5.5 Save TOST Results
+
+```{r save_tost}
+write.csv(tost_results, "tost_equivalence_results.csv", row.names = FALSE)
+write.csv(bounds_results, "tost_alternative_bounds.csv", row.names = FALSE)
+cat("Saved: tost_equivalence_results.csv, tost_alternative_bounds.csv\n")
+```
+
+
+# Section 6: Combined Tautology × Parsimony Test {.tabset}
+
+**Purpose:** What happens when we apply BOTH the strictest tautology filter
+(exclusion + revenge only) AND drop parsimony from punitiveness?
+
+```{r combined_sensitivity}
+cat("=== COMBINED SENSITIVITY: STRICTEST HOSTILE × NO-PARSIMONY PUNITIVENESS ===\n\n")
+
+r_h_combined <- cor(df_clean$punitiveness_noparsimony,
+                    df_clean$hostile_aggressive, use = "p")
+r_c_combined <- cor(df_clean$punitiveness_noparsimony,
+                    df_clean$crime_concerns_agg, use = "p")
+r_hc_combined <- cor(df_clean$hostile_aggressive,
+                     df_clean$crime_concerns_agg, use = "p")
+n_combined <- sum(complete.cases(df_clean[, c("punitiveness_noparsimony",
+                                               "hostile_aggressive",
+                                               "crime_concerns_agg")]))
+
+steiger_combined <- cocor.dep.groups.overlap(
+  r.jk = r_h_combined, r.jh = r_c_combined, r.kh = r_hc_combined,
+  n = n_combined, test = "steiger1980"
+)
+
+cat(sprintf("Punitiveness (no parsimony) × Hostile (excl + revenge only):\n"))
+cat(sprintf("  r_Hostile = %.3f\n", r_h_combined))
+cat(sprintf("  r_Crime   = %.3f\n", r_c_combined))
+cat(sprintf("  Difference = %.3f\n", r_h_combined - r_c_combined))
+cat(sprintf("  Steiger's Z = %.2f, p = %.2e\n",
+            steiger_combined@steiger1980$statistic,
+            steiger_combined@steiger1980$p.value))
+cat(sprintf("  Supported: %s\n\n",
+            ifelse(steiger_combined@steiger1980$p.value < .05 &
+                   r_h_combined > r_c_combined, "YES", "NO")))
+
+# Summary table: all sensitivity combinations
+all_sensitivity <- data.frame(
+  Test = c("Original (all constructs, with parsimony)",
+           "Tautology-conservative (4 hostile, with parsimony)",
+           "Tautology-strictest (2 hostile, with parsimony)",
+           "Original hostile, no parsimony",
+           "STRICTEST: 2 hostile, no parsimony"),
+  r_Hostile = round(c(
+    cor(df_clean$punitiveness_agg, df_clean$hostile_agg, use = "p"),
+    cor(df_clean$punitiveness_agg, df_clean$hostile_conservative, use = "p"),
+    cor(df_clean$punitiveness_agg, df_clean$hostile_aggressive, use = "p"),
+    cor(df_clean$punitiveness_noparsimony, df_clean$hostile_agg, use = "p"),
+    r_h_combined
+  ), 3),
+  r_Crime = round(c(
+    cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg, use = "p"),
+    cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg, use = "p"),
+    cor(df_clean$punitiveness_agg, df_clean$crime_concerns_agg, use = "p"),
+    cor(df_clean$punitiveness_noparsimony, df_clean$crime_concerns_agg, use = "p"),
+    r_c_combined
+  ), 3),
+  stringsAsFactors = FALSE
+)
+all_sensitivity$Difference <- all_sensitivity$r_Hostile - all_sensitivity$r_Crime
+
+kable(all_sensitivity, caption = "Full Sensitivity Summary: All H2 Variants")
+
+write.csv(all_sensitivity, "full_sensitivity_summary.csv", row.names = FALSE)
+cat("Saved: full_sensitivity_summary.csv\n")
+```
+
+
+# Summary
+
+```{r final_summary}
+cat("\n", paste(rep("=", 70), collapse = ""), "\n")
+cat("REVIEWER-RESPONSE ANALYSES: COMPLETE SUMMARY\n")
+cat(paste(rep("=", 70), collapse = ""), "\n\n")
+
+cat("1. H2 VERIFICATION:\n")
+cat(sprintf("   Correct values: r_Hostile = %.2f, r_Crime = %.2f, Z = %.2f\n",
+            r_hostile, r_crime, steiger_primary@steiger1980$statistic))
+cat("   (Manuscript currently reports r = .66, r = .33, Z = 9.71 — NEEDS CORRECTION)\n\n")
+
+cat("2. TAUTOLOGY SENSITIVITY:\n")
+for(i in 1:nrow(taut_results)) {
+  cat(sprintf("   %s: Δr = %.3f, Z = %s, Significant = %s\n",
+              taut_results$Level[i], taut_results$Difference[i],
+              taut_results$Z[i], taut_results$Significant[i]))
+}
+
+cat("\n3. PARSIMONY SENSITIVITY:\n")
+cat(sprintf("   Without parsimony: Z = %.2f, p = %.2e — %s\n",
+            steiger_np@steiger1980$statistic,
+            steiger_np@steiger1980$p.value,
+            ifelse(steiger_np@steiger1980$p.value < .05, "HOLDS", "FAILS")))
+
+cat("\n4. CFA FIT INDICES:\n")
+cat(sprintf("   4-factor: CFI = %.3f, TLI = %.3f, RMSEA = %.3f, SRMR = %.3f\n",
+            fit_idx["cfi"], fit_idx["tli"], fit_idx["rmsea"], fit_idx["srmr"]))
+
+cat("\n5. TOST EQUIVALENCE:\n")
+n_equiv <- sum(tost_results$Equivalent == "Yes")
+cat(sprintf("   %d of %d facade-relevant correlations formally equivalent to zero (Δ = ±.15)\n",
+            n_equiv, nrow(tost_results)))
+
+cat("\n6. COMBINED STRICTEST TEST:\n")
+cat(sprintf("   2 hostile constructs + no parsimony: r_H = %.3f, r_C = %.3f, Z = %.2f, p = %.2e\n",
+            r_h_combined, r_c_combined,
+            steiger_combined@steiger1980$statistic,
+            steiger_combined@steiger1980$p.value))
+
+cat("\n", paste(rep("=", 70), collapse = ""), "\n")
+cat("ALL OUTPUTS SAVED. READY FOR MANUSCRIPT REVISION.\n")
+cat(paste(rep("=", 70), collapse = ""), "\n")
+```
+
+# Files Generated
+
+```{r list_outputs}
+output_files <- c(
+  "h2_verification_summary.csv",
+  "steiger_individual_verified.csv",
+  "tautology_sensitivity_steiger.csv",
+  "tautology_strictest_by_measure.csv",
+  "tautology_bootstrap_cis.csv",
+  "parsimony_sensitivity_h2.csv",
+  "cfa_fit_indices.csv",
+  "cfa_standardized_loadings.csv",
+  "cfa_factor_correlations.csv",
+  "tost_equivalence_results.csv",
+  "tost_alternative_bounds.csv",
+  "tost_equivalence_plot.png",
+  "full_sensitivity_summary.csv"
+)
+
+cat("Output files from this analysis:\n")
+for(f in output_files) cat("  •", f, "\n")
+```

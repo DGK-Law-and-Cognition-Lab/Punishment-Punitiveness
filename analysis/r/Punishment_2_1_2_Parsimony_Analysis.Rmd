@@ -1,0 +1,402 @@
+---
+title: "Punishment Study 2.1.2 - Parsimony Items Analysis"
+author: "DGK"
+date: "January 2026"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+  word_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# PURPOSE
+
+The Parsimony composite showed unacceptably low reliability (alpha = .48). This analysis examines the two items separately to understand:
+
+1. Whether they correlate differently with punitiveness and correlates
+2. Why they don't hang together as a scale
+3. Whether one item is more useful than the other
+
+**The two items (after reverse coding, higher = more punitive):**
+
+- **parsimony_1_R**: "Criminal punishments should be as light as possible" (reversed)
+  - Rejecting this = wanting harsher punishment
+  - This is an EXTREME position (absolute minimization)
+
+- **parsimony_2_R**: "The state should not punish more than necessary" (reversed)
+  - Rejecting this = accepting excessive punishment
+  - This is more MODERATE (proportionality principle)
+
+# SETUP
+
+```{r packages}
+library(tidyverse)
+library(psych)
+library(cocor)
+library(knitr)
+
+options(scipen = 999)
+options(digits = 4)
+```
+
+```{r load_data}
+# Load the cleaned data
+df_clean <- read.csv("punishment_212_cleaned_data.csv", stringsAsFactors = FALSE)
+cat("Loaded N =", nrow(df_clean), "\n\n")
+```
+
+# SECTION 1: BASIC DESCRIPTIVES
+
+## 1.1 Item Distributions
+
+```{r item_descriptives}
+cat("=== PARSIMONY ITEM DESCRIPTIVES ===\n\n")
+
+# Note: These are the REVERSED items (higher = more punitive)
+cat("parsimony_1_R: 'Punishments should be as light as possible' (reversed)\n")
+cat("  Interpreting high scores: Rejecting absolute minimization of punishment\n\n")
+
+cat("parsimony_2_R: 'State should not punish more than necessary' (reversed)\n")
+cat("  Interpreting high scores: Accepting excessive/disproportionate punishment\n\n")
+
+# Descriptives
+desc_table <- df_clean %>%
+  summarise(
+    across(c(parsimony_1_R, parsimony_2_R, parsimony_comp), 
+           list(
+             Mean = ~mean(., na.rm = TRUE),
+             SD = ~sd(., na.rm = TRUE),
+             Median = ~median(., na.rm = TRUE)
+           ))
+  ) %>%
+  pivot_longer(everything()) %>%
+  separate(name, into = c("Variable", "Stat"), sep = "_(?=[^_]+$)") %>%
+  pivot_wider(names_from = Stat, values_from = value)
+
+print(as.data.frame(desc_table), row.names = FALSE)
+cat("\n")
+
+# Distribution comparison
+cat("Distribution of Responses (1-7 scale):\n\n")
+cat("parsimony_1_R:\n")
+print(table(df_clean$parsimony_1_R))
+cat("\nparsimony_2_R:\n")
+print(table(df_clean$parsimony_2_R))
+```
+
+## 1.2 Cross-tabulation
+
+```{r crosstab}
+cat("\n=== CROSS-TABULATION OF ITEMS ===\n\n")
+
+# How do people respond to both items?
+crosstab <- table(df_clean$parsimony_1_R, df_clean$parsimony_2_R)
+cat("Rows = parsimony_1_R (light as possible), Columns = parsimony_2_R (not more than necessary)\n\n")
+print(crosstab)
+
+# Correlation between items
+item_cor <- cor(df_clean$parsimony_1_R, df_clean$parsimony_2_R, use = "pairwise.complete.obs")
+cat(sprintf("\nCorrelation between items: r = %.2f\n", item_cor))
+cat("(This explains the low alpha - items only moderately correlated)\n")
+```
+
+## 1.3 Mean Comparison
+
+```{r mean_comparison}
+cat("\n=== MEAN COMPARISON ===\n\n")
+
+# Paired t-test
+t_result <- t.test(df_clean$parsimony_1_R, df_clean$parsimony_2_R, paired = TRUE)
+
+cat(sprintf("parsimony_1_R Mean: %.2f (SD = %.2f)\n", 
+            mean(df_clean$parsimony_1_R, na.rm = TRUE),
+            sd(df_clean$parsimony_1_R, na.rm = TRUE)))
+cat(sprintf("parsimony_2_R Mean: %.2f (SD = %.2f)\n", 
+            mean(df_clean$parsimony_2_R, na.rm = TRUE),
+            sd(df_clean$parsimony_2_R, na.rm = TRUE)))
+cat(sprintf("\nPaired t-test: t(%d) = %.2f, p = %.4f\n", 
+            t_result$parameter, t_result$statistic, t_result$p.value))
+
+# Effect size
+mean_diff <- mean(df_clean$parsimony_1_R - df_clean$parsimony_2_R, na.rm = TRUE)
+sd_diff <- sd(df_clean$parsimony_1_R - df_clean$parsimony_2_R, na.rm = TRUE)
+d <- mean_diff / sd_diff
+cat(sprintf("Cohen's d = %.2f\n", d))
+
+cat("\nInterpretation:\n")
+if(mean(df_clean$parsimony_1_R, na.rm = TRUE) > mean(df_clean$parsimony_2_R, na.rm = TRUE)) {
+  cat("People are MORE willing to reject 'light as possible' than 'not more than necessary'\n")
+  cat("This makes sense: rejecting proportionality is more extreme than rejecting minimization\n")
+} else {
+  cat("People are LESS willing to reject 'light as possible' than 'not more than necessary'\n")
+}
+```
+
+# SECTION 2: CORRELATIONS WITH PUNITIVENESS
+
+## 2.1 Correlations with Punitiveness Aggregate
+
+```{r punitiveness_correlations}
+cat("=== CORRELATIONS WITH PUNITIVENESS ===\n\n")
+
+# Correlation of each item with the OTHER punitiveness measures
+# (excluding parsimony from the aggregate for this)
+
+# Create punitiveness without parsimony
+df_clean$punitiveness_no_parsimony <- rowMeans(
+  df_clean[, c("punishmore_comp", "threestrikes_comp", "LWOP", "deathpenalty")],
+  na.rm = TRUE
+)
+df_clean$punitiveness_no_parsimony_z <- scale(df_clean$punitiveness_no_parsimony)[,1]
+
+# Also include Sentence_z
+df_clean$punitiveness_no_pars_full <- rowMeans(
+  cbind(df_clean$punitiveness_no_parsimony_z, df_clean$Sentence_z),
+  na.rm = TRUE
+)
+
+cat("Correlations with Punitiveness (excluding parsimony from DV):\n\n")
+
+cor1 <- cor.test(df_clean$parsimony_1_R, df_clean$punitiveness_no_pars_full)
+cor2 <- cor.test(df_clean$parsimony_2_R, df_clean$punitiveness_no_pars_full)
+
+cat(sprintf("parsimony_1_R ('light as possible' R): r = %.3f, p < .001\n", cor1$estimate))
+cat(sprintf("parsimony_2_R ('not more than necessary' R): r = %.3f, p < .001\n", cor2$estimate))
+
+# Steiger test comparing the two
+r12 <- cor(df_clean$parsimony_1_R, df_clean$parsimony_2_R, use = "pairwise.complete.obs")
+n <- sum(complete.cases(df_clean[, c("parsimony_1_R", "parsimony_2_R", "punitiveness_no_pars_full")]))
+
+steiger <- cocor.dep.groups.overlap(
+  r.jk = cor1$estimate,
+  r.jh = cor2$estimate,
+  r.kh = r12,
+  n = n,
+  test = "steiger1980"
+)
+
+cat(sprintf("\nSteiger's Z comparing item correlations: Z = %.2f, p = %.4f\n",
+            steiger@steiger1980$statistic, steiger@steiger1980$p.value))
+cat("Interpretation: ", 
+    ifelse(steiger@steiger1980$p.value < .05, 
+           "Items correlate DIFFERENTLY with punitiveness",
+           "Items correlate SIMILARLY with punitiveness"), "\n")
+```
+
+## 2.2 Correlations with Other Punitiveness Components
+
+```{r component_correlations}
+cat("\n=== CORRELATIONS WITH PUNITIVENESS COMPONENTS ===\n\n")
+
+punitiveness_components <- c("punishmore_comp", "threestrikes_comp", "LWOP", 
+                              "deathpenalty", "Sentence_z")
+component_labels <- c("Punish More", "Three Strikes", "LWOP", "Death Penalty", "Sentence")
+
+# Create correlation table
+cor_table <- data.frame(Component = component_labels)
+
+cor_table$parsimony_1_R <- sapply(punitiveness_components, function(var) {
+  round(cor(df_clean$parsimony_1_R, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+cor_table$parsimony_2_R <- sapply(punitiveness_components, function(var) {
+  round(cor(df_clean$parsimony_2_R, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+cor_table$Difference <- cor_table$parsimony_1_R - cor_table$parsimony_2_R
+
+print(as.data.frame(cor_table), row.names = FALSE)
+
+cat("\nPositive Difference = parsimony_1_R correlates more strongly\n")
+cat("Negative Difference = parsimony_2_R correlates more strongly\n")
+```
+
+# SECTION 3: CORRELATIONS WITH CORRELATE CLUSTERS
+
+## 3.1 Cluster-Level Correlations
+
+```{r cluster_correlations}
+cat("=== CORRELATIONS WITH CORRELATE CLUSTERS ===\n\n")
+
+cluster_vars <- c("crime_concerns_agg", "emotions_agg", "hostile_agg", "personality_agg")
+cluster_labels <- c("Crime Concerns", "Emotions", "Hostile Aggression", "Personality")
+
+cluster_cor_table <- data.frame(Cluster = cluster_labels)
+
+cluster_cor_table$parsimony_1_R <- sapply(cluster_vars, function(var) {
+  round(cor(df_clean$parsimony_1_R, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+cluster_cor_table$parsimony_2_R <- sapply(cluster_vars, function(var) {
+  round(cor(df_clean$parsimony_2_R, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+cluster_cor_table$parsimony_comp <- sapply(cluster_vars, function(var) {
+  round(cor(df_clean$parsimony_comp, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+cluster_cor_table$Difference <- cluster_cor_table$parsimony_1_R - cluster_cor_table$parsimony_2_R
+
+print(as.data.frame(cluster_cor_table), row.names = FALSE)
+```
+
+## 3.2 Construct-Level Correlations
+
+```{r construct_correlations}
+cat("\n=== CORRELATIONS WITH INDIVIDUAL CONSTRUCTS ===\n\n")
+
+construct_vars <- c(
+  "crime_rates_comp", "fear_comp",
+  "hatred_comp", "anger_comp",
+  "exclusion_comp", "degradation_comp", "suffering_comp",
+  "prisonvi_comp", "harsh_comp", "revenge_comp",
+  "rwa_comp", "sdo_comp", "venge_comp", "vprone_comp",
+  "raceresent_comp", "bloodsports_comp"
+)
+
+construct_labels <- c(
+  "Crime Rates", "Fear",
+  "Hatred", "Anger",
+  "Exclusion", "Degradation", "Suffering",
+  "Prison Violence", "Harsh Conditions", "Revenge",
+  "RWA", "SDO", "Vengefulness", "Violence Prone",
+  "Racial Resentment", "Blood Sports"
+)
+
+construct_cor_table <- data.frame(Construct = construct_labels)
+
+construct_cor_table$parsimony_1_R <- sapply(construct_vars, function(var) {
+  round(cor(df_clean$parsimony_1_R, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+construct_cor_table$parsimony_2_R <- sapply(construct_vars, function(var) {
+  round(cor(df_clean$parsimony_2_R, df_clean[[var]], use = "pairwise.complete.obs"), 2)
+})
+
+construct_cor_table$Difference <- construct_cor_table$parsimony_1_R - construct_cor_table$parsimony_2_R
+
+# Sort by difference
+construct_cor_table <- construct_cor_table %>% arrange(desc(Difference))
+
+print(as.data.frame(construct_cor_table), row.names = FALSE)
+
+cat("\nConstructs where items diverge most (|Diff| > .05):\n")
+print(construct_cor_table %>% filter(abs(Difference) > 0.05), row.names = FALSE)
+```
+
+# SECTION 4: H2 TEST FOR EACH ITEM
+
+```{r h2_by_item}
+cat("=== H2 (HOSTILE > CRIME) FOR EACH PARSIMONY ITEM ===\n\n")
+
+# parsimony_1_R
+r1_hostile <- cor(df_clean$parsimony_1_R, df_clean$hostile_agg, use = "pairwise.complete.obs")
+r1_crime <- cor(df_clean$parsimony_1_R, df_clean$crime_concerns_agg, use = "pairwise.complete.obs")
+r_hc <- cor(df_clean$hostile_agg, df_clean$crime_concerns_agg, use = "pairwise.complete.obs")
+n <- nrow(df_clean)
+
+steiger1 <- cocor.dep.groups.overlap(r1_hostile, r1_crime, r_hc, n, test = "steiger1980")
+
+cat("parsimony_1_R ('light as possible' reversed):\n")
+cat(sprintf("  r(Hostile) = %.3f, r(Crime) = %.3f\n", r1_hostile, r1_crime))
+cat(sprintf("  Difference = %.3f, Z = %.2f, p = %.4f\n", 
+            r1_hostile - r1_crime, steiger1@steiger1980$statistic, steiger1@steiger1980$p.value))
+cat(sprintf("  H2 Supported: %s\n\n", 
+            ifelse(r1_hostile > r1_crime & steiger1@steiger1980$p.value < .05, "YES", "NO")))
+
+# parsimony_2_R
+r2_hostile <- cor(df_clean$parsimony_2_R, df_clean$hostile_agg, use = "pairwise.complete.obs")
+r2_crime <- cor(df_clean$parsimony_2_R, df_clean$crime_concerns_agg, use = "pairwise.complete.obs")
+
+steiger2 <- cocor.dep.groups.overlap(r2_hostile, r2_crime, r_hc, n, test = "steiger1980")
+
+cat("parsimony_2_R ('not more than necessary' reversed):\n")
+cat(sprintf("  r(Hostile) = %.3f, r(Crime) = %.3f\n", r2_hostile, r2_crime))
+cat(sprintf("  Difference = %.3f, Z = %.2f, p = %.4f\n", 
+            r2_hostile - r2_crime, steiger2@steiger1980$statistic, steiger2@steiger1980$p.value))
+cat(sprintf("  H2 Supported: %s\n\n", 
+            ifelse(r2_hostile > r2_crime & steiger2@steiger1980$p.value < .05, "YES", "NO")))
+
+# Composite for comparison
+rc_hostile <- cor(df_clean$parsimony_comp, df_clean$hostile_agg, use = "pairwise.complete.obs")
+rc_crime <- cor(df_clean$parsimony_comp, df_clean$crime_concerns_agg, use = "pairwise.complete.obs")
+
+steigerc <- cocor.dep.groups.overlap(rc_hostile, rc_crime, r_hc, n, test = "steiger1980")
+
+cat("parsimony_comp (composite - for comparison):\n")
+cat(sprintf("  r(Hostile) = %.3f, r(Crime) = %.3f\n", rc_hostile, rc_crime))
+cat(sprintf("  Difference = %.3f, Z = %.2f, p = %.4f\n", 
+            rc_hostile - rc_crime, steigerc@steiger1980$statistic, steigerc@steiger1980$p.value))
+cat(sprintf("  H2 Supported: %s\n", 
+            ifelse(rc_hostile > rc_crime & steigerc@steiger1980$p.value < .05, "YES", "NO")))
+```
+
+# SECTION 5: INTERPRETATION
+
+```{r interpretation}
+cat("\n")
+cat(paste(rep("=", 70), collapse = ""), "\n")
+cat("INTERPRETATION AND RECOMMENDATIONS\n")
+cat(paste(rep("=", 70), collapse = ""), "\n\n")
+
+cat("WHY THE LOW RELIABILITY?\n\n")
+
+cat("The two items measure related but distinct constructs:\n\n")
+
+cat("parsimony_1_R: 'Punishments should be as light as possible'\n")
+cat("  - This is an ABSOLUTIST position\n")
+cat("  - Rejecting it means wanting SOME level of punishment (most people)\n")
+cat("  - Higher variance, more central tendency\n\n")
+
+cat("parsimony_2_R: 'State should not punish more than necessary'\n")
+cat("  - This is a PROPORTIONALITY principle\n")
+cat("  - Rejecting it means accepting EXCESSIVE punishment\n")
+cat("  - This is a more EXTREME position to reject\n\n")
+
+cat("The items ask fundamentally different questions:\n")
+cat("  - Item 1: Do you want ANY punishment? (Most say yes)\n")
+cat("  - Item 2: Do you want EXCESSIVE punishment? (More variation)\n\n")
+
+cat("RECOMMENDATION:\n\n")
+
+# Compare correlations
+mean_r1 <- mean(abs(c(r1_hostile, r1_crime)))
+mean_r2 <- mean(abs(c(r2_hostile, r2_crime)))
+
+if(mean_r1 > mean_r2) {
+  cat("parsimony_1_R shows STRONGER correlations with psychological factors.\n")
+  cat("Consider using parsimony_1_R alone or reporting items separately.\n")
+} else {
+  cat("parsimony_2_R shows STRONGER correlations with psychological factors.\n")
+  cat("Consider using parsimony_2_R alone or reporting items separately.\n")
+}
+
+cat("\nAlternatively, given low reliability, consider:\n")
+cat("  1. Dropping parsimony from the punitiveness aggregate\n")
+cat("  2. Reporting results with and without parsimony\n")
+cat("  3. Discussing this as a measurement limitation\n")
+```
+
+# SECTION 6: SAVE OUTPUTS
+
+```{r save_outputs}
+cat("\n=== SAVING OUTPUTS ===\n\n")
+
+# Save correlation tables
+write.csv(construct_cor_table, "parsimony_items_construct_correlations.csv", row.names = FALSE)
+cat("Saved: parsimony_items_construct_correlations.csv\n")
+
+write.csv(cluster_cor_table, "parsimony_items_cluster_correlations.csv", row.names = FALSE)
+cat("Saved: parsimony_items_cluster_correlations.csv\n")
+
+cat("\n")
+cat(paste(rep("=", 70), collapse = ""), "\n")
+cat("PARSIMONY ANALYSIS COMPLETE\n")
+cat(paste(rep("=", 70), collapse = ""), "\n")
+```

@@ -1,0 +1,7 @@
+"Factor1","Factor2","r","p"
+"CrimeConcerns","Emotions",0.58,"0"
+"CrimeConcerns","Harshness",0.503,"0"
+"CrimeConcerns","Personality",0.496,"0"
+"Emotions","Harshness",0.802,"0"
+"Emotions","Personality",0.646,"0"
+"Harshness","Personality",0.783,"0"

@@ -1,0 +1,509 @@
+---
+title: "Punishment Study 2.1.2 - NLP Integration Analysis"
+author: "DGK"
+date: "February 2026"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+  word_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# OVERVIEW
+
+This document provides **R-based analyses that complement** the main NLP pipeline (run in Python/Colab). These analyses require R's regression infrastructure and are not duplicated in the Python notebook.
+
+**What this document covers (unique to R):**
+
+1. **Incremental Validity**: Do text features predict punitiveness beyond psychological measures? (with vignette covariate)
+2. **Standardized Coefficients**: Relative importance of text vs. psychological predictors
+3. **Text Predicting Sentencing**: Regression models for sentence length (with vignette covariate)
+4. **Political Ideology Moderation**: Does the cultural default hold across the political spectrum?
+5. **Vignette Moderation**: ANOVA and vignette-specific patterns
+
+**What is handled in the Python notebook (not duplicated here):**
+
+- Facade detection correlations (text × psychological measures)
+- Group comparisons (high vs. low hostile)
+- Cross-method convergence (BART ML, FC, Dictionary, BERT Similarity)
+- Competing interpretations (facade vs. sincerity vs. folk theory)
+- Deterrence regression / folk theory test
+- Individual-level directional tests (hostile_agg × all text features)
+- Prototype sensitivity analysis
+- Collective facade evidence
+
+# SECTION 0: SETUP
+
+```{r packages}
+required_packages <- c(
+  "tidyverse",
+  "psych",
+  "broom",
+  "knitr",
+  "car",
+  "effectsize",
+  "scales",
+  "lmerTest",
+  "performance"
+)
+
+new_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
+lapply(required_packages, library, character.only = TRUE)
+
+options(scipen = 999)
+options(digits = 4)
+```
+
+```{r load_data}
+# Load the NLP features dataset (contains both NLP and psychological variables)
+# UPDATE PATH AS NEEDED
+df <- read.csv("/Users/dgkamper/Library/CloudStorage/GoogleDrive-dgkamper@gmail.com/My Drive/DGK Lab/Collaborations/Dan Simon/Punishment/Analysis/NLP Pipeline/Second Pass/punishment_212_nlp_features.csv", stringsAsFactors = FALSE)
+
+cat("Loaded dataset: N =", nrow(df), "rows,", ncol(df), "columns\n\n")
+
+# Verify key variables
+nlp_vars <- c("sim_prosocial_mean", "sim_dark_mean", "sim_prosocial_minus_dark",
+              "vader_compound", "just_prosocial", "just_dark", 
+              "zs_prosocial_mean", "zs_dark_mean", "facade_residual")
+psych_vars <- c("punitiveness_agg", "hostile_agg", "crime_concerns_agg",
+                "hatred_comp", "revenge_comp", "sdo_comp")
+
+cat("NLP variables present:", sum(nlp_vars %in% names(df)), "/", length(nlp_vars), "\n")
+cat("Psych variables present:", sum(psych_vars %in% names(df)), "/", length(psych_vars), "\n")
+```
+
+# SECTION 1: INCREMENTAL VALIDITY
+
+## 1.1 Do Text Features Predict Punitiveness Beyond Psychological Measures?
+
+```{r incremental_validity}
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("INCREMENTAL VALIDITY: TEXT FEATURES PREDICTING PUNITIVENESS\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n\n")
+
+# All models include factor(vignette) to account for between-condition differences
+# (Main RMD found vignette random effect variance ≈ 0, so fixed effect is conservative)
+
+# Step 1: Psychological predictors only (+ vignette)
+model1 <- lm(punitiveness_agg ~ factor(vignette) + hostile_agg + crime_concerns_agg + 
+               emotions_agg + personality_agg, data = df)
+
+cat("Model 1: Psychological Predictors (+ vignette covariate)\n")
+cat(sprintf("  R² = %.3f, Adj R² = %.3f\n", 
+            summary(model1)$r.squared, summary(model1)$adj.r.squared))
+cat("  Predictors: hostile_agg, crime_concerns_agg, emotions_agg, personality_agg\n\n")
+
+# Step 2: Add text features
+model2 <- lm(punitiveness_agg ~ factor(vignette) + hostile_agg + crime_concerns_agg + 
+               emotions_agg + personality_agg +
+               sim_prosocial_mean + sim_dark_mean + vader_compound, data = df)
+
+cat("Model 2: Psychological + Text Features (+ vignette covariate)\n")
+cat(sprintf("  R² = %.3f, Adj R² = %.3f\n\n", 
+            summary(model2)$r.squared, summary(model2)$adj.r.squared))
+
+# Compare models
+r2_change <- summary(model2)$r.squared - summary(model1)$r.squared
+anova_comparison <- anova(model1, model2)
+
+cat(sprintf("Incremental R² (ΔR²): %.4f\n\n", r2_change))
+cat("Model comparison F-test:\n")
+print(anova_comparison)
+
+cat("\nModel 2 Coefficients (excluding vignette dummies):\n")
+print(tidy(model2) %>% 
+        filter(!grepl("vignette", term)) %>%
+        mutate(across(where(is.numeric), ~round(., 3))) %>%
+        select(term, estimate, std.error, statistic, p.value))
+
+# Robustness: Compare with and without vignette covariate
+model2_novign <- lm(punitiveness_agg ~ hostile_agg + crime_concerns_agg + 
+                      emotions_agg + personality_agg +
+                      sim_prosocial_mean + sim_dark_mean + vader_compound, data = df)
+cat(sprintf("\nRobustness: R² without vignette covariate: %.3f (diff = %.4f)\n",
+            summary(model2_novign)$r.squared,
+            summary(model2)$r.squared - summary(model2_novign)$r.squared))
+```
+
+## 1.2 Standardized Coefficients
+
+```{r standardized_coefficients}
+cat("\n=== STANDARDIZED COEFFICIENTS (β) ===\n\n")
+cat("(Vignette dummies included but not shown; continuous predictors standardized)\n\n")
+
+model2_std <- lm(scale(punitiveness_agg) ~ factor(vignette) + 
+                   scale(hostile_agg) + scale(crime_concerns_agg) + 
+                   scale(emotions_agg) + scale(personality_agg) +
+                   scale(sim_prosocial_mean) + scale(sim_dark_mean) + 
+                   scale(vader_compound), data = df)
+
+std_coefs <- tidy(model2_std) %>%
+  filter(term != "(Intercept)" & !grepl("vignette", term)) %>%
+  mutate(
+    term = c("Hostile Agg", "Crime Concerns", "Emotions", "Personality",
+             "Prosocial Sim", "Dark Sim", "Sentiment"),
+    estimate = round(estimate, 3),
+    p.value = round(p.value, 4)
+  ) %>%
+  select(Predictor = term, Beta = estimate, p = p.value) %>%
+  arrange(desc(abs(Beta)))
+
+print(std_coefs, row.names = FALSE)
+
+cat("\nInterpretation:\n")
+text_betas <- std_coefs %>% filter(Predictor %in% c("Prosocial Sim", "Dark Sim", "Sentiment"))
+max_text_beta <- max(abs(text_betas$Beta))
+max_psych_beta <- max(abs(std_coefs$Beta[!std_coefs$Predictor %in% c("Prosocial Sim", "Dark Sim", "Sentiment")]))
+
+cat(sprintf("Largest text feature β: %.3f\n", max_text_beta))
+cat(sprintf("Largest psychological β: %.3f\n", max_psych_beta))
+
+if(max_text_beta < 0.10) {
+  cat("Text features show minimal unique contribution beyond psychological measures.\n")
+  cat("Language reflects the psychological profile but does not add to it.\n")
+} else {
+  cat("Text features show some unique contribution beyond psychological measures.\n")
+}
+```
+
+# SECTION 2: TEXT PREDICTING SENTENCING BEHAVIOR
+
+## 2.1 Correlations: Text Features × Sentence Length
+
+```{r text_sentence_correlations}
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("TEXT FEATURES PREDICTING SENTENCING BEHAVIOR\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n\n")
+
+text_for_sentence <- c("sim_prosocial_mean", "sim_dark_mean", 
+                       "sim_proto_rehabilitation", "sim_proto_deterrence",
+                       "sim_proto_revenge", "sim_proto_suffering",
+                       "zs_rehabilitation_and_reform", "zs_deterrence_and_prevention",
+                       "zs_revenge_and_payback", "zs_punishment_and_suffering",
+                       "vader_compound", "just_dark", "just_prosocial")
+text_for_sentence <- text_for_sentence[text_for_sentence %in% names(df)]
+
+sentence_cors <- data.frame()
+for(var in text_for_sentence) {
+  test <- cor.test(df[[var]], df$Sentence_z, use = "pairwise.complete.obs")
+  sentence_cors <- rbind(sentence_cors, data.frame(
+    Text_Feature = var,
+    r = round(test$estimate, 3),
+    p = test$p.value,
+    sig = ifelse(test$p.value < .001, "***",
+                 ifelse(test$p.value < .01, "**",
+                        ifelse(test$p.value < .05, "*", "")))
+  ))
+}
+
+sentence_cors <- sentence_cors %>% arrange(r)
+cat("Text Features × Sentence (z-scored):\n")
+print(sentence_cors %>% mutate(p = format(p, scientific = FALSE, digits = 4)), row.names = FALSE)
+```
+
+## 2.2 Regression: Psychological + Text Predicting Sentence
+
+```{r sentence_regression}
+cat("\n=== REGRESSION: SENTENCE LENGTH ===\n\n")
+cat("Note: Sentence_z is already z-scored within vignette, but we include\n")
+cat("vignette as covariate for robustness.\n\n")
+
+# Model 1: Psychological predictors (+ vignette)
+sent_model1 <- lm(Sentence_z ~ factor(vignette) + hostile_agg + crime_concerns_agg + 
+                    punitiveness_8item, data = df)
+
+cat("Model 1: Psychological Predictors (+ vignette)\n")
+cat(sprintf("  R² = %.3f, Adj R² = %.3f\n\n", 
+            summary(sent_model1)$r.squared, summary(sent_model1)$adj.r.squared))
+
+# Model 2: Add text features
+sent_text_vars <- c("zs_rehabilitation_and_reform", "vader_compound")
+sent_text_vars <- sent_text_vars[sent_text_vars %in% names(df)]
+
+if(length(sent_text_vars) > 0) {
+  formula_str <- paste("Sentence_z ~ factor(vignette) + hostile_agg + crime_concerns_agg + punitiveness_8item +",
+                       paste(sent_text_vars, collapse = " + "))
+  sent_model2 <- lm(as.formula(formula_str), data = df)
+  
+  cat("Model 2: Psychological + Text Features (+ vignette)\n")
+  cat(sprintf("  R² = %.3f, Adj R² = %.3f\n", 
+              summary(sent_model2)$r.squared, summary(sent_model2)$adj.r.squared))
+  sent_r2_change <- summary(sent_model2)$r.squared - summary(sent_model1)$r.squared
+  cat(sprintf("  ΔR² = %.4f\n\n", sent_r2_change))
+  
+  cat("Model comparison:\n")
+  print(anova(sent_model1, sent_model2))
+  
+  cat("\nModel 2 Coefficients (excluding vignette dummies):\n")
+  print(tidy(sent_model2) %>% 
+          filter(!grepl("vignette", term)) %>%
+          mutate(across(where(is.numeric), ~round(., 3))))
+}
+```
+
+# SECTION 3: VISUALIZATION
+
+## 3.1 Scatter: Hostile Aggression × Prosocial Language
+
+```{r scatter_plot, fig.width=10, fig.height=6}
+test1 <- cor.test(df$sim_prosocial_mean, df$hostile_agg)
+
+ggplot(df, aes(x = hostile_agg, y = sim_prosocial_mean, color = punitiveness_agg)) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", se = TRUE, color = "black", linetype = "dashed") +
+  scale_color_gradient2(low = "#3498DB", mid = "#F1C40F", high = "#E74C3C",
+                        midpoint = mean(df$punitiveness_agg, na.rm = TRUE),
+                        name = "Punitiveness") +
+  labs(x = "Hostile Aggression (Quantitative)",
+       y = "Prosocial Language Similarity",
+       title = "Hostile Aggression vs. Prosocial Language",
+       subtitle = sprintf("r = %.3f, p = %.4f", 
+                          test1$estimate, test1$p.value)) +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+ggsave("facade_scatter_plot.png", width = 10, height = 6, dpi = 150)
+cat("Saved: facade_scatter_plot.png\n")
+```
+
+# SECTION 4: POLITICAL IDEOLOGY MODERATION
+
+If the cultural default interpretation is correct, liberals and conservatives should both use prosocial language to justify punishment — despite conservatives being more punitive on average. This section tests whether political orientation moderates the language patterns.
+
+## 4.1 Language Features by Political Group
+
+```{r political_groups}
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("POLITICAL IDEOLOGY MODERATION\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n\n")
+
+# Create political groups (matching main RMD: 1-3 = Liberal, 4 = Moderate, 5-7 = Conservative)
+if(!"political_group" %in% names(df) || all(is.na(df$political_group))) {
+  df <- df %>%
+    mutate(political_group = case_when(
+      politid <= 3 ~ "Liberal",
+      politid == 4 ~ "Moderate",
+      politid >= 5 ~ "Conservative"
+    ))
+}
+
+cat("Group sizes:\n")
+print(table(df$political_group, useNA = "ifany"))
+cat("\n")
+
+# Mean punitiveness by group (context)
+cat("Punitiveness by Political Group (context):\n")
+pun_by_group <- df %>%
+  filter(!is.na(political_group)) %>%
+  group_by(political_group) %>%
+  summarise(
+    n = n(),
+    Mean_Punitiveness = round(mean(punitiveness_agg, na.rm = TRUE), 3),
+    SD_Punitiveness = round(sd(punitiveness_agg, na.rm = TRUE), 3),
+    Mean_Hostile = round(mean(hostile_agg, na.rm = TRUE), 3)
+  )
+print(as.data.frame(pun_by_group), row.names = FALSE)
+
+# Text features by group
+cat("\n\nText Features by Political Group:\n")
+cat("-" %>% rep(60) %>% paste(collapse = ""), "\n")
+
+text_by_politics <- df %>%
+  filter(!is.na(political_group)) %>%
+  group_by(political_group) %>%
+  summarise(
+    n = n(),
+    Prosocial_Sim = round(mean(sim_prosocial_mean, na.rm = TRUE), 3),
+    Dark_Sim = round(mean(sim_dark_mean, na.rm = TRUE), 3),
+    ProDark_Gap = round(mean(sim_prosocial_minus_dark, na.rm = TRUE), 3),
+    Sentiment = round(mean(vader_compound, na.rm = TRUE), 3),
+    Dict_Prosocial = round(mean(just_prosocial, na.rm = TRUE), 3),
+    Dict_Dark = round(mean(just_dark, na.rm = TRUE), 3)
+  )
+print(as.data.frame(text_by_politics), row.names = FALSE)
+```
+
+## 4.2 Cultural Default Test: Prosocial Language × Hostile Aggression by Group
+
+```{r political_cultural_default}
+cat("\n\nKey test: Does hostile_agg × prosocial language differ by political group?\n")
+cat("If cultural default holds, correlations should be near zero for ALL groups.\n\n")
+
+political_cors <- df %>%
+  filter(!is.na(political_group)) %>%
+  group_by(political_group) %>%
+  summarise(
+    n = n(),
+    r_prosocial_hostile = round(cor(sim_prosocial_mean, hostile_agg, use = "pairwise.complete.obs"), 3),
+    r_dark_hostile = round(cor(sim_dark_mean, hostile_agg, use = "pairwise.complete.obs"), 3),
+    r_sentiment_hostile = round(cor(vader_compound, hostile_agg, use = "pairwise.complete.obs"), 3),
+    r_sentiment_pun = round(cor(vader_compound, punitiveness_agg, use = "pairwise.complete.obs"), 3),
+    pct_closer_dark = round(mean(sim_prosocial_minus_dark < 0, na.rm = TRUE) * 100, 1)
+  )
+print(as.data.frame(political_cors), row.names = FALSE)
+
+cat("\nInterpretation:\n")
+cat("If r_prosocial_hostile is near zero across all groups → cultural default holds\n")
+cat("universally: liberals, moderates, and conservatives all use prosocial framing\n")
+cat("regardless of their hostile attitudes.\n\n")
+cat("If pct_closer_dark is similar across groups → the semantic mismatch\n")
+cat("(prosocial words, dark meaning) is not a conservative or liberal phenomenon.\n")
+```
+
+## 4.3 Interaction Test: Does Political Orientation Moderate the Language-Hostility Link?
+
+```{r political_interaction}
+cat("\n=== INTERACTION: Political Orientation × Hostile Aggression → Language ===\n\n")
+
+# Continuous interaction (politid × hostile_agg → prosocial language)
+int_model1 <- lm(sim_prosocial_mean ~ hostile_agg * politid + factor(vignette), data = df)
+int_coefs1 <- tidy(int_model1) %>% filter(grepl("hostile_agg:politid", term))
+
+cat("Prosocial Similarity ~ Hostile Agg × Political Orientation (+ vignette):\n")
+cat(sprintf("  Interaction: b = %.4f, p = %.4f\n",
+            int_coefs1$estimate, int_coefs1$p.value))
+
+int_model2 <- lm(sim_prosocial_minus_dark ~ hostile_agg * politid + factor(vignette), data = df)
+int_coefs2 <- tidy(int_model2) %>% filter(grepl("hostile_agg:politid", term))
+
+cat(sprintf("\nPro-Dark Gap ~ Hostile Agg × Political Orientation (+ vignette):\n"))
+cat(sprintf("  Interaction: b = %.4f, p = %.4f\n",
+            int_coefs2$estimate, int_coefs2$p.value))
+
+int_model3 <- lm(vader_compound ~ hostile_agg * politid + factor(vignette), data = df)
+int_coefs3 <- tidy(int_model3) %>% filter(grepl("hostile_agg:politid", term))
+
+cat(sprintf("\nSentiment ~ Hostile Agg × Political Orientation (+ vignette):\n"))
+cat(sprintf("  Interaction: b = %.4f, p = %.4f\n\n",
+            int_coefs3$estimate, int_coefs3$p.value))
+
+all_ns <- all(c(int_coefs1$p.value, int_coefs2$p.value, int_coefs3$p.value) >= 0.05)
+if(all_ns) {
+  cat("RESULT: No significant interactions.\n")
+  cat("Political orientation does NOT moderate the language-hostility link.\n")
+  cat("The cultural default (prosocial framing regardless of attitudes) holds\n")
+  cat("equally for liberals and conservatives.\n")
+} else {
+  cat("RESULT: At least one significant interaction detected.\n")
+  cat("Political orientation may moderate the language-hostility relationship.\n")
+  cat("Examine group-level correlations above for interpretation.\n")
+}
+```
+
+# SECTION 5: VIGNETTE MODERATION
+
+## 5.1 Text Features by Vignette
+
+```{r text_by_vignette}
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("TEXT FEATURES BY VIGNETTE\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n\n")
+
+vignette_labels <- c("1" = "Stranger Felony-Murder", 
+                     "2" = "Domestic Violence", 
+                     "3" = "Organized Crime")
+
+vignette_text <- df %>%
+  group_by(vignette) %>%
+  summarise(
+    n = n(),
+    Prosocial_Sim = mean(sim_prosocial_mean, na.rm = TRUE),
+    Dark_Sim = mean(sim_dark_mean, na.rm = TRUE),
+    Sentiment = mean(vader_compound, na.rm = TRUE),
+    Word_Count = mean(text_combined_wordcount, na.rm = TRUE)
+  ) %>%
+  mutate(across(where(is.numeric) & !c(vignette, n), ~round(., 3)))
+
+vignette_text$Vignette_Label <- vignette_labels[as.character(vignette_text$vignette)]
+
+print(vignette_text, row.names = FALSE)
+
+cat("\nANOVA: Prosocial Similarity by Vignette\n")
+aov_prosocial <- aov(sim_prosocial_mean ~ factor(vignette), data = df)
+print(summary(aov_prosocial))
+
+cat("\nANOVA: Dark Similarity by Vignette\n")
+aov_dark <- aov(sim_dark_mean ~ factor(vignette), data = df)
+print(summary(aov_dark))
+
+cat("\nANOVA: Sentiment by Vignette\n")
+aov_sentiment <- aov(vader_compound ~ factor(vignette), data = df)
+print(summary(aov_sentiment))
+```
+
+# SECTION 6: EXPORT AND SUMMARY
+
+```{r save_outputs}
+cat("\n=== SAVING OUTPUTS ===\n\n")
+
+write.csv(sentence_cors, "nlp_sentence_correlations.csv", row.names = FALSE)
+cat("Saved: nlp_sentence_correlations.csv\n")
+
+write.csv(as.data.frame(vignette_text), "nlp_vignette_text_features.csv", row.names = FALSE)
+cat("Saved: nlp_vignette_text_features.csv\n")
+
+write.csv(as.data.frame(political_cors), "nlp_political_moderation.csv", row.names = FALSE)
+cat("Saved: nlp_political_moderation.csv\n")
+```
+
+```{r summary}
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("NLP INTEGRATION SUMMARY (R-SPECIFIC ANALYSES)\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n\n")
+
+cat("All regressions include factor(vignette) as covariate.\n\n")
+
+cat("1. INCREMENTAL VALIDITY:\n")
+cat(sprintf("   ΔR² when adding text to psychological predictors: %.4f\n", r2_change))
+if(r2_change < 0.01) {
+  cat("   Text features add negligible unique variance.\n")
+  cat("   Language reflects the psychological profile but does not improve prediction.\n\n")
+} else {
+  cat("   Text features add modest unique variance.\n\n")
+}
+
+cat("2. STANDARDIZED COEFFICIENTS:\n")
+cat("   See Section 1.2 for relative importance of text vs. psychological predictors.\n\n")
+
+cat("3. TEXT PREDICTING SENTENCING:\n")
+if(exists("sent_r2_change")) {
+  cat(sprintf("   ΔR² for text beyond psychological predictors: %.4f\n", sent_r2_change))
+}
+if("zs_rehabilitation_and_reform" %in% names(df)) {
+  rehab_r <- cor(df$zs_rehabilitation_and_reform, df$Sentence_z, use = "pairwise.complete.obs")
+  cat(sprintf("   Rehabilitation language × Sentence: r = %.3f\n", rehab_r))
+}
+sent_r <- cor(df$vader_compound, df$Sentence_z, use = "pairwise.complete.obs")
+cat(sprintf("   Sentiment × Sentence: r = %.3f\n\n", sent_r))
+
+cat("4. POLITICAL IDEOLOGY MODERATION:\n")
+cat("   Liberals, moderates, and conservatives all use prosocial language.\n")
+if(all_ns) {
+  cat("   No significant ideology × hostility interactions.\n")
+  cat("   Cultural default holds across the political spectrum.\n\n")
+} else {
+  cat("   Some interactions detected — see Section 4.3.\n\n")
+}
+
+cat("5. VIGNETTE MODERATION:\n")
+cat("   See Section 5.1 for ANOVA results across crime types.\n\n")
+
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("For facade detection, cross-method convergence, competing interpretations,\n")
+cat("prototype sensitivity, and individual-level directional tests, see the\n")
+cat("Python NLP notebook (Punishment_212_NLP_Analysis_v2.ipynb).\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+```

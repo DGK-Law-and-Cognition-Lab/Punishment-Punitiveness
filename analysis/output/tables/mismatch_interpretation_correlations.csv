@@ -1,0 +1,11 @@
+Variable,Label,r,p,sig
+hostile_agg,Hostile Aggression (facade predicts negative r),-0.03415789545300883,0.4478318759207176,ns
+crime_concerns_agg,Crime Concerns (sincerity predicts positive r),0.0572428239991389,0.2031297073581607,ns
+punitiveness_agg,Punitiveness,-0.17160150587284498,0.00012271907756297015,***
+hatred_comp,Hatred,0.036810609936323735,0.41334575746222735,ns
+revenge_comp,Revenge,-0.09129455838187009,0.042119031216527505,*
+rwa_comp,Right-Wing Authoritarianism,0.03982235486867725,0.3761569845873185,ns
+sdo_comp,Social Dominance Orientation,-0.057089952615525415,0.20434085551009495,ns
+raceresent_comp,Racial Resentment,-0.061074801455284274,0.17445209825751912,ns
+fear_comp,Fear of Crime,0.0843972705204511,0.060350232114849765,ns
+crime_rates_comp,Perceived Crime Rates,-0.0031161333018324827,0.9448108018725135,ns

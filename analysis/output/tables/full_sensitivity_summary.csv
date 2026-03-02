@@ -1,0 +1,6 @@
+"Test","r_Hostile","r_Crime","Difference"
+"Original (all constructs, with parsimony)",0.586,0.322,0.264
+"Tautology-conservative (4 hostile, with parsimony)",0.547,0.322,0.225
+"Tautology-strictest (2 hostile, with parsimony)",0.543,0.322,0.221
+"Original hostile, no parsimony",0.581,0.334,0.247
+"STRICTEST: 2 hostile, no parsimony",0.548,0.334,0.214
