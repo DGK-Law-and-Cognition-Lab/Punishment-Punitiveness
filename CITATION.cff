@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "Is Criminal Punishment Prosocial? Investigating the Psychological Correlates of Public Punitiveness"
+message: "If you use this data or code, please cite as below."
+type: dataset
+authors:
+  - given-names: David G.
+    family-names: Kamper
+    affiliation: "UCLA Department of Psychology"
+    email: davidgkamper@ucla.edu
+  - given-names: David E.
+    family-names: Melnikoff
+    affiliation: "Stanford Graduate School of Business"
+  - given-names: Dan
+    family-names: Simon
+    affiliation: "USC Gould School of Law"
+    email: dsimon@law.usc.edu
+repository-code: "https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness"
+url: "https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/"
+keywords:
+  - punitiveness
+  - criminal punishment
+  - hostile aggression
+  - prosocial facade
+  - NLP
+  - computational text analysis
+license: MIT
+date-released: "2026-03-01"
