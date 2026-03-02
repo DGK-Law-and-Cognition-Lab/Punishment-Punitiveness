@@ -1,0 +1,4 @@
+"Level","Constructs","r_Hostile","r_Hostile_CI","r_Crime","Difference","Z","p","Significant"
+"Original (6 constructs)","All 6",0.586,"[0.525, 0.641]",0.322,0.264,6.26,0.000000000381564779772248,"Yes"
+"Conservative (4 constructs)","Excl, Degrad, PrisonVi, Revenge",0.547,"[0.482, 0.606]",0.322,0.226,5.07,0.000000407833113280631,"Yes"
+"Strictest (2 constructs)","Excl, Revenge",0.543,"[0.478, 0.602]",0.322,0.221,5.05,0.00000043991362019824,"Yes"

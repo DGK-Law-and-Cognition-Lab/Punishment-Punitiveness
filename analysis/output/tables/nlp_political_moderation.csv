@@ -1,0 +1,4 @@
+"political_group","n","r_prosocial_hostile","r_dark_hostile","r_sentiment_hostile","r_sentiment_pun","pct_closer_dark"
+"Conservative",190,-0.075,0.042,0.015,-0.054,64.7
+"Liberal",190,0.026,0.05,0.028,-0.159,67.9
+"Moderate",116,-0.046,-0.114,-0.112,-0.303,71.6
