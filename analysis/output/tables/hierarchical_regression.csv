@@ -1,0 +1,6 @@
+"Step","Predictors","R2","Delta_R2"
+1,"Crime Concerns",0.103,0.103
+2,"+ Process Violations",0.221,0.117
+3,"+ Hostile Aggression",0.363,0.142
+4,"+ Emotions",0.386,0.022
+5,"+ Personality",0.39,0.004
