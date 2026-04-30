@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+  \centering
+  \caption{BERTopic topic distributions across political groups and hostile-aggression tertiles. Each cell shows the percentage of responses within a subgroup that fell in the indicated topic cluster. Topic ``$-1$'' is the HDBSCAN outlier set (responses not confidently assignable to any cluster). The chi-square tests reach the conventional significance threshold for both moderators ($\chi^2_\textit{political}(12) = 23.47$, $p = .024$; $\chi^2_\textit{tertile}(12) = 21.38$, $p = .045$), but the cell-level differences are small in absolute terms and the rank ordering of topic frequencies is preserved across all subgroups --- consistent with a shared rhetorical structure modestly shifted by group membership. $N = 496$.}
+  \label{tab:nlp_political_moderation}
+  \small
+  \begin{tabular}{rrrrrrrrr}
+    \toprule
+    Topic & \multicolumn{3}{c}{Political group (\%)} & & \multicolumn{3}{c}{Hostile tertile (\%)} & Overall \\
+    \cmidrule(lr){2-4} \cmidrule(lr){6-8}
+          & Liberal & Moderate & Conservative & & Low & Mid & High & (\%) \\
+    \midrule
+    $-1$  & 30.5 & 19.0 & 26.8 & & 23.8 & 28.4 & 27.1 & 26.4 \\
+    0     & 10.5 & 11.2 & 15.3 & & 11.6 & 13.0 & 12.9 & 12.5 \\
+    1     & 12.1 &  8.6 & 17.4 & & 12.8 & 12.4 & 14.8 & 13.3 \\
+    2     & 10.5 & 19.0 & 13.2 & & 12.8 & 17.8 &  9.7 & 13.5 \\
+    3     & 12.6 & 15.5 & 14.2 & & 12.2 & 10.7 & 19.4 & 13.9 \\
+    4     &  4.7 & 10.3 &  2.6 & &  7.0 &  5.3 &  3.2 &  5.2 \\
+    5     &  7.4 &  8.6 &  5.8 & &  6.4 &  6.5 &  8.4 &  7.1 \\
+    6     & 11.6 &  7.8 &  4.7 & & 13.4 &  5.9 &  4.5 &  8.1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
