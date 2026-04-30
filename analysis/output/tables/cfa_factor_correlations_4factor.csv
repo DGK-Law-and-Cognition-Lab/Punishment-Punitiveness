@@ -1,7 +1,0 @@
-"Factor1","Factor2","r","p","Sig"
-"CrimeConcerns","Emotions",0.58,0,"***"
-"CrimeConcerns","HostileAggr",0.503,0,"***"
-"CrimeConcerns","Personality",0.496,0,"***"
-"Emotions","HostileAggr",0.802,0,"***"
-"Emotions","Personality",0.646,0,"***"
-"HostileAggr","Personality",0.783,0,"***"
