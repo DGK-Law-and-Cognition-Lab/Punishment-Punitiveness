@@ -1,0 +1,11 @@
+"Factor1","Factor2","r"
+"CrimeConcerns","ProcessViolations",0.589
+"CrimeConcerns","Emotions",0.611
+"CrimeConcerns","HostileAggression",0.54
+"CrimeConcerns","Personality",0.514
+"ProcessViolations","Emotions",0.626
+"ProcessViolations","HostileAggression",0.755
+"ProcessViolations","Personality",0.794
+"Emotions","HostileAggression",0.802
+"Emotions","Personality",0.649
+"HostileAggression","Personality",0.786

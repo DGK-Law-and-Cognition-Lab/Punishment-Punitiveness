@@ -1,0 +1,2 @@
+"Outcome","N","R2_Step1","R2_Step2","Delta_R2","F","df_num","df_den","p","Step1_predictors","Step2_predictors"
+"Sentence_z",496,0.1211,0.255,0.1339,21.835,4,486,0.000000000000000137478519550793,"punitiveness_8item; hostile_agg; crime_concerns_agg; rwa_comp; raceresent_comp","bge_orig_rehabilitation; bge_orig_suffering; vader_compound; text_combined_wordcount"

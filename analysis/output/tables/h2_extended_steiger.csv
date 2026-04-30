@@ -1,0 +1,5 @@
+"Cluster","r_Cluster","r_Crime","Difference","Steiger_p","Greater_p_lt05"
+"Hostile Aggression",0.586,0.322,0.264,0,"YES"
+"Emotions",0.535,0.322,0.213,0,"YES"
+"Personality",0.475,0.322,0.153,0.0012,"YES"
+"Process Violations",0.439,0.322,0.117,0.0091,"YES"
