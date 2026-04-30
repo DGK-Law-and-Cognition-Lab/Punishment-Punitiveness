@@ -1,4 +1,0 @@
-classifier,n,top1,top2,top3,mean_rank,mean_true_score
-BART-large-MNLI (v2 historical),40,0.775,0.925,0.95,1.4,0.932
-DeBERTa-v3-large,40,0.875,0.95,0.975,1.2,0.8894228041172028
-Claude Haiku 4.5,40,1.0,1.0,1.0,1.0,0.9212499999999999

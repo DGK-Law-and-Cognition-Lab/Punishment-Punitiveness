@@ -1,4 +1,0 @@
-"Level","Constructs","n","r_Hostile","r_Hostile_CI","r_Crime","r_HC","Difference","Z","p","Sig","Supported"
-"Original (6)","exclu+degrad+suff+prisonvi+harsh+revenge",496,0.586,"[0.525, 0.641]",0.322,0.38,0.264,6.26,0.000000000381564779772248,"***","Yes"
-"Conservative (4)","exclu+degrad+prisonvi+revenge",496,0.547,"[0.482, 0.606]",0.322,0.333,0.226,5.07,0.000000407833113280631,"***","Yes"
-"Strictest (2)","exclu+revenge",496,0.543,"[0.478, 0.602]",0.322,0.36,0.221,5.05,0.00000043991362019824,"***","Yes"

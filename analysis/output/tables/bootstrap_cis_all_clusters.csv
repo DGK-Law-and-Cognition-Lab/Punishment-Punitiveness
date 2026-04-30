@@ -1,4 +1,0 @@
-"Cluster","Observed_r_diff","Boot_Mean","Boot_SE","BCa_Lower","BCa_Upper","Excludes_Zero"
-"Hostile Aggression",0.264,0.264,0.049,0.174,0.367,"Yes"
-"Emotions",0.213,0.213,0.052,0.117,0.32,"Yes"
-"Personality",0.153,0.153,0.052,0.054,0.261,"Yes"
