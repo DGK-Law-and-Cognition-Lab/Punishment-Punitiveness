@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+title: "The Dark Side of Punishment"
+message: "If you use this data, code, or manuscript, please cite as below."
+type: software
+authors:
+  - given-names: Dan
+    family-names: Simon
+    affiliation: "USC Gould School of Law and Department of Psychology, University of Southern California"
+    email: dsimon@law.usc.edu
+  - given-names: David E.
+    family-names: Melnikoff
+    affiliation: "Stanford Graduate School of Business, Stanford University"
+  - given-names: David G.
+    family-names: Kamper
+    affiliation: "Department of Psychology, University of California, Los Angeles, and University of Chicago Law School"
+    email: davidgkamper@ucla.edu
+repository-code: "https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness"
+url: "https://dgk-law-and-cognition-lab.github.io/Punishment-Punitiveness/"
+keywords:
+  - punitiveness
+  - criminal punishment
+  - hostile aggression
+  - prosocial facade
+  - cultural default
+  - selective suppression
+  - sentencing
+  - mass incarceration
+  - natural language processing
+  - sentence embeddings
+  - computational text analysis
+license: MIT
+preferred-citation:
+  type: article
+  title: "The Dark Side of Punishment"
+  authors:
+    - given-names: Dan
+      family-names: Simon
+    - given-names: David E.
+      family-names: Melnikoff
+    - given-names: David G.
+      family-names: Kamper
+  year: 2026
+  notes: "Manuscript under review at the Journal of Personality and Social Psychology"
+date-released: "2026-04-30"
