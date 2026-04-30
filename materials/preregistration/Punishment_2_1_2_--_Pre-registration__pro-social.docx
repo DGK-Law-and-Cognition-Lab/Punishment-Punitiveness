@@ -1,0 +1,507 @@
+**Authors**
+
+This pre-registration is currently anonymous to enable blind
+peer-review. It has 3 authors.
+
+## **1) Have any data been collected for this study already?**
+
+Yes, the current study mostly replicates a preliminary study,
+(unpublished; preregistration #129382) whose results matched its
+predictions very closely. Due to the undue length of the preliminary
+study, we broke it into two separate studies, one of which we are now
+preregistering. This version also includes minor changes to increase
+conceptual clarity. Specific changes include:
+
+-   We dropped several measures (all of secondary importance)
+
+-   We added new measures to expand the potential theoretical
+    contribution
+
+-   We included three alternative vignettes to enhance generalizability
+    of the sentencing decision
+
+-   We removed pre/post vignette emotion and Righteousness measures as
+    preliminary data showed no differences
+
+-   We also removed a manipulation of the victim's race (Black v.
+    White), as preliminary data showed no differences
+
+Other than that, the current predictions are very similar to the ones we
+originally preregistered, and we expect the results of this new study to
+be very similar to both the predictions and findings made at that
+preliminary phase.
+
+## **2) What's the main question being asked or hypothesis being tested in this study?**
+
+We seek to ascertain whether public punitiveness is positively
+correlated with a variety of dependent measures (listed in section 3).
+From a normative point of view, these factors should be correlated
+negatively (or not at all) with punitiveness, especially in light of the
+prosocial tenet that underlies the canonic justifications of criminal
+punishment (retribution, deterrence, incapacitation, rehabilitation,
+norm expression). Positive relationships with punitiveness will call
+into question the bedrock tenet of prosocial nature of criminal
+punishment.
+
+*Primary Hypotheses:*
+
+**H1:** Punitiveness will be positively correlated with all listed
+correlate measures.
+
+**H2:** The \"Hostile Aggression\" cluster (hatred, revenge,
+degradation, suffering, prison violence) will show stronger correlations
+with punitiveness than the \"Crime Concerns\" cluster (perceived crime
+rates, fear of crime).
+
+**H3:** Most correlate measures will be positively intercorrelated,
+suggesting a cohesive psychological "punitiveness mindset."
+
+The punitiveness construct will be comprised of the following measures:
+
+-   Belief in more punishment
+
+-   The Benthamite principle of parsimony
+
+-   Support for three strike laws
+
+-   Support for life in prison without the possibility of parole
+
+-   Support for the death penalty
+
+-   A sentencing decision in a second-degree murder case
+
+## **3a) Describe the key dependent variable(s) specifying how they will be measured.**
+
+*(R) = Reverse coded*
+
+**The punitiveness construct will comprise of the following measures:**
+
+1.  The current level of punishment in the United States is too high (R)
+
+2.  The solution to crime is more punishment
+
+3.  Criminal punishments should be as light as possible (R)
+
+4.  The state should not punish more than is absolutely necessary (R)
+
+5.  People convicted three times for a felony should be imprisoned for
+    life
+
+6.  People convicted three times for shoplifting should serve at least
+    25 years in prison
+
+7.  Convicted murderers should never be allowed out of prison
+
+8.  Support for the death penalty (5-point scale)
+
+```{=html}
+<!-- -->
+```
+9.  Sentencing decision (0-50 years scale)
+
+### **Our correlate measures (IVs)**
+
+*Cluster 1: Crime Concerns*
+
+1.  Perceived seriousness of crime in the US
+
+2.  Perception that violent crime keeps rising
+
+3.  Fear of walking at night near home
+
+4.  Fear of being victim of serious crime
+
+5.  Fear of home break-in
+
+[We decided to drop this cluster for this study.]{.comment-start id="0"
+author="Dan Simon" date="2025-11-25T16:04:00Z"}[]{.comment-end
+id="0"}*Cluster 2: Process Violations*
+
+12. Legal loopholes make conviction too difficult
+
+13. Every defendant deserves due process (R)
+
+14. Should convict even if police cut corners
+
+15. Jailhouse informant testimony can be trusted
+
+16. Police only arrest when sure of guilt
+
+17. Should believe police over suspect
+
+18. OK for police to lie to obtain conviction
+
+*Cluster 3: Emotions Toward Criminals*
+
+19. Hatred towards criminals
+
+20. Sympathy towards criminals (R)
+
+21. Criminals are detestable human beings
+
+22. Anger towards criminals
+
+23. Crime problem makes me angry
+
+*Cluster 4: Harshness / Hostile Aggression*
+
+Social Exclusion:
+
+24. Criminals exclude themselves from society
+
+25. Criminals don\'t deserve society\'s benefits
+
+26. Punishment communicates no place in society
+
+Degradation:
+
+27. Prisoners deserve dignity and respect (R)
+
+28. Punishment shows society\'s low regard
+
+29. Punishment should humiliate the criminal
+
+Infliction of Suffering:
+
+30. Infliction of suffering is permissible goal
+
+31. Punishment without suffering is not punishment
+
+Prison Violence
+
+32. Feel bad when prisoner is assaulted (R)
+
+33. Sexual assault of prisoners is serious problem (R)
+
+Prison Conditions:
+
+34. Prison conditions should be extremely harsh
+
+35. Prisoners deserve decent living conditions (R)
+
+36. Prison conditions are currently too comfortable
+
+Revenge:
+
+37. Society has right to take revenge on offenders
+
+38. Society should punish to get back at offenders
+
+39. Father shouldn\'t be prosecuted for killing daughter\'s rapist
+
+*Cluster 5: Personality Measures*
+
+Right-Wing Authoritarianism (5 items):
+
+40. Country needs discipline, following leaders
+
+41. God\'s laws must be strictly followed
+
+42. Nothing wrong with premarital sex (R)
+
+43. Society needs tougher government, stricter laws
+
+44. Should crack down harder on troublemakers
+
+Social Dominance Orientation (8 items):
+
+45. Some groups should be on top, others on bottom
+
+46. Some groups are simply inferior
+
+47. No one group should dominate (R)
+
+48. Bottom groups are just as deserving (R)
+
+49. Group equality should not be primary goal
+
+50. Unjust to try to make groups equal
+
+51. Should equalize conditions for groups (R)
+
+52. Should give all groups equal chance (R)
+
+Vengefulness (5 items):
+
+53. Not worth getting back at people (R)
+
+54. Important to get back at people who hurt me
+
+55. Nothing wrong getting back at someone
+
+56. I don\'t just get mad, I get even
+
+57. I am not a vengeful person (R)
+
+Violence Proneness (3 items):
+
+58. Right to kill to defend property
+
+59. Physical punishment necessary for children
+
+60. Nothing wrong torturing terrorists for information
+
+61. Support for nuclear weapon on enemy capitol (200K civilians to save
+    20K soldiers)
+
+Racial Resentment Scale (4 items):
+
+62. Slavery/discrimination created difficult conditions (R)
+
+63. If Blacks tried harder, they\'d be as well off
+
+64. Other minorities overcame prejudice without special favors
+
+65. Blacks have gotten less than they deserve (R)
+
+TV Viewership (Exploratory) (1 matrix, 9 items)
+
+![A screenshot of a computer AI-generated content may be
+incorrect.](media/image1.png){width="6.5in"
+height="2.7472222222222222in"} \[Blood sports composite: Boxing,
+MMA/UFC, Hunting, Wrestling\]
+
+*Demographics:*
+
+-   Age
+
+-   Gender
+
+-   Race/Ethnicity
+
+-   Education level
+
+-   Political orientation (liberal-conservative)
+
+## **Open-Ended Measures**
+
+Immediately following the sentencing decision, participants will be
+asked:
+
+\"In your own words, please explain why you recommended this sentence
+for Darryl. What was your reasoning?\"
+
+(Please write at least 2-3 sentences explaining your thinking.)
+
+**Purpose:**
+
+-   Capture spontaneous justifications for punishment decisions
+
+-   Validate quantitative measures against qualitative reasoning
+
+-   Identify which justifications (deterrence, retribution, revenge,
+    incapacitation) are cognitively accessible
+
+-   Provide illustrative quotes for manuscript
+
+**Analysis Plan:**
+
+*Dictionary-Based:*
+
+-   Custom justification dictionaries (deterrence, revenge, retribution,
+    incapacitation, rehabilitation word lists)
+
+-   LIWC categories (anger, certainty, power, moral language)
+
+-   Correlate dictionary counts with personality measures
+
+*Sentiment & Emotion:*
+
+-   Overall sentiment valence (VADER or RoBERTa-based)
+
+-   Emotion detection (anger, disgust, fear) using NRCLex or GoEmotions
+
+-   Target-specific sentiment toward defendant vs. victim
+
+*Topic Modeling:*
+
+-   LDA or BERTopic to discover emergent themes
+
+-   Correlate topic loadings with sentence length and personality
+    measures
+
+*Semantic Similarity:*
+
+-   Sentence embeddings (Sentence-BERT)
+
+-   Compute similarity to justification prototype sentences
+
+-   Cluster responses in semantic space; correlate clusters with
+    psychological profiles
+
+*Zero-Shot Classification:*
+
+-   Classify justification type without training data (BART-large-mnli
+    or similar)
+
+-   Multi-label classification: deterrence, revenge, retribution,
+    incapacitation, rehabilitation
+
+*Moral Foundations:*
+
+-   Score responses using extended Moral Foundations Dictionary (eMFD)
+
+-   Test whether moral foundation profiles predict punitiveness
+    correlates
+
+*Validation Analyses:*
+
+-   Consistency scoring: Do open-ended themes match quantitative scale
+    scores?
+
+-   Facade detection: Identify participants with prosocial language but
+    high \"dark\" scale scores
+
+-   Implicit bias: Flag coded racial language; correlate with Racial
+    Resentment scores
+
+## **4) How many and which conditions will participants be assigned to?**
+
+All participants will be in the same condition and see identical
+materials. The only exception is that for the sentencing measure, each
+participant will be randomly presented with one of three alternative
+vignettes (intended to enhance generalizability):
+
+*Vignette A: Stranger Felony-Murder*
+
+Darryl Smith (recently unemployed) attempts purse-snatching in parking
+lot. Victim resists, struggle ensues, Darryl strikes her, she falls over
+railing and dies.
+
+*Vignette B: Domestic Violence Murder*
+
+Darryl Smith and Frankie Williams were dating. History of domestic
+abuse, restraining order. Darryl violates order, confrontation, chase,
+Frankie hit by traffic and dies.
+
+*Vignette C: Organized Crime Murder*
+
+Darryl Smith runs car theft operation. Frankie Williams is suspected
+snitch. Darryl and accomplice ambush and beat Frankie, who dies from
+injuries.
+
+All three result in second-degree murder conviction.
+
+## **5) Specify exactly which analyses you will conduct to examine the main question/hypothesis.**
+
+**5.1 Correlational Analyses** We will use Pearson correlations to test:
+
+-   Punitiveness vs. each of 5 clusters
+
+-   Punitiveness vs. each of \~\~18 constructs
+
+-   Punitiveness vs. each of \~74 individual measures
+
+-   Intercorrelations among all clusters and constructs
+
+Results will be presented as heat maps with significance indicators.
+
+**5.2 Vignette Standardization** Because the three vignettes may produce
+different baseline sentence distributions, we will:
+
+-   Z-score sentences within each vignette condition before computing
+    correlations
+
+-   This removes vignette-specific variance while preserving individual
+    differences
+
+**5.3 Sensitivity Analyses**
+
+-   Mixed-effects models with vignette as random intercept to confirm
+    correlations hold across conditions
+
+-   Compare correlation patterns across the three vignettes
+
+### *Hypotheses:*
+
+**H1:** Punitiveness will be positively correlated with all listed
+correlate measures.
+
+**H2:** Hostile Aggression cluster will show stronger correlation with
+punitiveness than Crime Concerns cluster.
+
+-   *Test:* Compare r(Punitiveness, Hostile Aggression) vs.
+    r(Punitiveness, Crime Concerns) using Steiger\'s Z-test for
+    dependent correlations.
+
+**H3:** Most correlate measures will be positively intercorrelated.
+
+-   *Test:* Majority of off-diagonal correlations in construct-level
+    matrix will be positive and significant.
+
+## **6) Describe exactly how outliers will be defined and handled, and your precise rule(s) for excluding observations.**
+
+n/a
+
+## **7) How many observations will be collected or what will determine sample size? No need to justify decision, but be precise about exactly how the number will be determined.**
+
+480
+
+## **8) Anything else you would like to pre-register? (e.g., secondary analyses, variables collected for exploratory purposes, unusual analyses planned?)**
+
+The following analyses are not confirmatory but will be conducted for
+exploratory purposes:
+
+*Exploratory Factor Analysis (EFA):*
+
+-   Run EFA on all correlate measures to examine empirical clustering
+
+-   Compare emergent factor structure to theoretical 5-cluster framework
+
+-   Identify potential redundancy or cross-loading items
+
+*Confirmatory Factor Analysis (CFA):*
+
+-   Test fit of theoretical 8-cluster model
+
+-   Report CFI, RMSEA, SRMR fit indices
+
+-   Compare theoretical model to EFA-derived model
+
+*Descriptive Statistics*
+
+-   Report % of participants above/below scale midpoints for each
+    measure
+
+-   Highlight prevalence of \"dark\" attitudes (hatred, racial
+    resentment, etc.)
+
+*Demographic Moderators*
+
+-   Explore whether correlations differ by political orientation, race,
+    gender, age
+
+-   Not hypothesis-driven; for exploratory purposes only
+
+*Qualitative Analysis*
+
+-   Thematic coding of justification responses
+
+-   Correlation between coded themes and quantitative measures
+
+*Construct Reliability*
+
+-   Will report Cronbach\'s alpha for all composite measures
+
+-   Composites with α \< .60 will be interpreted with caution
+
+*Multiple Comparisons*
+
+-   Given large number of correlations, we will:
+
+    -   Report exact p-values
+
+    -   Apply FDR correction for construct-level analyses
+
+    -   Focus interpretation on effect sizes rather than significance
+        alone
+
+*Open Data*
+
+-   Full dataset will be made publicly available upon publication
+
+-   All materials (survey, measures, analysis code) will be shared
+
+*Deviations from Pre-Registration*
+
+-   Any deviations will be transparently reported in the manuscript
