@@ -1,0 +1,6 @@
+"Method","N","Pct_Prosocial","Pct_Dark","N_Unclassified"
+"Dictionary",421,96.4,3.6,75
+"DeBERTa",496,72,28,0
+"Claude",496,95.6,4.4,0
+"BGE",496,70.8,29.2,0
+"voyage",496,87.7,12.3,0
