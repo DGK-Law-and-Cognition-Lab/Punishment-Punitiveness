@@ -1,0 +1,5 @@
+flag,n_flagged,pct_flagged
+flag_fast_half,25,0.026371308016877638
+flag_fast_third,2,0.002109704641350211
+flag_slow,6,0.006329113924050633
+flag_longstring,118,0.12447257383966245

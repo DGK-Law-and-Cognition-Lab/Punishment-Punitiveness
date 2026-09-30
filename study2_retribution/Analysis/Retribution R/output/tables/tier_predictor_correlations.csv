@@ -1,0 +1,16 @@
+slice_x,slice_y,k_x,k_y,items_shared,relation,n,r
+"3. Obligation R2,R5","1. Soft core R1,R3,R4",2,3,0,disjoint: clean,948,0.8374034215624176
+"4. Rationales R6,R7","1. Soft core R1,R3,R4",2,3,0,disjoint: clean,948,0.7028631737951244
+"3. Obligation R2,R5","2. Soft core strict R1,R4",2,2,0,disjoint: clean,948,0.84776471690201
+"4. Rationales R6,R7","2. Soft core strict R1,R4",2,2,0,disjoint: clean,948,0.6480943687267806
+"4. Rationales R6,R7","3. Obligation R2,R5",2,2,0,disjoint: clean,948,0.6266049928492647
+5. REGISTERED deserved R1-R4,"4. Rationales R6,R7",4,2,0,disjoint: clean,948,0.6997779709763507
+5. REGISTERED deserved R1-R4,"3. Obligation R2,R5",4,2,1,partial overlap,948,0.9025523889457064
+"2. Soft core strict R1,R4","1. Soft core R1,R3,R4",2,3,2,part-whole: one contains the other,948,0.9522859523570771
+5. REGISTERED deserved R1-R4,"2. Soft core strict R1,R4",4,2,2,part-whole: one contains the other,948,0.9500411838162464
+"6. REGISTERED retribution, 7 items","2. Soft core strict R1,R4",7,2,2,part-whole: one contains the other,948,0.9136872259963633
+"6. REGISTERED retribution, 7 items","3. Obligation R2,R5",7,2,2,part-whole: one contains the other,948,0.8965713576996435
+"6. REGISTERED retribution, 7 items","4. Rationales R6,R7",7,2,2,part-whole: one contains the other,948,0.8561246973147485
+5. REGISTERED deserved R1-R4,"1. Soft core R1,R3,R4",4,3,3,part-whole: one contains the other,948,0.9857696788473108
+"6. REGISTERED retribution, 7 items","1. Soft core R1,R3,R4",7,3,3,part-whole: one contains the other,948,0.9519893234155814
+"6. REGISTERED retribution, 7 items",5. REGISTERED deserved R1-R4,7,4,4,part-whole: one contains the other,948,0.9630696026218112

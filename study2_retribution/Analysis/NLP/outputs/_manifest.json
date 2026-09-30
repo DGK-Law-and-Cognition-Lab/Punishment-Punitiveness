@@ -1,0 +1,29 @@
+{
+ "files": {
+  "openends_long.csv": {
+   "written_by": "00_extract_openends",
+   "written_at": "2026-08-13T21:36:20",
+   "rows": 2844,
+   "sha16": "66a71f23243d3317",
+   "run_mode": "full",
+   "note": "948 participants x 3 items; analytic restriction applied"
+  },
+  "retribution_scored.csv": {
+   "written_by": "00_extract_openends",
+   "written_at": "2026-08-13T21:36:20",
+   "rows": 948,
+   "sha16": "74c247c42320f135",
+   "run_mode": "full",
+   "note": "written by Track 1 01_main_analysis.Rmd; carried into the chain here"
+  }
+ },
+ "runs": [
+  {
+   "nb": "00",
+   "name": "extract_openends",
+   "run_mode": "full",
+   "human_gold": false,
+   "at": "2026-08-13T21:36:20"
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+punitiveness,sidedness,comparison,r_jk,r_jh,r_kh,n,z,p,diff,diff_lower,diff_upper,alternative
+Punitiveness (six components),"one-sided, registered direction","r(punitiveness, revenge) > r(punitiveness, just deserts)",0.6762573212922165,0.4319736086442988,0.3445132470164899,948,8.699287450137996,0,0.2442837126479177,0.18843871506815815,0.3011173446347615,greater
+Punitiveness (six components),two-sided,"r(punitiveness, revenge) vs r(punitiveness, just deserts)",0.6762573212922165,0.4319736086442988,0.3445132470164899,948,8.699287450137996,0,0.2442837126479177,0.18843871506815815,0.3011173446347615,two.sided
+Punitiveness (five attitude components),"one-sided, registered direction","r(punitiveness, revenge) > r(punitiveness, just deserts)",0.6920430569728409,0.41816903072512324,0.3445132470164899,948,9.820634054944872,0,0.2738740262477176,0.21810656867438458,0.33074323141317435,greater
+Punitiveness (five attitude components),two-sided,"r(punitiveness, revenge) vs r(punitiveness, just deserts)",0.6920430569728409,0.41816903072512324,0.3445132470164899,948,9.820634054944872,0,0.2738740262477176,0.21810656867438458,0.33074323141317435,two.sided

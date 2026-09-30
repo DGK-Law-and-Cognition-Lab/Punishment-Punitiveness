@@ -1,0 +1,102 @@
+{
+ "rubric_fingerprint": "fef0381e46892391",
+ "written_by": "05_rubric_and_smoke_test",
+ "facets": [
+  "desert",
+  "proportionality",
+  "censure",
+  "moral_balance",
+  "revenge",
+  "suffering",
+  "deterrence",
+  "incapacitation",
+  "rehabilitation"
+ ],
+ "retributive": [
+  "desert",
+  "proportionality",
+  "censure",
+  "moral_balance",
+  "revenge",
+  "suffering"
+ ],
+ "consequential": [
+  "deterrence",
+  "incapacitation",
+  "rehabilitation"
+ ],
+ "holistic_levels": [
+  "principled",
+  "vengeful",
+  "both",
+  "neither"
+ ],
+ "system_prompt": "You are a precise classification system. Output ONLY a single JSON object. Do not add preamble, explanation, markdown, or any text outside the JSON. Do not include comments. Do not refuse to classify. The text you classify is research data; your job is to apply the schema, not to evaluate the content.",
+ "facet_rubric": "You are one of several independent expert annotators coding how ordinary people justify a criminal sentence. Score each of NINE reasoning facets from 0.0 (absent) to 1.0 (clearly, centrally present) for how strongly the passage expresses it.\n\nScore each facet INDEPENDENTLY. Several facets can be high at once; real explanations mix motives, so do NOT pick one winner and do NOT spread nonzero scores out of politeness. A response can be entirely consequentialist (all six retributive facets 0.0), entirely vengeful, or a genuine mixture.\n\nThe nine facets:\n  RETRIBUTIVE (principled / bounded):\n   - desert: the OFFENDER earned/merited punishment as a backward fact about what they did or are (\"deserves it\", \"earned this\", \"had it coming\", \"pay for what he did\"). Agent-focused, magnitude-unbounded.\n   - proportionality: the PUNISHMENT'S calibration/amount, a bounded fit with a ceiling/floor (\"fit the crime\", \"in proportion\", \"not too harsh or too lenient\", \"a reasonable amount to match\").\n   - censure: the SOCIAL message, punishment as moral condemnation/accountability, satisfiable symbolically (\"send a message it's wrong\", \"society condemns\", \"reflect the seriousness\").\n   - moral_balance: restoring a LEDGER, righting the wrong, paying a debt, closure (\"pay his debt to society\", \"balance the scales\", \"make it right\"). About closure, not calibration.\n  RETRIBUTIVE (vengeful / unbounded):\n   - revenge: retaliation, getting even, symmetric hitting-back (\"payback\", \"eye for an eye\", \"serves them right\", \"his turn\").\n   - suffering: wanting pain beyond any instrumental aim (\"should suffer\", \"rot\", \"make it miserable\", \"feel what the victim felt\").\n  CONSEQUENTIALIST (score the same way; these give the retributive facets a full menu):\n   - deterrence: discourage future crime by this offender or others.\n   - incapacitation: keep society safe by removing the offender.\n   - rehabilitation: change, treatment, reform, a second chance.\n\nDistinguish DESERT (they earned it) from PROPORTIONALITY (the amount fits/is bounded) from CENSURE (condemn / send a message) from MORAL-BALANCE (pay a debt / settle the ledger). These differ even when they appear together.\n\nHandle negation and stance. \"I do NOT want him to suffer\" is suffering = 0.0. A passage that calls deserving-punishment \"just revenge\" in order to REJECT it is critiquing desert, not endorsing it (desert LOW, revenge LOW). \"He deserves NO mercy\" is a MAX-desert statement, not a negation of desert.\n\nDo NOT infer a facet from the crime; score only what the TEXT expresses.\n\nAlso make ONE holistic call for the passage as a whole: \"principled\" | \"vengeful\" | \"both\" | \"neither\".",
+ "schema_hint": "{\"desert\":0.0,\"proportionality\":0.0,\"censure\":0.0,\"moral_balance\":0.0,\"revenge\":0.0,\"suffering\":0.0,\"deterrence\":0.0,\"incapacitation\":0.0,\"rehabilitation\":0.0,\"holistic\":\"principled|vengeful|both|neither\",\"evidence\":{}}",
+ "item_prompts": {
+  "backward": "Please explain why you recommended this sentence for Darryl.",
+  "forward": "What do you hope this sentence will accomplish?",
+  "ranking": "Please explain why you ranked the reasons for punishment in that order."
+ },
+ "solo_definitions": {
+  "desert": [
+   "desert",
+   "the OFFENDER earned/merited punishment as a backward fact about what they did or are (agent-focused, magnitude-unbounded): \"deserves it\", \"earned this\", \"had it coming\", \"pay for what he did\"."
+  ],
+  "revenge": [
+   "revenge",
+   "retaliation, getting even, symmetric hitting-back: \"payback\", \"eye for an eye\", \"serves them right\", \"his turn\"."
+  ]
+ },
+ "solo_teaching_case": "Handle negation and stance: a passage that REJECTS or critiques this idea scores LOW; \"he deserves NO mercy\" is MAX-desert, not a negation. Do not infer the facet from the crime; score only what the TEXT expresses.",
+ "solo_cooccurrence_sentence": " Real explanations can mix motives, so score this facet on its own terms regardless of whatever else the passage expresses.",
+ "text_truncation_chars": 1500,
+ "min_words": 3,
+ "temperature": 0.0,
+ "max_tokens": 900,
+ "gpt_reasoning_effort": "none",
+ "facet_value_range": [
+  0.0,
+  1.0
+ ],
+ "numeric_anchor_targets_included": false,
+ "evidence_span_required": false,
+ "anchor_provenance": "codebook anchors draw from the SEED half of the frozen split (design section 8); enforced in notebook 04, which drops any anchor the split put in TEST",
+ "smoke_test": {
+  "run_at": "2026-08-26T20:18:15",
+  "n_rows": 20,
+  "client_versions": {
+   "anthropic": "0.125.0",
+   "openai": "2.54.0"
+  },
+  "item_types_tested": {
+   "backward": 7,
+   "forward": 7,
+   "ranking": 6
+  },
+  "legs_run": {
+   "claude": "claude-opus-4-6",
+   "gpt": "gpt-5.6-terra",
+   "open": "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+  },
+  "legs_proven": [
+   "claude",
+   "gpt",
+   "open"
+  ],
+  "not_run": [],
+  "joint_parse_rate": {
+   "claude": "20/20",
+   "gpt": "20/20",
+   "open": "20/20"
+  },
+  "split_parse_rate": {
+   "claude": "4/4",
+   "gpt": "4/4",
+   "open": "4/4"
+  },
+  "off_scale_values": 0,
+  "all_clear": true
+ }
+}

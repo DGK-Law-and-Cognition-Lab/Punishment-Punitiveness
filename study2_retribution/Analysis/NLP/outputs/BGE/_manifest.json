@@ -1,0 +1,37 @@
+{
+ "files": {
+  "embeddings_bge.npy": {
+   "written_by": "08_embed_one_encoder",
+   "written_at": "2026-08-26T20:53:29",
+   "rows": 2844,
+   "sha16": "600039ba9dfc54c6",
+   "run_mode": "full",
+   "note": "bge: one row per answer, in openends_long.csv order, width 1024, L2-normalized"
+  },
+  "embeddings_bge_seed.npy": {
+   "written_by": "08_embed_one_encoder",
+   "written_at": "2026-08-26T20:53:29",
+   "rows": 133,
+   "sha16": "a54f3fe562daf50a",
+   "run_mode": "full",
+   "note": "bge: one row per reference passage, same checkpoint, same run, re-embedded every time"
+  },
+  "embeddings_bge_meta.json": {
+   "written_by": "08_embed_one_encoder",
+   "written_at": "2026-08-26T20:53:29",
+   "rows": 1,
+   "sha16": "a99d262173d9c240",
+   "run_mode": "full",
+   "note": "row keys, facet labels, the row counts and the pinned checkpoint for embeddings_bge.npy and embeddings_bge_seed.npy"
+  }
+ },
+ "runs": [
+  {
+   "nb": "08",
+   "name": "embed_one_encoder",
+   "run_mode": "full",
+   "human_gold": false,
+   "at": "2026-08-26T20:53:29"
+  }
+ ]
+}

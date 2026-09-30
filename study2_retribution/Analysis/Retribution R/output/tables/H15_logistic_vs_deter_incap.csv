@@ -1,0 +1,2 @@
+outcome,predictor,n,b,se,OR,OR_lower,OR_upper,z,p_two,p_dir,alternative
+Shark to death (yes/no): vs deterrence- or incapacitation-first,retrib_vs_deter_incap,824,0.3978544342296212,0.14930793076948717,1.4886273209521759,1.1109448727299691,1.9947086080335918,2.6646570760119825,0.007706686583567316,0.003853343291783658,greater

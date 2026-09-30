@@ -1,0 +1,206 @@
+grouping,punitiveness,n,quantity,value
+Whole sample (reference),Punitiveness (full index),948,H1_n_positive_of_12,12
+Whole sample (reference),Punitiveness (full index),948,H1_n_BH_significant,12
+Whole sample (reference),Punitiveness (full index),948,H1_min_r,0.2130466686334613
+Whole sample (reference),Punitiveness (full index),948,H1_max_r,0.5990259744992873
+Whole sample (reference),Punitiveness (full index),948,H2_diff,0.2734227826359689
+Whole sample (reference),Punitiveness (full index),948,H2_diff_lower,0.21712034815577475
+Whole sample (reference),Punitiveness (full index),948,H2_diff_upper,0.3306928186084198
+Whole sample (reference),Punitiveness (full index),948,H2_z,9.669240042447003
+Whole sample (reference),Punitiveness (full index),948,H2_p_one_sided,0
+Whole sample (reference),Punitiveness (full index),948,H3_n_positive_of_66,66
+Whole sample (reference),Punitiveness (full index),948,H3_share_1,0.4954826744160137
+Whole sample (reference),Punitiveness (full index),948,H4_item_d,1.2601119602995874
+Whole sample (reference),Punitiveness (full index),948,H4_item_p_one_sided,1
+Whole sample (reference),Punitiveness (full index),948,H5_d,0.2591070073942423
+Whole sample (reference),Punitiveness (full index),948,H5_p_one_sided,2.141250145009923e-15
+Whole sample (reference),Punitiveness (full index),948,H6_r_principle,0.19939605135703542
+Whole sample (reference),Punitiveness (full index),948,H6_r_severity,0.4743794682847065
+Whole sample (reference),Punitiveness (full index),948,H6_diff,0.2749834169276711
+Whole sample (reference),Punitiveness (full index),948,H6_diff_lower,0.1929678319086114
+Whole sample (reference),Punitiveness (full index),948,H6_diff_upper,0.3562532494371902
+Whole sample (reference),Punitiveness (full index),948,H6_p_two,6.496159166147208e-11
+Whole sample (reference),Punitiveness (full index),948,H7_revenge_n_p05_of_6,6
+Whole sample (reference),Punitiveness (full index),948,H7_revenge_min_r,0.4310905165582024
+Whole sample (reference),Punitiveness (full index),948,H7_revenge_max_r,0.655856720755874
+Whole sample (reference),Punitiveness (full index),948,H7_desert_theory_n_positive_of_6,6
+Whole sample (reference),Punitiveness (full index),948,H7_desert_theory_n_two_sided_p05,6
+Whole sample (reference),Punitiveness (full index),948,H7_desert_theory_min_r,0.35937980244835926
+Whole sample (reference),Punitiveness (full index),948,H7_desert_theory_max_r,0.5827712847906856
+Whole sample (reference),Punitiveness (full index),948,H8_n_p05_of_6,6
+Whole sample (reference),Punitiveness (full index),948,H8_min_r,0.3677887451614619
+Whole sample (reference),Punitiveness (full index),948,H8_max_r,0.6138925227804968
+Whole sample (reference),Punitiveness (full index),948,H9_d,1.1764507988160493
+Whole sample (reference),Punitiveness (full index),948,H9_d_lower,1.0934444535588521
+Whole sample (reference),Punitiveness (full index),948,H9_d_upper,1.258961187807683
+Whole sample (reference),Punitiveness (full index),948,H9_p_one_sided,2.79637785089291e-181
+Whole sample (reference),Punitiveness (full index),948,H10_diff,-0.023597907551957453
+Whole sample (reference),Punitiveness (full index),948,H10_diff_lower,-0.0686968520680924
+Whole sample (reference),Punitiveness (full index),948,H10_diff_upper,0.021316777687391132
+Whole sample (reference),Punitiveness (full index),948,H10_z,-1.0300050639708527
+Whole sample (reference),Punitiveness (full index),948,H10_p_two,0.3030076284155687
+Whole sample (reference),Punitiveness (full index),948,H10_p_one_sided_registered_direction,0.8484961857922156
+Ranking (retribution first),Punitiveness (full index),371,H1_n_positive_of_12,12
+Ranking (retribution first),Punitiveness (full index),371,H1_n_BH_significant,12
+Ranking (retribution first),Punitiveness (full index),371,H1_min_r,0.12300758762005429
+Ranking (retribution first),Punitiveness (full index),371,H1_max_r,0.4972425168987049
+Ranking (retribution first),Punitiveness (full index),371,H2_diff,0.3013973636920976
+Ranking (retribution first),Punitiveness (full index),371,H2_diff_lower,0.19295149869182124
+Ranking (retribution first),Punitiveness (full index),371,H2_diff_upper,0.4098595062808661
+Ranking (retribution first),Punitiveness (full index),371,H2_z,5.441310355120326
+Ranking (retribution first),Punitiveness (full index),371,H2_p_one_sided,2.644503904747353e-8
+Ranking (retribution first),Punitiveness (full index),371,H3_n_positive_of_66,65
+Ranking (retribution first),Punitiveness (full index),371,H3_share_1,0.421733977062711
+Ranking (retribution first),Punitiveness (full index),371,H4_item_d,1.309083053950534
+Ranking (retribution first),Punitiveness (full index),371,H4_item_p_one_sided,1
+Ranking (retribution first),Punitiveness (full index),371,H5_d,0.6401625942097776
+Ranking (retribution first),Punitiveness (full index),371,H5_p_one_sided,8.392555910154565e-30
+Ranking (retribution first),Punitiveness (full index),371,H6_r_principle,0.07752265921904616
+Ranking (retribution first),Punitiveness (full index),371,H6_r_severity,0.2771859778946702
+Ranking (retribution first),Punitiveness (full index),371,H6_diff,0.19966331867562404
+Ranking (retribution first),Punitiveness (full index),371,H6_diff_lower,0.044453274875262405
+Ranking (retribution first),Punitiveness (full index),371,H6_diff_upper,0.352074660228635
+Ranking (retribution first),Punitiveness (full index),371,H6_p_two,0.011841460449142138
+Ranking (retribution first),Punitiveness (full index),371,H7_revenge_n_p05_of_6,6
+Ranking (retribution first),Punitiveness (full index),371,H7_revenge_min_r,0.2874943944032654
+Ranking (retribution first),Punitiveness (full index),371,H7_revenge_max_r,0.5483274445950876
+Ranking (retribution first),Punitiveness (full index),371,H7_desert_theory_n_positive_of_6,6
+Ranking (retribution first),Punitiveness (full index),371,H7_desert_theory_n_two_sided_p05,6
+Ranking (retribution first),Punitiveness (full index),371,H7_desert_theory_min_r,0.11599694565130275
+Ranking (retribution first),Punitiveness (full index),371,H7_desert_theory_max_r,0.4262031885959246
+Ranking (retribution first),Punitiveness (full index),371,H8_n_p05_of_6,6
+Ranking (retribution first),Punitiveness (full index),371,H8_min_r,0.2118941270688745
+Ranking (retribution first),Punitiveness (full index),371,H8_max_r,0.5140295668184459
+Ranking (retribution first),Punitiveness (full index),371,H9_d,1.2540796693782201
+Ranking (retribution first),Punitiveness (full index),371,H9_d_lower,1.117525413926805
+Ranking (retribution first),Punitiveness (full index),371,H9_d_upper,1.3896482743428193
+Ranking (retribution first),Punitiveness (full index),371,H9_p_one_sided,2.329709849972379e-78
+Ranking (retribution first),Punitiveness (full index),371,H10_diff,-0.026317292189442787
+Ranking (retribution first),Punitiveness (full index),371,H10_diff_lower,-0.1188691726021855
+Ranking (retribution first),Punitiveness (full index),371,H10_diff_upper,0.0660450706459134
+Ranking (retribution first),Punitiveness (full index),371,H10_z,-0.5586779962699181
+Ranking (retribution first),Punitiveness (full index),371,H10_p_two,0.5763814989114653
+Ranking (retribution first),Punitiveness (full index),371,H10_p_one_sided_registered_direction,0.7118092505442674
+Median split: high half,Punitiveness (full index),470,H1_n_positive_of_12,12
+Median split: high half,Punitiveness (full index),470,H1_n_BH_significant,12
+Median split: high half,Punitiveness (full index),470,H1_min_r,0.24865399577479985
+Median split: high half,Punitiveness (full index),470,H1_max_r,0.6173899543186833
+Median split: high half,Punitiveness (full index),470,H2_diff,0.2604990739820258
+Median split: high half,Punitiveness (full index),470,H2_diff_lower,0.1851471675591839
+Median split: high half,Punitiveness (full index),470,H2_diff_upper,0.3383555786823346
+Median split: high half,Punitiveness (full index),470,H2_z,6.902122650755679
+Median split: high half,Punitiveness (full index),470,H2_p_one_sided,2.561506562415161e-12
+Median split: high half,Punitiveness (full index),470,H3_n_positive_of_66,66
+Median split: high half,Punitiveness (full index),470,H3_share_1,0.5102896676486119
+Median split: high half,Punitiveness (full index),470,H4_item_d,1.1973776146213138
+Median split: high half,Punitiveness (full index),470,H4_item_p_one_sided,1
+Median split: high half,Punitiveness (full index),470,H5_d,0.37043228023101593
+Median split: high half,Punitiveness (full index),470,H5_p_one_sided,3.941813048851857e-15
+Median split: high half,Punitiveness (full index),470,H6_r_principle,0.10736018077623233
+Median split: high half,Punitiveness (full index),470,H6_r_severity,0.47309262790058854
+Median split: high half,Punitiveness (full index),470,H6_diff,0.3657324471243562
+Median split: high half,Punitiveness (full index),470,H6_diff_lower,0.24307270458198094
+Median split: high half,Punitiveness (full index),470,H6_diff_upper,0.48570026681432316
+Median split: high half,Punitiveness (full index),470,H6_p_two,7.761286724417005e-9
+Median split: high half,Punitiveness (full index),470,H7_revenge_n_p05_of_6,6
+Median split: high half,Punitiveness (full index),470,H7_revenge_min_r,0.39318288388609
+Median split: high half,Punitiveness (full index),470,H7_revenge_max_r,0.6693296164667557
+Median split: high half,Punitiveness (full index),470,H7_desert_theory_n_positive_of_6,6
+Median split: high half,Punitiveness (full index),470,H7_desert_theory_n_two_sided_p05,6
+Median split: high half,Punitiveness (full index),470,H7_desert_theory_min_r,0.36147710632740715
+Median split: high half,Punitiveness (full index),470,H7_desert_theory_max_r,0.6199205078541729
+Median split: high half,Punitiveness (full index),470,H8_n_p05_of_6,6
+Median split: high half,Punitiveness (full index),470,H8_min_r,0.34095721539627366
+Median split: high half,Punitiveness (full index),470,H8_max_r,0.6368814149849056
+Median split: high half,Punitiveness (full index),470,H9_d,1.2875813840148886
+Median split: high half,Punitiveness (full index),470,H9_d_lower,1.1648832627907784
+Median split: high half,Punitiveness (full index),470,H9_d_upper,1.409497703920145
+Median split: high half,Punitiveness (full index),470,H9_p_one_sided,4.769783707213588e-102
+Median split: high half,Punitiveness (full index),470,H10_diff,-0.04205697031789446
+Median split: high half,Punitiveness (full index),470,H10_diff_lower,-0.10436318552478988
+Median split: high half,Punitiveness (full index),470,H10_diff_upper,0.019531409653264727
+Median split: high half,Punitiveness (full index),470,H10_z,-1.338411750194988
+Median split: high half,Punitiveness (full index),470,H10_p_two,0.18076225063963802
+Median split: high half,Punitiveness (full index),470,H10_p_one_sided_registered_direction,0.909618874680181
+Tertiles: top third,Punitiveness (full index),314,H1_n_positive_of_12,12
+Tertiles: top third,Punitiveness (full index),314,H1_n_BH_significant,12
+Tertiles: top third,Punitiveness (full index),314,H1_min_r,0.22898633599629648
+Tertiles: top third,Punitiveness (full index),314,H1_max_r,0.6305459024105603
+Tertiles: top third,Punitiveness (full index),314,H2_diff,0.2795823153698499
+Tertiles: top third,Punitiveness (full index),314,H2_diff_lower,0.18667378896301423
+Tertiles: top third,Punitiveness (full index),314,H2_diff_upper,0.3763729339386026
+Tertiles: top third,Punitiveness (full index),314,H2_z,6.0099558152609385
+Tertiles: top third,Punitiveness (full index),314,H2_p_one_sided,9.278694479419869e-10
+Tertiles: top third,Punitiveness (full index),314,H3_n_positive_of_66,66
+Tertiles: top third,Punitiveness (full index),314,H3_share_1,0.5145494976410908
+Tertiles: top third,Punitiveness (full index),314,H4_item_d,1.1790960066784555
+Tertiles: top third,Punitiveness (full index),314,H4_item_p_one_sided,1
+Tertiles: top third,Punitiveness (full index),314,H5_d,0.3926301444682219
+Tertiles: top third,Punitiveness (full index),314,H5_p_one_sided,1.0169558931842096e-11
+Tertiles: top third,Punitiveness (full index),314,H6_r_principle,0.0849303244481775
+Tertiles: top third,Punitiveness (full index),314,H6_r_severity,0.4500381112573133
+Tertiles: top third,Punitiveness (full index),314,H6_diff,0.3651077868091358
+Tertiles: top third,Punitiveness (full index),314,H6_diff_lower,0.2113182592869419
+Tertiles: top third,Punitiveness (full index),314,H6_diff_upper,0.5144356681273882
+Tertiles: top third,Punitiveness (full index),314,H6_p_two,4.179009951643664e-6
+Tertiles: top third,Punitiveness (full index),314,H7_revenge_n_p05_of_6,6
+Tertiles: top third,Punitiveness (full index),314,H7_revenge_min_r,0.3663849701782128
+Tertiles: top third,Punitiveness (full index),314,H7_revenge_max_r,0.6857948402258048
+Tertiles: top third,Punitiveness (full index),314,H7_desert_theory_n_positive_of_6,6
+Tertiles: top third,Punitiveness (full index),314,H7_desert_theory_n_two_sided_p05,6
+Tertiles: top third,Punitiveness (full index),314,H7_desert_theory_min_r,0.3779183217636729
+Tertiles: top third,Punitiveness (full index),314,H7_desert_theory_max_r,0.6290560194842486
+Tertiles: top third,Punitiveness (full index),314,H8_n_p05_of_6,6
+Tertiles: top third,Punitiveness (full index),314,H8_min_r,0.3356340192661709
+Tertiles: top third,Punitiveness (full index),314,H8_max_r,0.6467603894435717
+Tertiles: top third,Punitiveness (full index),314,H9_d,1.2917253691853698
+Tertiles: top third,Punitiveness (full index),314,H9_d_lower,1.1412587133301013
+Tertiles: top third,Punitiveness (full index),314,H9_d_upper,1.4410210294055794
+Tertiles: top third,Punitiveness (full index),314,H9_p_one_sided,4.0349328777723535e-69
+Tertiles: top third,Punitiveness (full index),314,H10_diff,-0.02356581579804884
+Tertiles: top third,Punitiveness (full index),314,H10_diff_lower,-0.09935922036706392
+Tertiles: top third,Punitiveness (full index),314,H10_diff_upper,0.051615778841079735
+Tertiles: top third,Punitiveness (full index),314,H10_z,-0.6159503034921642
+Tertiles: top third,Punitiveness (full index),314,H10_p_two,0.5379273198635397
+Tertiles: top third,Punitiveness (full index),314,H10_p_one_sided_registered_direction,0.7310363400682302
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H1_n_positive_of_12,12
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H1_n_BH_significant,12
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H1_min_r,0.20162485403417385
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H1_max_r,0.6941647658842083
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H2_diff,0.34438046353749807
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H2_diff_lower,0.2716867054952886
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H2_diff_upper,0.4199668041959414
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H2_z,9.697918713968784
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H2_p_one_sided,0
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H3_n_positive_of_66,66
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H3_share_1,0.4836904675530216
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H4_item_d,1.136229144936199
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H4_item_p_one_sided,1
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H5_d,0.4483151264185298
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H5_p_one_sided,1.5542577922400988e-22
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H6_r_principle,0.1796988783362462
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H6_r_severity,0.4138817417567415
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H6_diff,0.23418286342049527
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H6_diff_lower,0.11527087034385419
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H6_diff_upper,0.3515111597103565
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H6_p_two,1.1994079208732522e-4
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_revenge_n_p05_of_6,6
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_revenge_min_r,0.42445877937341697
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_revenge_max_r,0.6674073671341838
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_desert_theory_n_positive_of_6,6
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_desert_theory_n_two_sided_p05,6
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_desert_theory_min_r,0.3368248758102754
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H7_desert_theory_max_r,0.588330914548818
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H8_n_p05_of_6,6
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H8_min_r,0.41497253868996975
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H8_max_r,0.6943351982972292
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H9_d,1.1389861038838873
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H9_d_lower,1.0276052236117368
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H9_d_upper,1.2496715811067438
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H9_p_one_sided,3.9311140670261075e-95
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H10_diff,0.019226407588829653
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H10_diff_lower,-0.03648944142865357
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H10_diff_upper,0.07529152306854736
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H10_z,0.6773827431735937
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H10_p_two,0.49816314448259935
+Sentencing ratio: did not reduce,Punitiveness (eight-item scale),514,H10_p_one_sided_registered_direction,0.24908157224129968

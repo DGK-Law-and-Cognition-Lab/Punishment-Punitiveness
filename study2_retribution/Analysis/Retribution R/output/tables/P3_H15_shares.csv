@@ -1,0 +1,9 @@
+grouping,side,measure,n,k,prop,ci_lower,ci_upper
+Ranking (desert first),Retributive side,yes,371,139,0.3746630727762803,0.32523555652287844,0.42610815988041206
+Ranking (desert first),Other side,yes,577,156,0.2703639514731369,0.23451179377963605,0.30858600975695916
+Median split on relative retribution,Retributive side,yes,470,154,0.3276595744680851,0.2853630774907428,0.37214149281358966
+Median split on relative retribution,Other side,yes,478,141,0.29497907949790797,0.2544287346759176,0.3380875192671394
+Top vs bottom third of relative retribution,Retributive side,yes,314,101,0.321656050955414,0.27029760691023064,0.3764185055621586
+Top vs bottom third of relative retribution,Other side,yes,317,90,0.28391167192429023,0.2349241749290022,0.33698951961803814
+Sentencing ratio (no reduction vs reduction),Retributive side,yes,514,173,0.33657587548638135,0.29579363603696723,0.37925059985465026
+Sentencing ratio (no reduction vs reduction),Other side,yes,433,122,0.2817551963048499,0.23984545288735823,0.326676296261591

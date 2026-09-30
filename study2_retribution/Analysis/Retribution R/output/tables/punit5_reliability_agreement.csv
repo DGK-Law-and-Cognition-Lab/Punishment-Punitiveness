@@ -1,0 +1,5 @@
+scoring,k,alpha,r_with_registered,ci_lower,ci_upper,n
+Registered: 8 items,8,0.8463440756876478,NA,NA,NA,948
+Five parts (one vote per part),5,0.8141997115438471,0.9892314741009168,0.9877758821474172,0.9905145679203791,948
+Registered full index: 8 items z-scored + sentence,9,0.8509739617716461,NA,NA,NA,948
+Six parts: five parts z-scored + sentence,6,0.8255005510697534,0.9451045155980795,0.9378705347721595,0.9515172879092549,948

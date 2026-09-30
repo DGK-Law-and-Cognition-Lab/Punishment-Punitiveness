@@ -1,0 +1,191 @@
+grouping,n,quantity,value
+Whole sample,948,H1_n_positive_of_12,12
+Whole sample,948,H1_n_BH_significant,12
+Whole sample,948,H1_median_r,0.5589546428044079
+Whole sample,948,H1_min_r,0.2418258613419944
+Whole sample,948,H1_max_r,0.7091137829627124
+Whole sample,948,H2_diff,0.3428385203074941
+Whole sample,948,H2_diff_lower,0.29055932455899125
+Whole sample,948,H2_diff_upper,0.3968807873440263
+Whole sample,948,H2_z,13.64915273588857
+Whole sample,948,H2_p_one_sided,0
+Whole sample,948,H3_share_positive,1
+Whole sample,948,H3_first_eigen_share,0.4954826744160137
+Whole sample,948,H3_mean_r,0.4337254990905759
+Whole sample,948,H4_item_mean,5.716244725738395
+Whole sample,948,H4_item_d,1.2601119602995874
+Whole sample,948,H4_item_p_one_sided,1
+Whole sample,948,H5_d,0.2591070073942423
+Whole sample,948,H5_p_one_sided,2.141250145009923e-15
+Whole sample,948,H6_r,0.0852643121837065
+Whole sample,948,H6_r_lower,0.021710796778785537
+Whole sample,948,H6_r_upper,0.14813150265929564
+Whole sample,948,H6_alpha,0.15713096105066282
+Whole sample,948,H6_cfi,0.9562947094507207
+Whole sample,948,H6_rmsea,0.09250977543913996
+Whole sample,948,H7_revenge_n_p05_of_6,6
+Whole sample,948,H7_revenge_median_r,0.5522551283305642
+Whole sample,948,H7_jd_n_positive_of_6,6
+Whole sample,948,H7_jd_n_two_sided_p05,6
+Whole sample,948,H7_jd_median_r,0.2563899001296192
+Whole sample,948,H8_n_p05_of_6,6
+Whole sample,948,H8_median_r,0.6165120428456824
+Whole sample,948,H9_jd_vs_revenge_d,0.9001163698667866
+Whole sample,948,H9_p_one_sided,1.4279947365566052e-124
+Whole sample,948,H10_diff,0.25114652719618125
+Whole sample,948,H10_diff_lower,0.19525549043549428
+Whole sample,948,H10_diff_upper,0.3080952210950889
+Whole sample,948,H10_z,8.960484476848169
+Whole sample,948,H10_p_one_sided,0
+Ranking (desert first),371,H1_n_positive_of_12,12
+Ranking (desert first),371,H1_n_BH_significant,12
+Ranking (desert first),371,H1_median_r,0.4863748150940618
+Ranking (desert first),371,H1_min_r,0.14222398949554818
+Ranking (desert first),371,H1_max_r,0.6113290519244144
+Ranking (desert first),371,H2_diff,0.39401266887371716
+Ranking (desert first),371,H2_diff_lower,0.2934982628583675
+Ranking (desert first),371,H2_diff_upper,0.49625137342696524
+Ranking (desert first),371,H2_z,7.803650564104708
+Ranking (desert first),371,H2_p_one_sided,2.9976021664879227e-15
+Ranking (desert first),371,H3_share_positive,0.9848484848484849
+Ranking (desert first),371,H3_first_eigen_share,0.421733977062711
+Ranking (desert first),371,H3_mean_r,0.3448117961039421
+Ranking (desert first),371,H4_item_mean,5.789757412398922
+Ranking (desert first),371,H4_item_d,1.309083053950534
+Ranking (desert first),371,H4_item_p_one_sided,1
+Ranking (desert first),371,H5_d,0.6401625942097776
+Ranking (desert first),371,H5_p_one_sided,8.392555910154565e-30
+Ranking (desert first),371,H6_r,0.07189333926973547
+Ranking (desert first),371,H6_r_lower,-0.030143462028818412
+Ranking (desert first),371,H6_r_upper,0.1724471965365323
+Ranking (desert first),371,H6_alpha,0.13414271109981013
+Ranking (desert first),371,H6_cfi,0.9006930529534447
+Ranking (desert first),371,H6_rmsea,0.11028330194569086
+Ranking (desert first),371,H7_revenge_n_p05_of_6,6
+Ranking (desert first),371,H7_revenge_median_r,0.46176170813805306
+Ranking (desert first),371,H7_jd_n_positive_of_6,2
+Ranking (desert first),371,H7_jd_n_two_sided_p05,1
+Ranking (desert first),371,H7_jd_median_r,-0.05166409383313076
+Ranking (desert first),371,H8_n_p05_of_6,6
+Ranking (desert first),371,H8_median_r,0.5043400128502735
+Ranking (desert first),371,H9_jd_vs_revenge_d,0.7584561157545706
+Ranking (desert first),371,H9_p_one_sided,8.78382384510663e-39
+Ranking (desert first),371,H10_diff,0.3836519137834232
+Ranking (desert first),371,H10_diff_lower,0.2671988221136639
+Ranking (desert first),371,H10_diff_upper,0.49924296456912065
+Ranking (desert first),371,H10_z,6.428568353231606
+Ranking (desert first),371,H10_p_one_sided,6.440570299304227e-11
+Median split: high half,470,H1_n_positive_of_12,12
+Median split: high half,470,H1_n_BH_significant,12
+Median split: high half,470,H1_median_r,0.6031555877458067
+Median split: high half,470,H1_min_r,0.2545225382985148
+Median split: high half,470,H1_max_r,0.7288686997653182
+Median split: high half,470,H2_diff,0.3150876301632879
+Median split: high half,470,H2_diff_lower,0.24537525979181446
+Median split: high half,470,H2_diff_upper,0.38875078032376365
+Median split: high half,470,H2_z,9.41464453950346
+Median split: high half,470,H2_p_one_sided,0
+Median split: high half,470,H3_share_positive,1
+Median split: high half,470,H3_first_eigen_share,0.5102896676486119
+Median split: high half,470,H3_mean_r,0.44906672824876004
+Median split: high half,470,H4_item_mean,5.6680851063829785
+Median split: high half,470,H4_item_d,1.1973776146213138
+Median split: high half,470,H4_item_p_one_sided,1
+Median split: high half,470,H5_d,0.37043228023101593
+Median split: high half,470,H5_p_one_sided,3.941813048851857e-15
+Median split: high half,470,H6_r,0.03869949473899004
+Median split: high half,470,H6_r_lower,-0.05193072731327293
+Median split: high half,470,H6_r_upper,0.12869746226758208
+Median split: high half,470,H6_alpha,0.07451528557586262
+Median split: high half,470,H6_cfi,0.9425703892800029
+Median split: high half,470,H6_rmsea,0.10617654676304686
+Median split: high half,470,H7_revenge_n_p05_of_6,6
+Median split: high half,470,H7_revenge_median_r,0.5832591106221477
+Median split: high half,470,H7_jd_n_positive_of_6,6
+Median split: high half,470,H7_jd_n_two_sided_p05,5
+Median split: high half,470,H7_jd_median_r,0.24384975176320856
+Median split: high half,470,H8_n_p05_of_6,6
+Median split: high half,470,H8_median_r,0.6550250484669431
+Median split: high half,470,H9_jd_vs_revenge_d,0.8459283373362902
+Median split: high half,470,H9_p_one_sided,2.4696551253088285e-57
+Median split: high half,470,H10_diff,0.2909899869881346
+Median split: high half,470,H10_diff_lower,0.20934062431374112
+Median split: high half,470,H10_diff_upper,0.3747370862577561
+Median split: high half,470,H10_z,7.104793064640691
+Median split: high half,470,H10_p_one_sided,6.025180354640725e-13
+Tertiles: top third,314,H1_n_positive_of_12,12
+Tertiles: top third,314,H1_n_BH_significant,12
+Tertiles: top third,314,H1_median_r,0.6218100320945807
+Tertiles: top third,314,H1_min_r,0.23328638963475062
+Tertiles: top third,314,H1_max_r,0.7354932010086918
+Tertiles: top third,314,H2_diff,0.3299428582573351
+Tertiles: top third,314,H2_diff_lower,0.24401580745432755
+Tertiles: top third,314,H2_diff_upper,0.421851695605171
+Tertiles: top third,314,H2_z,7.995198365690401
+Tertiles: top third,314,H2_p_one_sided,6.661338147750939e-16
+Tertiles: top third,314,H3_share_positive,1
+Tertiles: top third,314,H3_first_eigen_share,0.5145494976410908
+Tertiles: top third,314,H3_mean_r,0.45140075322805245
+Tertiles: top third,314,H4_item_mean,5.687898089171975
+Tertiles: top third,314,H4_item_d,1.1790960066784555
+Tertiles: top third,314,H4_item_p_one_sided,1
+Tertiles: top third,314,H5_d,0.3926301444682219
+Tertiles: top third,314,H5_p_one_sided,1.0169558931842096e-11
+Tertiles: top third,314,H6_r,0.026330871453415877
+Tertiles: top third,314,H6_r_lower,-0.08459970114726131
+Tertiles: top third,314,H6_r_upper,0.1366167294370886
+Tertiles: top third,314,H6_alpha,0.051310687782640585
+Tertiles: top third,314,H6_cfi,0.938134341177971
+Tertiles: top third,314,H6_rmsea,0.10646088910923893
+Tertiles: top third,314,H7_revenge_n_p05_of_6,6
+Tertiles: top third,314,H7_revenge_median_r,0.6135457472458183
+Tertiles: top third,314,H7_jd_n_positive_of_6,6
+Tertiles: top third,314,H7_jd_n_two_sided_p05,5
+Tertiles: top third,314,H7_jd_median_r,0.24636554034727293
+Tertiles: top third,314,H8_n_p05_of_6,6
+Tertiles: top third,314,H8_median_r,0.6624148616262313
+Tertiles: top third,314,H9_jd_vs_revenge_d,0.823644528406878
+Tertiles: top third,314,H9_p_one_sided,1.8349373022785313e-37
+Tertiles: top third,314,H10_diff,0.3170687433015486
+Tertiles: top third,314,H10_diff_lower,0.21584935332970562
+Tertiles: top third,314,H10_diff_upper,0.42143625561478465
+Tertiles: top third,314,H10_z,6.246458984763251
+Tertiles: top third,314,H10_p_one_sided,2.099310725256487e-10
+Sentencing ratio: did not reduce,514,H1_n_positive_of_12,12
+Sentencing ratio: did not reduce,514,H1_n_BH_significant,12
+Sentencing ratio: did not reduce,514,H1_median_r,0.5468045862240869
+Sentencing ratio: did not reduce,514,H1_min_r,0.20162485403417385
+Sentencing ratio: did not reduce,514,H1_max_r,0.6941647658842083
+Sentencing ratio: did not reduce,514,H2_diff,0.34438046353749807
+Sentencing ratio: did not reduce,514,H2_diff_lower,0.2716867054952886
+Sentencing ratio: did not reduce,514,H2_diff_upper,0.4199668041959414
+Sentencing ratio: did not reduce,514,H2_z,9.697918713968784
+Sentencing ratio: did not reduce,514,H2_p_one_sided,0
+Sentencing ratio: did not reduce,514,H3_share_positive,1
+Sentencing ratio: did not reduce,514,H3_first_eigen_share,0.4836904675530216
+Sentencing ratio: did not reduce,514,H3_mean_r,0.41994660425165486
+Sentencing ratio: did not reduce,514,H4_item_mean,5.686770428015564
+Sentencing ratio: did not reduce,514,H4_item_d,1.136229144936199
+Sentencing ratio: did not reduce,514,H4_item_p_one_sided,1
+Sentencing ratio: did not reduce,514,H5_d,0.4483151264185298
+Sentencing ratio: did not reduce,514,H5_p_one_sided,1.5542577922400988e-22
+Sentencing ratio: did not reduce,514,H6_r,0.07647891697563168
+Sentencing ratio: did not reduce,514,H6_r_lower,-0.010074809615493523
+Sentencing ratio: did not reduce,514,H6_r_upper,0.16189515873990046
+Sentencing ratio: did not reduce,514,H6_alpha,0.1420908775259604
+Sentencing ratio: did not reduce,514,H6_cfi,0.9585182076893343
+Sentencing ratio: did not reduce,514,H6_rmsea,0.08831149945807781
+Sentencing ratio: did not reduce,514,H7_revenge_n_p05_of_6,6
+Sentencing ratio: did not reduce,514,H7_revenge_median_r,0.562090544195255
+Sentencing ratio: did not reduce,514,H7_jd_n_positive_of_6,6
+Sentencing ratio: did not reduce,514,H7_jd_n_two_sided_p05,5
+Sentencing ratio: did not reduce,514,H7_jd_median_r,0.2368223996536274
+Sentencing ratio: did not reduce,514,H8_n_p05_of_6,6
+Sentencing ratio: did not reduce,514,H8_median_r,0.5909805172051573
+Sentencing ratio: did not reduce,514,H9_jd_vs_revenge_d,0.7650290034376929
+Sentencing ratio: did not reduce,514,H9_p_one_sided,1.1317293254132976e-53
+Sentencing ratio: did not reduce,514,H10_diff,0.2724105766983515
+Sentencing ratio: did not reduce,514,H10_diff_lower,0.19352892376542036
+Sentencing ratio: did not reduce,514,H10_diff_upper,0.3530011831209348
+Sentencing ratio: did not reduce,514,H10_z,6.857438837382611
+Sentencing ratio: did not reduce,514,H10_p_one_sided,3.5053071556490067e-12

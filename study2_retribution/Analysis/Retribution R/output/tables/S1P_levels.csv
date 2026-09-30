@@ -1,0 +1,26 @@
+"demographic","statistic","value"
+"Political orientation","M, liberals",-0.312159649578218
+"Political orientation","M, moderates",0.0460009067329369
+"Political orientation","M, conservatives",0.284074885467583
+"Political orientation","F (one-way ANOVA, three groups)",39.1301427653322
+"Political orientation","df1",2
+"Political orientation","df2",493
+"Political orientation","p (ANOVA)",1.68723883484037e-16
+"Political orientation","d, conservatives minus liberals",0.903385532845776
+"Political orientation","r with the 1-to-7 item",0.427787804518265
+"Gender","M, men",-0.0671301954501749
+"Gender","M, women",0.0583542607392074
+"Gender","t (Welch, women minus men)",1.97375986240269
+"Gender","df",489.976522699
+"Gender","p",0.0489704049336433
+"Gender","d, women minus men",0.177842365234415
+"Race","M, White",-0.0187699870927749
+"Race","M, non-White",0.0353574175468549
+"Race","t (Welch, non-White minus White)",0.810789971169828
+"Race","df",351.040633161826
+"Race","p",0.418035635003476
+"Race","d, non-White minus White",0.0763119392781378
+"Age","r",-0.0606442762369074
+"Age","p",0.177515044176227
+"Education","r",0.0424977889998964
+"Education","p",0.344909386215285

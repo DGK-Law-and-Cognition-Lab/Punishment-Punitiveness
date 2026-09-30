@@ -1,0 +1,37 @@
+grouping,x,y,n,r,ci_lower,ci_upper,p_two,p_dir,alternative
+Ranking (retribution first),Punitiveness (six components),Restricting due-process rights,371,0.44392504490225293,0.35830377004971636,0.5221410796692035,2.394778506625887e-19,1.1973892533129436e-19,greater
+Ranking (retribution first),Punitiveness (six components),Convicting on substandard evidence,371,0.25805197891461074,0.16045150523580926,0.35065507073373864,4.673328667212277e-7,2.3366643336061385e-7,greater
+Ranking (retribution first),Punitiveness (six components),Hatred toward offenders,371,0.5323592240989751,0.4552170970868715,0.6015686895821705,1.53772083302954e-28,7.6886041651477e-29,greater
+Ranking (retribution first),Punitiveness (six components),Degradation of prisoners,371,0.47056787420839563,0.3873082026902493,0.546214138115241,7.682136188530136e-22,3.841068094265068e-22,greater
+Ranking (retribution first),Punitiveness (six components),Infliction of suffering,371,0.5112263256305274,0.4318905489953695,0.5827116959162171,4.2949328039366026e-26,2.1474664019683013e-26,greater
+Ranking (retribution first),Punitiveness (six components),Tolerance of prison violence,371,0.45028933813777233,0.36521719782578455,0.5279028724724996,6.357551292355939e-20,3.1787756461779694e-20,greater
+Ranking (retribution first),Punitiveness (six components),Harsh prison conditions,371,0.577594103880135,0.5055059511805757,0.6416744062103047,2.145408654939933e-34,1.0727043274699666e-34,greater
+Ranking (retribution first),Punitiveness (six components),A painful death for the shark,371,0.05221351189351099,-0.0498677480511783,0.15321514682298973,0.3158638468662229,0.15793192343311144,greater
+Ranking (retribution first),Punitiveness (six components),Putting the shark to death (yes),371,0.17374149576105224,0.07322059131791012,0.2707678502552611,7.771711064345093e-4,3.8858555321725466e-4,greater
+"Median split, upper half",Punitiveness (six components),Restricting due-process rights,470,0.5871225584445582,0.5245288608105477,0.6434034987361671,6.936111992185418e-45,3.468055996092709e-45,greater
+"Median split, upper half",Punitiveness (six components),Convicting on substandard evidence,470,0.4130014837233443,0.33506967817051436,0.485320613971791,8.723320575057733e-21,4.3616602875288664e-21,greater
+"Median split, upper half",Punitiveness (six components),Hatred toward offenders,470,0.6769694613559263,0.6247766078091257,0.723139474220766,2.7341017922511303e-64,1.3670508961255651e-64,greater
+"Median split, upper half",Punitiveness (six components),Degradation of prisoners,470,0.5708961219217898,0.5066071804893549,0.628871729379722,5.324216339922995e-42,2.6621081699614974e-42,greater
+"Median split, upper half",Punitiveness (six components),Infliction of suffering,470,0.6453981617433839,0.5893533709484908,0.6952605907939654,1.0052597860527849e-56,5.0262989302639245e-57,greater
+"Median split, upper half",Punitiveness (six components),Tolerance of prison violence,470,0.5322167391513374,0.46410968549256054,0.5940678438141137,9.853052251102768e-36,4.926526125551384e-36,greater
+"Median split, upper half",Punitiveness (six components),Harsh prison conditions,470,0.6992410453017442,0.6498954057267263,0.7427162083711518,3.190141419228486e-70,1.595070709614243e-70,greater
+"Median split, upper half",Punitiveness (six components),A painful death for the shark,470,0.15671347965058277,0.06721780944447459,0.24370749833490146,6.507975708093985e-4,3.2539878540469925e-4,greater
+"Median split, upper half",Punitiveness (six components),Putting the shark to death (yes),470,0.2260504728323526,0.1384324014345853,0.31015746819112155,7.351234410005272e-7,3.675617205002636e-7,greater
+Top third,Punitiveness (six components),Restricting due-process rights,314,0.5812923759532609,0.5029692917737312,0.6501461353011402,8.942231672012686e-30,4.471115836006343e-30,greater
+Top third,Punitiveness (six components),Convicting on substandard evidence,314,0.39834015180718196,0.3009238350777389,0.4875290649969063,2.1957031988877176e-13,1.0978515994438588e-13,greater
+Top third,Punitiveness (six components),Hatred toward offenders,314,0.6785349807148201,0.6139612855900083,0.7340868857985415,1.0552094781024096e-43,5.276047390512048e-44,greater
+Top third,Punitiveness (six components),Degradation of prisoners,314,0.592626106545124,0.5157738862327251,0.6600168216154062,3.697523935739862e-31,1.848761967869931e-31,greater
+Top third,Punitiveness (six components),Infliction of suffering,314,0.6419647433009061,0.5719185345364018,0.7027170339433391,7.148805642150923e-38,3.5744028210754615e-38,greater
+Top third,Punitiveness (six components),Tolerance of prison violence,314,0.5383513371539174,0.4547653756664205,0.6125362248325117,5.41243979174332e-25,2.70621989587166e-25,greater
+Top third,Punitiveness (six components),Harsh prison conditions,314,0.7066745868261184,0.646563179594285,0.7580646210990539,8.433037255070663e-49,4.2165186275353315e-49,greater
+Top third,Punitiveness (six components),A painful death for the shark,314,0.18934523298148914,0.08034504890793774,0.2938704602651391,7.452111850044249e-4,3.7260559250221247e-4,greater
+Top third,Punitiveness (six components),Putting the shark to death (yes),314,0.22729542651432635,0.11962082910667213,0.32968522995916116,4.804232245137476e-5,2.402116122568738e-5,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Restricting due-process rights,514,0.5354592545160257,0.47077385073137284,0.5944186300745201,1.7839768575038622e-39,8.919884287519311e-40,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Convicting on substandard evidence,514,0.4071505969324052,0.3323672469091465,0.47684636487326904,6.055307548751084e-22,3.027653774375542e-22,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Hatred toward offenders,514,0.6455197058032015,0.5920883918284597,0.6933004402613884,6.385222327882481e-62,3.1926111639412405e-62,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Degradation of prisoners,514,0.5538461386677626,0.490872089128722,0.6110629797178326,1.1758123673665604e-42,5.879061836832802e-43,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Infliction of suffering,514,0.6238924450451486,0.5680569376992208,0.67401082470222,8.574582862852022e-57,4.287291431426011e-57,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Tolerance of prison violence,514,0.4531084299564265,0.3815744947019022,0.5192472416954224,2.1811616367390573e-27,1.0905808183695287e-27,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Harsh prison conditions,514,0.6850287974071991,0.6362362557839122,0.7283631742201245,1.902159057798371e-72,9.510795288991855e-73,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),A painful death for the shark,514,0.1323138249854096,0.046357223589199026,0.2163254061343506,0.002649845468664257,0.0013249227343321286,greater
+"Sentencing ratio, kept or raised",Punitiveness (five attitude components),Putting the shark to death (yes),514,0.1931369276555,0.1084615660423884,0.27502995581474615,1.0354177153228518e-5,5.177088576614259e-6,greater

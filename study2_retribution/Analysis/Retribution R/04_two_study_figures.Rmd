@@ -1,0 +1,3011 @@
+---
+title: "The paper's figures: Study 1, both studies, and Study 2"
+subtitle: "Study 1 (The Dark Side of Punishment, N = 496) and Study 2 (Retribution, N = 948)"
+author: "David G. Kamper"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+---
+
+# What this document does
+
+The paper reports two studies. Study 1 is the Dark Side study; Study 2 is the
+Retribution study. Each has its own analysis documents, and neither is changed
+here. This document sets the two studies' results side by side, computed the
+same way in both, and draws the paper's figures for Study 1 and for Parts 1 to 3
+of Study 2's Results.
+
+**Reads.** Study 1's cleaned data, exactly as its own analysis wrote it; Study
+2's scored data and exported tables, exactly as `01_main_analysis.Rmd` wrote
+them.
+
+**The paper's scorings (settled by the co-authors on 27 September 2026; none
+is registered).** The paper scores several measures differently from the two
+studies' registrations, and this document uses the paper's scorings throughout:
+
+- **Punitiveness, in both studies, is the six components weighted equally.**
+  The five attitude components (support for more punishment, two items;
+  rejection of parsimony, two; three-strikes laws, two; life without parole,
+  one; the death penalty, one; each the mean of its items after reverse coding)
+  and the first sentence, standardized within its vignette, are each
+  standardized across the sample, and punitiveness is their mean. Study 1's
+  published score (`punitiveness_agg`) and Study 2's registered full index
+  (`punitiveness_full`) instead averaged two halves, the eight attitude items
+  and the sentence, so the single sentence counted for half.
+- **Where the sentence, or anything built from it, is on the other side** of an
+  analysis, punitiveness is the five attitude components, each standardized,
+  then averaged; the sentence cannot be both the outcome and part of the
+  score it is set against.
+- **Desert theory** is the mean of Study 2's five retribution items
+  (Retribution_1 to _5), and the paper's **just deserts** is the mean of desert
+  theory and the proportionality principle. The registered scores keep their
+  names with "(registered)".
+
+For Study 2 the two punitiveness scores come from section 7.4 of
+`01_main_analysis.Rmd` (exported per participant in `PAPER_person_scores.csv`)
+and are rebuilt here from the items as a check. For Study 1 they are built here
+from its cleaned data. Every Study 1 computation below is first run on Study
+1's published index and checked against that study's own exports, and only then
+run on the six components, so the code that produces a new number is code that
+has just reproduced an old one.
+
+**Computes.** Study 1 quantities that its own documents never exported, and a
+small number of cross-study quantities. Section 3c computes every Study 1
+number the paper's main text and Supplement Section S1 report on the six
+components (Table 1's punitiveness column, H2 and its bootstrap interval,
+Tables S1 to S3, and the statements of Section S1) and writes them to
+`output/tables/` with the prefix `S1P_`. Every quantity is tied to the analysis
+of record by a guard: a Study 1 number is checked against that study's exported
+tables or its submitted manuscript (on the published index), or against the
+independently verified values of the six-component rescoring; a Study 2 number
+rebuilt here is checked against the value `01_main_analysis.Rmd` exported. The
+knit stops if any guard fails. Where a guard can only check part of a quantity
+(for example, a value the manuscript prints to two decimals), the comment beside
+it says so.
+
+**Writes.** The paper's grayscale figures, as PNG and PDF, to
+`output/figures/two_study/`. Each paper figure's PNG is copied to the
+manuscript's figure folder (`Docs/Writing/figures/paper/`), which the Word draft
+embeds, and its PDF to the Overleaf project's figure folder
+(`Docs/Writing/overleaf/retribution-results/figures/`). The figures are Study
+1's sentences (a histogram, `fig1`) and its two correlation matrices (`fig2`,
+the clusters; `fig4`, the eighteen correlates), redrawn here from Study 1's data
+on the six components; the three two-study figures (`fig5` to `fig7`); Study 2's
+figures for Part 2 of its Results (`fig8` to `fig13`, `fig17`, `fig18`); and
+three for Part 3 (`fig14` to `fig16`). `fig3`, Study 1's sensitivity analysis on
+its published index, is no longer a paper figure: it is drawn to the output
+folder only. Tables go to `output/tables/`, prefixed `two_study_` (the two
+studies side by side) or `S1P_` (Study 1 on the paper's scoring).
+
+**Run order.** Knit `01_main_analysis.Rmd` first. This document reads its
+exports and stops if they are missing.
+
+```{r setup, include = FALSE}
+# === SETUP ===
+# echo = TRUE so every computation is visible in the knitted report, as in the
+# other documents in this folder. message and warning are silenced only for
+# package start-up chatter. Nothing below depends on a warning being seen:
+# every condition that matters is a stopifnot() guard, which halts the knit.
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.align = "center")
+```
+
+# 1. Paths, packages, and a check that the inputs are the right files
+
+```{r paths}
+# === PATHS AND INPUT CHECKS ===
+# WHAT THIS CHUNK DOES: names every input and output, loads the packages, and
+# confirms that the Study 1 data file is the one its analysis produced.
+#
+# PATHS ARE RELATIVE to this document's folder, so the project runs from any
+# machine that keeps the two study folders side by side as they are now.
+# Study 1 sits three levels up and across: Retribution/Analysis/Retribution R
+# -> Punishment/ -> Punishment 2.1/Analysis/Punishment 2.1.
+S1_ROOT     <- file.path("..", "..", "..", "Punishment 2.1", "Analysis",
+                         "Punishment 2.1")
+S1_DATA     <- file.path(S1_ROOT, "data", "cleaned",
+                         "punishment_212_cleaned_data.csv")
+S1_H1_TABLE <- file.path(S1_ROOT, "output", "tables", "supplementary",
+                         "h1_construct_level_fdr.csv")
+S1_H2_EXT   <- file.path(S1_ROOT, "output", "tables", "h2_extended_steiger.csv")
+S2_TABLES   <- file.path("output", "tables")
+S2_DATA     <- file.path("data", "cleaned", "retribution_scored.rds")
+OUT_FIGURES <- file.path("output", "figures", "two_study")
+OUT_TABLES  <- file.path("output", "tables")
+# The manuscript's own figure folder. Knitting this document refreshes the
+# figures the Word draft embeds, so the draft can never carry a figure that
+# this analysis did not produce.
+DOCS_FIG    <- file.path("..", "..", "Docs", "Writing", "figures", "study2")
+dir.create(OUT_FIGURES, recursive = TRUE, showWarnings = FALSE)
+dir.create(DOCS_FIG, recursive = TRUE, showWarnings = FALSE)
+
+# The MD5 hash is a fingerprint of the file's exact contents. This is the hash
+# of the cleaned file Study 1's analysis wrote, the file every Study 1 number in
+# the submitted manuscript comes from. If the file has changed in any way, the
+# hash changes and the knit stops, because every Study 1 value below would
+# otherwise come from a different file than the published numbers did.
+S1_MD5 <- "ce8752c030aaba37089bddef18f93171"
+stopifnot(file.exists(S1_DATA), file.exists(S1_H1_TABLE),
+          file.exists(S1_H2_EXT), file.exists(S2_DATA))
+stopifnot(unname(tools::md5sum(S1_DATA)) == S1_MD5)
+
+# Study 2's exports must exist before anything is read from them. A missing file
+# means 01_main_analysis.Rmd has not been knitted since the section that writes
+# it was added; knit it first.
+# PAPER_H1 (section 9.19B) carries the eleven registered correlates on the
+# six-component score, and PAPER_person_scores (9.19A) the paper's scores for
+# every participant; both replace what this document used to read from the
+# registered run on the full index (H1_correlations_full_index), which is no
+# longer read here. H1_correlations (the eight-item scale) is still read, for the
+# comparison of the two studies on the attitude items alone.
+S2_NEEDED <- c("H1_correlations", "PAPER_H1", "PAPER_person_scores",
+               "DS_personality_correlates", "DS_revenge_darkside",
+               "DS_cluster_correlations", "DS_tautology_ladder",
+               "DS_H2_by_part", "H2_steiger", "E2_solidarity_steiger",
+               "descriptives", "sentence_ceiling_share", "sentence_modal_share")
+S2_MISSING <- S2_NEEDED[!file.exists(file.path(S2_TABLES,
+                                               paste0(S2_NEEDED, ".csv")))]
+if (length(S2_MISSING)) stop("Knit 01_main_analysis.Rmd first. Missing: ",
+                             paste(S2_MISSING, collapse = ", "))
+
+library(ggplot2)
+library(patchwork)   # stacks two panels into one figure
+# Section 3c also uses boot (the bootstrap), car (type 3 tests), lme4 (the
+# mixed model) and psych (Cronbach's alpha). Each is called with its package
+# name (boot::boot(), car::Anova() and so on) rather than attached, so none of
+# them can mask a function this document uses under the same name.
+stopifnot(requireNamespace("boot", quietly = TRUE),
+          requireNamespace("car", quietly = TRUE),
+          requireNamespace("lme4", quietly = TRUE),
+          requireNamespace("psych", quietly = TRUE))
+
+s1 <- read.csv(S1_DATA, stringsAsFactors = FALSE)
+s2 <- as.data.frame(readRDS(S2_DATA))
+read_s2 <- function(name) read.csv(file.path(S2_TABLES, paste0(name, ".csv")),
+                                   stringsAsFactors = FALSE)
+stopifnot(nrow(s1) == 496, nrow(s2) == 948)
+cat(sprintf("Study 1: %d participants. Study 2: %d participants.\n",
+            nrow(s1), nrow(s2)))
+```
+
+# 2. One comparison function, checked against the analysis of record
+
+```{r steiger}
+# === THE DEPENDENT-CORRELATION COMPARISON ===
+# WHAT THIS CHUNK DOES: defines the one function every comparison between two
+# correlations goes through below, then proves it computes exactly what the main
+# analysis computes before it is used for anything.
+#
+# THE TEST. Two correlations measured on the same people share those people, so
+# their difference cannot be tested as if they came from two samples. Steiger's
+# (1980) test handles that dependence; Zou's (2007) interval gives the range of
+# differences the data leave standing. Both come from cocor, the package
+# 01_main_analysis.Rmd uses, called the same way. j is the variable the two
+# correlations share (punitiveness); k and h are the two rivals.
+# THE p IS ONE-SIDED ("greater": k correlates more strongly than h), as in the
+# registered tests. Study 1's manuscript reports two-sided p values, so the
+# column is named p_one_sided and a two-sided p is added beside it.
+two_steiger <- function(data, j, k, h) {
+  ok <- stats::complete.cases(data[[j]], data[[k]], data[[h]])
+  x  <- data[ok, ]
+  r_jk <- cor(x[[j]], x[[k]]); r_jh <- cor(x[[j]], x[[h]])
+  r_kh <- cor(x[[k]], x[[h]]); n <- nrow(x)
+  res <- cocor::cocor.dep.groups.overlap(
+    r.jk = r_jk, r.jh = r_jh, r.kh = r_kh, n = n,
+    alternative = "greater", test = c("steiger1980", "zou2007"),
+    return.htest = TRUE)
+  z <- unname(res$steiger1980$statistic)
+  data.frame(r_jk = r_jk, r_jh = r_jh, r_kh = r_kh, n = n, diff = r_jk - r_jh,
+             diff_lower = res$zou2007$conf.int[1],
+             diff_upper = res$zou2007$conf.int[2],
+             z = z, p_one_sided = res$steiger1980$p.value,
+             p_two_sided = 2 * pnorm(-abs(z)))
+}
+
+# GUARD 1. The registered H2 exactly as 01_main_analysis.Rmd exported it: both
+# correlations, the difference, both ends of its interval, and z. (Its p
+# underflows to zero, so the p is checked on the next guard instead.)
+g2 <- two_steiger(s2, "punitiveness", "hostile_agg", "crime_concerns")
+h2_rec <- read_s2("H2_steiger")
+for (f in c("r_jk", "r_jh", "diff", "diff_lower", "diff_upper", "z"))
+  stopifnot(isTRUE(all.equal(g2[[f]], h2_rec[[f]], tolerance = 1e-8)))
+# GUARD 2. The E2 comparison, whose p is small but not zero, so the p the
+# function returns is checked as well.
+ge2 <- two_steiger(s2, "punitiveness", "solidarity_hostile", "solidarity_durk")
+e2_rec <- read_s2("E2_solidarity_steiger")
+for (f in c("diff", "diff_lower", "diff_upper", "z"))
+  stopifnot(isTRUE(all.equal(ge2[[f]], e2_rec[[f]], tolerance = 1e-8)))
+stopifnot(isTRUE(all.equal(ge2$p_one_sided, e2_rec$p, tolerance = 1e-8)))
+cat("The comparison function reproduces Study 2's H2 and E2 exactly.\n")
+```
+
+# 3. Study 1, computed from its cleaned data and checked against its record
+
+```{r study1_scores}
+# === 3.0 STUDY 1'S PUNITIVENESS: THE PUBLISHED INDEX AND THE PAPER'S TWO SCORES ===
+# WHAT THIS CHUNK DOES: adds the paper's two punitiveness scores to s1, built
+# exactly as Study 2's section 7.4 builds them, after checking that Study 1's
+# published score is what this document takes it to be.
+#   s1$punit_six     SIX COMPONENTS WEIGHTED EQUALLY, the paper's punitiveness
+#                    in the main text: the five attitude components and the
+#                    first sentence (Sentence_z, standardized within vignette),
+#                    each standardized across the sample, then averaged.
+#   s1$punit_five_z  THE FIVE ATTITUDE COMPONENTS, EACH STANDARDIZED, averaged:
+#                    the paper's punitiveness wherever the sentence is on the
+#                    other side of an analysis. In Study 1 that is only Table
+#                    S3, whose outcome is the sentence.
+# PREREG: NOT REGISTERED. Study 1's registered and published primary measure is
+#         punitiveness_agg, the eight-item scale and the sentence each
+#         standardized and averaged, so that the one sentencing decision counts
+#         for half of the score. The co-authors decided on 27 September 2026
+#         that the sentence is one component of six, not half. punitiveness_agg
+#         is kept in s1, unchanged: every Study 1 guard below reproduces the
+#         published numbers on it before the same code is run on punit_six.
+# CONSUMES: s1 (section 1).
+# DANGER: never overwrite s1$punitiveness_agg with a new score. The guards in
+#         sections 3, 3b and 3c check this document's code against Study 1's
+#         exports through that column; if it changed, those guards would check
+#         the new score against the old exports and stop the knit, or worse,
+#         be edited to pass.
+
+# zmean(): standardize each argument across the sample, then average them for
+# each participant. It is a copy of the helper in 01_main_analysis.Rmd (section
+# 0.3), which builds Study 2's six-component score with it, so both studies'
+# scores come from the same rule. Standardizing first is what makes the parts
+# count equally: the attitude components are 1-to-7 means with different
+# spreads and the sentence is already a z-score, so a plain mean would let the
+# widest-spread part count for most.
+zmean <- function(...) {
+  m <- scale(cbind(...))
+  out <- rowMeans(m, na.rm = TRUE)
+  out[is.nan(out)] <- NA_real_
+  as.numeric(out)
+}
+
+# --- The components, as Study 1's cleaned file stores them -------------------
+# Study 1's cleaning built each two-item component as the mean of its items
+# after reverse coding (the _R columns), and the one-item components are the
+# items themselves. GUARD: every component is exactly that mean, so the six
+# components here are the ones the published scale was built from, and no
+# participant is missing any of them (Study 1 required every answer).
+S1_ITEMS8 <- c("punishmore_1_R", "punishmore_2", "parsimony_1_R", "parsimony_2_R",
+               "threestrikes_1", "threestrikes_2", "LWOP", "deathpenalty")
+S1_PARTS  <- c("punishmore_comp", "parsimony_comp", "threestrikes_comp",
+               "LWOP", "deathpenalty")
+stopifnot(!anyNA(s1[, c(S1_ITEMS8, S1_PARTS, "Sentence_z", "Sentence_1")]),
+          max(abs(s1$punishmore_comp -
+                    rowMeans(s1[, c("punishmore_1_R", "punishmore_2")]))) < 1e-12,
+          max(abs(s1$parsimony_comp -
+                    rowMeans(s1[, c("parsimony_1_R", "parsimony_2_R")]))) < 1e-12,
+          max(abs(s1$threestrikes_comp -
+                    rowMeans(s1[, c("threestrikes_1", "threestrikes_2")]))) < 1e-12)
+
+# --- The published index, rebuilt ------------------------------------------
+# GUARD: Study 1's sentence z-score is the first sentence standardized within
+# each vignette, and its published index is the mean of the standardized
+# eight-item scale and that z-score. Rebuilt from the items, both agree with
+# the stored columns to rounding error. This pins down what "the published
+# index" means in every comparison below.
+s1_sz <- ave(s1$Sentence_1, s1$vignette, FUN = function(x) as.numeric(scale(x)))
+s1_old_rebuilt <- rowMeans(cbind(as.numeric(scale(rowMeans(s1[, S1_ITEMS8]))),
+                                 s1$Sentence_z))
+stopifnot(max(abs(s1_sz - s1$Sentence_z)) < 1e-10,
+          max(abs(s1_old_rebuilt - s1$punitiveness_agg)) < 1e-10,
+          max(abs(rowMeans(s1[, S1_ITEMS8]) - s1$punitiveness_8item)) < 1e-10)
+
+# --- The paper's two scores --------------------------------------------------
+s1$punit_six <- zmean(s1$punishmore_comp, s1$parsimony_comp, s1$threestrikes_comp,
+                      s1$LWOP, s1$deathpenalty, s1$Sentence_z)
+s1$punit_five_z <- zmean(s1$punishmore_comp, s1$parsimony_comp,
+                         s1$threestrikes_comp, s1$LWOP, s1$deathpenalty)
+# GUARDS, against the independently verified rescoring of Study 1 (scratch
+# report "study1-six", 27 Sep 2026): the six-component score correlates .928
+# with the published index and .967 with the eight-item scale, and the
+# standardized five-component score correlates .99 with the eight-item scale
+# (it is the eight attitude items reweighted so each component counts a fifth;
+# a component turned upside down would pull this far lower).
+stopifnot(!anyNA(s1$punit_six), !anyNA(s1$punit_five_z),
+          round(cor(s1$punit_six, s1$punitiveness_agg), 3) == 0.928,
+          round(cor(s1$punit_six, s1$punitiveness_8item), 3) == 0.967,
+          round(cor(s1$punit_five_z, s1$punitiveness_8item), 2) == 0.99)
+cat(sprintf(paste("Study 1: six components vs the published index r = %.3f;",
+                  "vs the eight-item scale r = %.3f;",
+                  "five components vs the eight-item scale r = %.3f.\n"),
+            cor(s1$punit_six, s1$punitiveness_agg),
+            cor(s1$punit_six, s1$punitiveness_8item),
+            cor(s1$punit_five_z, s1$punitiveness_8item)))
+```
+
+```{r study1}
+# === STUDY 1 QUANTITIES ===
+# WHAT THIS CHUNK DOES: computes, from Study 1's cleaned data, every Study 1
+# number the two-study comparisons need, on the paper's punitiveness score.
+# PUNITIVENESS is the six components weighted equally (s1$punit_six, section
+# 3.0), in both studies (Study 2's matching score is 01's punit_parts6, read in
+# section 4). NOT REGISTERED: see section 3.0.
+# HOW EACH NUMBER IS CHECKED: each computation is first run on Study 1's
+# published index (punitiveness_agg) and checked against Study 1's exported
+# tables or its submitted manuscript; the identical code is then run on
+# punit_six, and those are the numbers this document uses. The published-index
+# versions carry the suffix _old and are used for nothing but the guards.
+# CONSUMES: s1 with punit_six (3.0), two_steiger() (section 2).
+
+# --- A. The sixteen constructs both studies fielded -------------------------
+# Construct columns as Study 1 named them, paired with the one label each
+# carries in every table and figure of the paper, in Study 1's order. Revenge is
+# Study 1's three-item scale; Study 2's matching column is its three-item scoring
+# of the same items, not its registered four.
+s1_constructs <- c(
+  harsh_comp       = "Harsh prison conditions",
+  exclusion_comp   = "Social exclusion",
+  hatred_comp      = "Hatred",
+  suffering_comp   = "Infliction of suffering",
+  rwa_comp         = "Right-wing authoritarianism",
+  raceresent_comp  = "Racial resentment",
+  anger_comp       = "Anger",
+  degradation_comp = "Degradation",
+  dueprocess_comp  = "Due-process permissiveness",
+  revenge_comp     = "Revenge (three shared items)",
+  vprone_comp      = "Violence proneness",
+  crime_rates_comp = "Perceived crime rates",
+  uncertain_comp   = "Convicting on uncertain evidence",
+  prisonvi_comp    = "Tolerance of prison violence",
+  sdo_comp         = "Social dominance orientation",
+  fear_comp        = "Fear of crime")
+# Fisher-z 95% interval, the same interval cor.test() and the main analysis use.
+cor_ci <- function(x, y) {
+  tt <- cor.test(x, y)
+  data.frame(r = unname(tt$estimate), ci_lower = tt$conf.int[1],
+             ci_upper = tt$conf.int[2], n = sum(complete.cases(x, y)))
+}
+con_table <- function(score) do.call(rbind, lapply(names(s1_constructs), function(v)
+  cbind(construct = unname(s1_constructs[v]), cor_ci(s1[[score]], s1[[v]]))))
+# GUARD: on the published index, every correlation against Study 1's own
+# exported H1 table, to the three decimals that table prints.
+s1_con_old <- con_table("punitiveness_agg")
+s1_h1 <- read.csv(S1_H1_TABLE, stringsAsFactors = FALSE)
+s1_h1_r <- setNames(s1_h1$r, s1_h1$Construct)[names(s1_constructs)]
+stopifnot(!anyNA(s1_h1_r), all(abs(round(s1_con_old$r, 3) - s1_h1_r) < 1e-9))
+# The paper's numbers: the same sixteen correlations on the six components.
+s1_con <- con_table("punit_six")
+
+# --- B. The four clusters ---------------------------------------------------
+s1_clusters <- c(hostile_agg        = "Hostile aggression",
+                 emotions_agg       = "Emotions",
+                 personality_agg    = "Personality and ideology",
+                 crime_concerns_agg = "Crime concerns")
+clu_table <- function(score) do.call(rbind, lapply(names(s1_clusters), function(v)
+  cbind(cluster = unname(s1_clusters[v]), cor_ci(s1[[score]], s1[[v]]))))
+# GUARD: on the published index, against Study 1's exported cluster table, to
+# its three decimals.
+s1_clu_old <- clu_table("punitiveness_agg")
+s1_h2x <- read.csv(S1_H2_EXT, stringsAsFactors = FALSE)
+stopifnot(all(abs(round(s1_clu_old$r[1:3], 3) - s1_h2x$r_Cluster[1:3]) < 1e-9),
+          abs(round(s1_clu_old$r[4], 3) - s1_h2x$r_Crime[1]) < 1e-9)
+# The paper's numbers. GUARD: the verified six-component values (hostile
+# aggression .690, emotions .622, personality .597, crime concerns .360).
+s1_clu <- clu_table("punit_six")
+stopifnot(all(abs(round(s1_clu$r, 3) - c(.690, .622, .597, .360)) < 1e-9))
+# Study 1's personality cluster pools thirty items, including trait
+# vengefulness and blood sports viewership, which Study 2 did not field. For a
+# like-for-like comparison, the cluster is also rebuilt here from the twenty-one
+# items of the four measures both studies share. The figure shows the published
+# thirty-item value; this one is reported beside it.
+shared_personality_items <- c("rwa_1", "rwa_2", "rwa_3_R", "rwa_4", "rwa_5",
+                              "sdo_1", "sdo_2", "sdo_3_R", "sdo_4_R", "sdo_5",
+                              "sdo_6", "sdo_7_R", "sdo_8_R",
+                              paste0("vprone_", 1:4),
+                              "Raceresent_1_R", "Raceresent_2", "Raceresent_3",
+                              "Raceresent_4_R")
+stopifnot(all(shared_personality_items %in% names(s1)))
+s1$personality_shared <- rowMeans(s1[, shared_personality_items], na.rm = TRUE)
+s1_pers_shared <- cor_ci(s1$punit_six, s1$personality_shared)
+# GUARD: the verified six-component value, .629 (the published index gave .513).
+stopifnot(round(s1_pers_shared$r, 3) == 0.629,
+          round(cor(s1$punitiveness_agg, s1$personality_shared), 3) == 0.513)
+
+# --- C. The three-level sensitivity analysis -------------------------------
+# Study 1's own levels (03_supplementary_analyses.Rmd): all six hostility
+# constructs; four, with suffering and harsh conditions dropped; exclusion and
+# revenge alone. The two narrower levels average composites, as that study
+# built them.
+s1$hostile_cons   <- rowMeans(s1[, c("exclusion_comp", "degradation_comp",
+                                     "prisonvi_comp", "revenge_comp")],
+                              na.rm = TRUE)
+s1$hostile_strict <- rowMeans(s1[, c("exclusion_comp", "revenge_comp")],
+                              na.rm = TRUE)
+LEVELS <- c("All six constructs", "Four constructs", "Exclusion and revenge only")
+ladder_table <- function(score) {
+  out <- do.call(rbind, list(
+    two_steiger(s1, score, "hostile_agg",    "crime_concerns_agg"),
+    two_steiger(s1, score, "hostile_cons",   "crime_concerns_agg"),
+    two_steiger(s1, score, "hostile_strict", "crime_concerns_agg")))
+  out$row <- LEVELS
+  out
+}
+# GUARD: on the published index, the manuscript prints these three differences
+# to three decimals and their Steiger Zs to two.
+s1_ladder_old <- ladder_table("punitiveness_agg")
+stopifnot(all(abs(s1_ladder_old$diff - c(.264, .226, .221)) < .0005),
+          all(abs(s1_ladder_old$z - c(6.26, 5.07, 5.05)) < .005))
+# The paper's numbers. GUARD: the verified six-component differences (.331,
+# .286, .263) and Zs (8.54, 6.90, 6.38).
+s1_ladder <- ladder_table("punit_six")
+stopifnot(all(abs(round(s1_ladder$diff, 3) - c(.331, .286, .263)) < 1e-9),
+          all(abs(round(s1_ladder$z, 2) - c(8.54, 6.90, 6.38)) < 1e-9))
+
+# --- D. Each component of punitiveness separately --------------------------
+# In the order the manuscript reports them, which is also the order of the
+# figure panel and of the text. Each part is tested on its own, so how the
+# parts are weighted into one score does not enter here: these rows are the
+# same under the published index and the six components.
+PARTS <- c(punishmore_comp   = "Punish more",
+           parsimony_comp    = "Rejection of parsimony",
+           deathpenalty      = "Death penalty",
+           threestrikes_comp = "Three strikes",
+           LWOP              = "Life without parole",
+           Sentence_z        = "The sentencing decision")
+s1_bypart <- do.call(rbind, lapply(names(PARTS), function(v)
+  two_steiger(s1, v, "hostile_agg", "crime_concerns_agg")))
+s1_bypart$row <- unname(PARTS)
+# GUARD: the manuscript prints these differences to TWO decimals (.34, .31,
+# .32, .22, .15, .08) and the Zs to two. The differences are therefore checked
+# at the precision the manuscript prints; the Zs pin the computation down more
+# tightly. The sentence is Sentence_z, the within-vignette z-score, which gives
+# Z = 1.60 (the raw years would give 1.59).
+stopifnot(all(abs(round(s1_bypart$diff, 2) - c(.34, .31, .32, .22, .15, .08)) < 1e-9),
+          all(abs(s1_bypart$z - c(8.23, 6.70, 7.23, 5.06, 3.27, 1.60)) < .005))
+
+# --- E. The twelve shared constructs on the eight-item scale ---------------
+# Study 1's eight attitude items, without the sentence, against the same twelve
+# constructs Study 2 registered (revenge on the three shared items). Set beside
+# Study 2's eight-item correlations, this shows whether the two studies differ on
+# the attitude items themselves or only once the sentence is folded in.
+s1_eight <- do.call(rbind, lapply(setdiff(names(s1_constructs),
+                                          c("rwa_comp", "raceresent_comp",
+                                            "vprone_comp", "sdo_comp")),
+  function(v) cbind(construct = unname(s1_constructs[v]),
+                    cor_ci(s1$punitiveness_8item, s1[[v]]))))
+cat("Study 1: on the published index, all sixteen constructs, the four clusters,\n")
+cat("the three levels of the sensitivity analysis and all six parts reproduce\n")
+cat("Study 1's record; the same code on the six components gives the paper's values.\n")
+```
+
+# 3b. Study 1 descriptives that the Method and the Supplement report
+
+```{r study1_reported}
+# === STUDY 1 NUMBERS REPORTED IN THE METHOD AND THE SUPPLEMENT ===
+# WHAT THIS CHUNK DOES: computes four Study 1 descriptives that the paper
+# reports but that no Study 1 output prints, and writes them, one row each,
+# to output/tables/two_study_s1_descriptives.csv. Each is checked against the
+# Study 1 export it can be checked against. None involves a punitiveness score.
+#   1. The shares of liberals, moderates and conservatives (the Method).
+#   2. The median completion time and its interquartile range (the Method).
+#   3. The first and last day a response was started (the Method).
+#   4. Sentences compared across the three political groups by a one-way
+#      analysis of variance (Supplement, Section S1). Not preregistered.
+# MOVED: the median range of each correlate's correlation with punitiveness
+# across the three vignettes used to be a fifth row here, on the published
+# index. It now depends on the punitiveness score, so it is computed in section
+# 3c on the six components (with the published-index value reproduced as a
+# guard) and written to S1P_vignette_summary.csv; this file no longer has it.
+# CONSUMES: s1 and S1_ROOT (section 1).
+# NOTHING HERE CHANGES s1 OR ANY NUMBER ABOVE.
+
+s1_out <- list()
+add_s1 <- function(quantity, value, detail) {
+  s1_out[[length(s1_out) + 1]] <<- data.frame(quantity = quantity, value = value,
+                                                detail = detail,
+                                                stringsAsFactors = FALSE)
+}
+
+# --- 1. Political groups ------------------------------------------------------
+# Study 1 groups the 1-7 liberal-conservative item as 1 to 3 = liberal, 4 =
+# moderate, 5 to 7 = conservative (its 01_main_analysis.Rmd, "Recode political
+# orientation"). GUARD: the column in the cleaned file follows that rule for
+# every participant, and the group sizes match Study 1's exported table of
+# sentences by political group.
+s1_pol <- read.csv(file.path(S1_ROOT, "output", "tables", "supplementary",
+                             "sentence_anchor_by_political_group.csv"),
+                   stringsAsFactors = FALSE)
+rule <- ifelse(s1$politid <= 3, "Liberal", ifelse(s1$politid == 4, "Moderate",
+                                                  "Conservative"))
+stopifnot(identical(rule, s1$political_group), !anyNA(s1$political_group))
+pol_n <- table(factor(s1$political_group,
+                      levels = c("Liberal", "Moderate", "Conservative")))
+stopifnot(all(pol_n[s1_pol$political_group] == s1_pol$n))
+for (g in names(pol_n))
+  add_s1(paste("percent", tolower(g)), 100 * unname(pol_n[g]) / nrow(s1),
+         sprintf("%d of %d", unname(pol_n[g]), nrow(s1)))
+
+# --- 2. Completion time -------------------------------------------------------
+# Qualtrics records the time from opening the survey to submitting it, in
+# seconds. Quartiles use R's default quantile rule (type 7).
+mins <- s1$Duration..in.seconds. / 60
+stopifnot(!anyNA(mins), length(mins) == 496)
+q <- stats::quantile(mins, c(.25, .50, .75))
+add_s1("completion minutes, median", unname(q[2]), "")
+add_s1("completion minutes, 25th percentile", unname(q[1]), "")
+add_s1("completion minutes, 75th percentile", unname(q[3]), "")
+
+# --- 3. Dates of collection ---------------------------------------------------
+# The cleaned file has no start date, so the dates come from the last raw
+# Qualtrics export, matched on ResponseId. A Qualtrics export has two further
+# header rows (question text and import ids) under the column names, which are
+# dropped. Only two columns are kept; the file's IP address and location
+# columns are never read into anything that is written out.
+S1_RAW <- file.path("..", "..", "..", "Punishment 2.1", "Data",
+                    "PUNISHMENT 2.1 -  Pro-Social_January 7, 2026_20.47.csv")
+raw <- read.csv(S1_RAW, stringsAsFactors = FALSE, check.names = FALSE)
+raw <- raw[-(1:2), c("ResponseId", "StartDate")]
+# GUARD: every analyzed participant is in this export, once.
+stopifnot(all(s1$ResponseId %in% raw$ResponseId), !anyDuplicated(raw$ResponseId))
+started <- as.Date(substr(raw$StartDate[match(s1$ResponseId, raw$ResponseId)], 1, 10))
+stopifnot(!anyNA(started))
+add_s1("first start date", NA_real_, format(min(started)))
+add_s1("last start date", NA_real_, format(max(started)))
+
+# --- 4. Sentences across the three political groups ---------------------------
+# GUARD: the group means match Study 1's exported table before the test is run.
+pol_means <- tapply(s1$Sentence_1, s1$political_group, mean)
+stopifnot(all(abs(round(pol_means[s1_pol$political_group], 2) - s1_pol$mean_sent) < 1e-9))
+pol_aov <- stats::anova(stats::lm(Sentence_1 ~ political_group, data = s1))
+add_s1("sentence by political group, F", pol_aov[1, "F value"],
+       sprintf("df = %d, %d; p = %.4f", pol_aov[1, "Df"], pol_aov[2, "Df"],
+               pol_aov[1, "Pr(>F)"]))
+
+# (The former item 5, the stability of the correlations across vignettes, is
+# in section 3c; see MOVED in the header of this chunk.)
+
+s1_reported <- do.call(rbind, s1_out)
+write.csv(s1_reported, file.path(OUT_TABLES, "two_study_s1_descriptives.csv"),
+          row.names = FALSE)
+print(s1_reported, row.names = FALSE, digits = 4)
+```
+
+# 3c. Study 1 on the paper's scoring: Table 1, H2, and Supplement Section S1
+
+The paper reports Study 1 with punitiveness scored as six components weighted
+equally (section 3.0). Study 1's own documents computed every number on its
+published index, so this section recomputes, from Study 1's cleaned data, each
+Study 1 number the paper's main text and Supplement Section S1 report that
+involves a punitiveness score:
+
+- Table 1's last column (the eighteen correlates and five clusters) and its
+  punitiveness row (number of parts, reliability, mean, SD);
+- H2 (hostile aggression against crime concerns) with its bootstrap interval,
+  the other clusters against crime concerns, the three levels of strictness
+  (Table S1), and the check without the parsimony items;
+- the demographic moderation tests (Tables S2 and S3);
+- Section S1's statements about punitiveness by political group, gender, race,
+  age and education, and about the stability of the correlations across the
+  three vignettes.
+
+**How each number is checked.** Every computation is run twice with the same
+code: first on the published index, where the result must reproduce Study 1's
+own export (the knit stops if it does not), then on the six components. The
+six-component results are checked against the independently verified values of
+the rescoring (scratch reports "study1-six", 27 September 2026). Only the
+six-component results are written, to `output/tables/S1P_*.csv`. None of this is
+registered: Study 1's registration and its published analyses used the index.
+
+```{r s1p_setup}
+# === 3c.0 SHARED PIECES FOR THE STUDY 1 RESCORING ===
+# WHAT THIS CHUNK DOES: checks that the Study 1 exports the guards below compare
+# against exist, and defines the two helpers every chunk in 3c uses.
+# PREREG: NOT REGISTERED (the paper's scoring; see section 3.0).
+# CONSUMES: S1_ROOT, OUT_TABLES (section 1); s1 with punit_six and punit_five_z
+#           (section 3.0).
+
+# Study 1's own exports, each written by its 01_main_analysis.Rmd or
+# 03_supplementary_analyses.Rmd. They are read only to check that the code here
+# reproduces the published numbers before it computes new ones.
+S1_SUPP <- file.path(S1_ROOT, "output", "tables", "supplementary")
+S1P_REFERENCE <- c(
+  file.path(S1_ROOT, "output", "tables", "reliability_alphas.csv"),
+  file.path(S1_ROOT, "output", "tables", "h2_extended_steiger.csv"),
+  file.path(S1_ROOT, "output", "tables", "vignette_correlation_stability.csv"),
+  file.path(S1_SUPP, "h1_construct_level_fdr.csv"),
+  file.path(S1_SUPP, "tautology_steiger_by_level.csv"),
+  file.path(S1_SUPP, "tautology_bootstrap_cis.csv"),
+  file.path(S1_SUPP, "parsimony_sensitivity.csv"),
+  file.path(S1_SUPP, "interactions_punitiveness_agg.csv"),
+  file.path(S1_SUPP, "interactions_sentence_z.csv"),
+  file.path(S1_SUPP, "punitiveness_levels_by_demographic.csv"),
+  file.path(S1_SUPP, "punitiveness_means_political.csv"))
+stopifnot(all(file.exists(S1P_REFERENCE)))
+read_s1 <- function(path) read.csv(path, stringsAsFactors = FALSE)
+
+# s1p_write(): writes one S1P_ table to output/tables and remembers its name, so
+# the chunk at the end of 3c can list everything this section wrote.
+S1P_WRITTEN <- character(0)
+s1p_write <- function(df, name) {
+  write.csv(df, file.path(OUT_TABLES, paste0("S1P_", name, ".csv")), row.names = FALSE)
+  S1P_WRITTEN <<- c(S1P_WRITTEN, paste0("S1P_", name))
+  invisible(df)
+}
+
+# s1p_steiger(): Steiger's (1980) test of two correlations that share one
+# variable (j, the punitiveness score), TWO-SIDED, exactly as Study 1's
+# run_steiger() calls cocor (its default alternative), plus Zou's (2007) 95%
+# interval for the difference. Section 2's two_steiger() runs the registered
+# one-sided test for Study 2; Study 1's manuscript reports two-sided p values,
+# so this section uses its own call rather than converting.
+s1p_steiger <- function(data, j, k, h) {
+  r_jk <- cor(data[[j]], data[[k]]); r_jh <- cor(data[[j]], data[[h]])
+  r_kh <- cor(data[[k]], data[[h]]); n <- nrow(data)
+  res <- cocor::cocor.dep.groups.overlap(
+    r.jk = r_jk, r.jh = r_jh, r.kh = r_kh, n = n,
+    test = c("steiger1980", "zou2007"), return.htest = TRUE)
+  data.frame(r_jk = r_jk, r_jh = r_jh, r_kh = r_kh, n = n, diff = r_jk - r_jh,
+             diff_lower = res$zou2007$conf.int[1],
+             diff_upper = res$zou2007$conf.int[2],
+             z = unname(res$steiger1980$statistic),
+             p_two = res$steiger1980$p.value)
+}
+# GUARD: s1 has no missing value on any column 3c uses, so every analysis below
+# rests on all 496 participants (except the gender tests, which, as in Study 1,
+# leave out the three participants who gave neither male nor female).
+S1P_COLS <- c("punitiveness_agg", "punit_six", "punit_five_z", "punitiveness_8item",
+              "Sentence_z", "hostile_agg", "emotions_agg", "personality_agg",
+              "process_agg", "crime_concerns_agg", "politid", "political_group",
+              "gender", "race", "age_1", "education", "vignette")
+stopifnot(all(S1P_COLS %in% names(s1)), !anyNA(s1[, S1P_COLS]), nrow(s1) == 496)
+```
+
+```{r s1p_table1}
+# === 3c.1 TABLE 1: PUNITIVENESS WITH THE EIGHTEEN CORRELATES AND FIVE CLUSTERS ===
+# WHAT THIS CHUNK DOES: computes Table 1's last column on the six components:
+# each of the eighteen correlates' and five clusters' correlation with
+# punitiveness, its 95% interval, and, for the eighteen, the Benjamini-Hochberg
+# corrected p (the correction H1 registered, over the eighteen tests). It also
+# computes Table 1's punitiveness row: the number of parts, Cronbach's alpha,
+# the mean and the SD.
+# PREREG: NOT REGISTERED. Study 1's H1 is registered on its published index;
+#         this is the same test on the paper's score.
+# CONSUMES: s1 with punit_six (3.0); cor_ci() (section 3).
+# WRITES: S1P_table1_correlations.csv (23 rows), S1P_punitiveness_scores.csv
+#         (4 rows).
+
+# The eighteen correlates and five clusters, in Table 1's order (by concept, as
+# Study 1's 01_main_analysis.Rmd orders them), with the paper's labels.
+S1P_CORRELATES <- c(
+  crime_rates_comp = "Perceived crime rates", fear_comp = "Fear of crime",
+  dueprocess_comp  = "Due-process permissiveness",
+  uncertain_comp   = "Convicting on uncertain evidence",
+  hatred_comp      = "Hatred", anger_comp = "Anger",
+  exclusion_comp   = "Social exclusion", degradation_comp = "Degradation",
+  suffering_comp   = "Infliction of suffering",
+  prisonvi_comp    = "Tolerance of prison violence",
+  harsh_comp       = "Harsh prison conditions", revenge_comp = "Revenge",
+  rwa_comp         = "Right-wing authoritarianism",
+  sdo_comp         = "Social dominance orientation",
+  venge_comp       = "Trait vengefulness", vprone_comp = "Violence proneness",
+  raceresent_comp  = "Racial resentment", bloodsports_comp = "Blood sports viewership")
+S1P_CLUSTERS <- c(crime_concerns_agg = "Crime concerns",
+                  process_agg        = "Process violations",
+                  emotions_agg       = "Emotions",
+                  hostile_agg        = "Hostile aggression",
+                  personality_agg    = "Personality and ideology")
+stopifnot(all(c(names(S1P_CORRELATES), names(S1P_CLUSTERS)) %in% names(s1)),
+          !anyNA(s1[, c(names(S1P_CORRELATES), names(S1P_CLUSTERS))]))
+
+# One row per measure: r, its Fisher-z 95% interval (cor.test(), as Study 1),
+# and the two-sided p. BH is applied over the eighteen correlates only, the
+# family H1 registered; the clusters are not in that family and carry no
+# corrected p.
+table1_col <- function(score) {
+  one <- function(v, lab, kind) {
+    tt <- cor.test(s1[[score]], s1[[v]])
+    data.frame(measure = lab, variable = v, kind = kind, n = nrow(s1),
+               r = unname(tt$estimate), ci_lower = tt$conf.int[1],
+               ci_upper = tt$conf.int[2], p_two = tt$p.value)
+  }
+  cor18 <- do.call(rbind, lapply(names(S1P_CORRELATES), function(v)
+    one(v, S1P_CORRELATES[[v]], "Correlate")))
+  cor18$p_BH <- p.adjust(cor18$p_two, method = "BH")
+  clu5 <- do.call(rbind, lapply(names(S1P_CLUSTERS), function(v)
+    one(v, S1P_CLUSTERS[[v]], "Cluster")))
+  clu5$p_BH <- NA_real_
+  rbind(cor18, clu5)
+}
+
+# GUARD, published index: the eighteen r, their intervals and the BH-corrected
+# p against Study 1's h1_construct_level_fdr.csv (r and interval to the three
+# decimals it prints, the corrected p exactly), and the clusters against
+# h2_extended_steiger.csv.
+t1_old <- table1_col("punitiveness_agg")
+h1fdr <- read_s1(file.path(S1_SUPP, "h1_construct_level_fdr.csv"))
+h1fdr <- h1fdr[match(names(S1P_CORRELATES), h1fdr$Construct), ]
+stopifnot(!anyNA(h1fdr$r),
+          all(abs(round(t1_old$r[1:18], 3) - h1fdr$r) < 1e-9),
+          all(abs(round(t1_old$ci_lower[1:18], 3) - h1fdr$CI_lo) < 1e-9),
+          all(abs(round(t1_old$ci_upper[1:18], 3) - h1fdr$CI_hi) < 1e-9),
+          isTRUE(all.equal(t1_old$p_BH[1:18], h1fdr$p_FDR, tolerance = 1e-8)))
+# h2_extended_steiger.csv lists hostile aggression, emotions, personality and
+# process violations in that order (checked by name), each with crime concerns'
+# r beside it; section 3c.2 reads it again for the Steiger tests.
+h2x_old <- read_s1(file.path(S1_ROOT, "output", "tables", "h2_extended_steiger.csv"))
+stopifnot(identical(h2x_old$Cluster, c("Hostile Aggression", "Emotions",
+                                       "Personality", "Process Violations")))
+t1_old_clu <- setNames(t1_old$r, t1_old$variable)[c("hostile_agg", "emotions_agg",
+                                                    "personality_agg", "process_agg")]
+stopifnot(all(abs(round(t1_old_clu, 3) - h2x_old$r_Cluster) < 1e-9),
+          abs(round(t1_old$r[t1_old$variable == "crime_concerns_agg"], 3) -
+                h2x_old$r_Crime[1]) < 1e-9)
+
+# The paper's numbers, on the six components.
+t1 <- table1_col("punit_six")
+# GUARDS, the verified six-component values: the eighteen correlations run from
+# .166 (blood sports) to .667 (harsh prison conditions), all eighteen are
+# significant after the BH correction (the largest corrected p is below .001),
+# and the clusters are hostile aggression .690 [.641, .734], emotions .622,
+# personality and ideology .597, process violations .558 and crime concerns
+# .360.
+t1_c <- t1[t1$kind == "Correlate", ]; t1_k <- t1[t1$kind == "Cluster", ]
+stopifnot(round(min(t1_c$r), 3) == 0.166, round(max(t1_c$r), 3) == 0.667,
+          t1_c$measure[which.min(t1_c$r)] == "Blood sports viewership",
+          t1_c$measure[which.max(t1_c$r)] == "Harsh prison conditions",
+          all(t1_c$p_BH < .05), max(t1_c$p_BH) < .001,
+          all(abs(round(setNames(t1_k$r, t1_k$variable)[c("hostile_agg", "emotions_agg",
+                    "personality_agg", "process_agg", "crime_concerns_agg")], 3) -
+                  c(.690, .622, .597, .558, .360)) < 1e-9),
+          round(t1_k$ci_lower[t1_k$variable == "hostile_agg"], 3) == 0.641,
+          round(t1_k$ci_upper[t1_k$variable == "hostile_agg"], 3) == 0.734)
+s1p_write(t1, "table1_correlations")
+
+# --- Table 1's punitiveness row, and the scores set side by side ------------
+# Cronbach's alpha of each score is the alpha of the parts exactly as that
+# score averages them. For the six components: the five components and the
+# sentence z-score, each standardized across the sample (the within-vignette
+# z-score standardized once more, as zmean() does when it builds the score);
+# the same rule as Study 2's PAPER_reliability. For the published index,
+# Study 1's own construction: the eight items standardized, beside the sentence
+# z-score (nine parts). check.keys = FALSE, so no part is silently reversed.
+s1_alpha <- function(df) suppressWarnings(suppressMessages(
+  psych::alpha(as.data.frame(df), check.keys = FALSE, warnings = FALSE)$total$raw_alpha))
+s1_parts_z <- as.data.frame(scale(s1[, S1_PARTS]))
+# GUARD: the five standardized components and the standardized sentence
+# average exactly to the six-component score, so the alpha below describes it.
+stopifnot(isTRUE(all.equal(as.numeric(rowMeans(data.frame(s1_parts_z,
+                                   s = as.numeric(scale(s1$Sentence_z))))),
+                           as.numeric(s1$punit_six))))
+s1p_scores <- data.frame(
+  score = c("Punitiveness (six components)",
+            "Punitiveness (five attitude components)",
+            "Published index (eight items standardized, plus the sentence)",
+            "Eight-item scale"),
+  column = c("punit_six", "punit_five_z", "punitiveness_agg", "punitiveness_8item"),
+  k = c(6, 5, 9, 8),
+  alpha = c(s1_alpha(data.frame(s1_parts_z, s = as.numeric(scale(s1$Sentence_z)))),
+            s1_alpha(s1_parts_z),
+            s1_alpha(data.frame(scale(s1[, S1_ITEMS8]), s = s1$Sentence_z)),
+            s1_alpha(s1[, S1_ITEMS8])),
+  stringsAsFactors = FALSE)
+s1p_scores$M  <- vapply(s1p_scores$column, function(v) mean(s1[[v]]), numeric(1))
+s1p_scores$SD <- vapply(s1p_scores$column, function(v) sd(s1[[v]]), numeric(1))
+s1p_scores$r_with_six <- vapply(s1p_scores$column, function(v)
+  cor(s1[[v]], s1$punit_six), numeric(1))
+s1p_scores$r_with_published_index <- vapply(s1p_scores$column, function(v)
+  cor(s1[[v]], s1$punitiveness_agg), numeric(1))
+s1p_scores$r_with_eight_item <- vapply(s1p_scores$column, function(v)
+  cor(s1[[v]], s1$punitiveness_8item), numeric(1))
+# GUARDS. The published alphas against Study 1's reliability_alphas.csv (.836
+# for the nine-part index, .842 for the eight items). The verified six-component
+# values: alpha .802, SD 0.71, and .928 with the published index. A standardized
+# score has mean 0, so the mean is checked to rounding error.
+rel_s1 <- read_s1(file.path(S1_ROOT, "output", "tables", "reliability_alphas.csv"))
+stopifnot(abs(round(s1p_scores$alpha[3], 3) -
+                rel_s1$Alpha[rel_s1$Construct == "Punitiveness (9 items, w/ sentence)"]) < 1e-9,
+          abs(round(s1p_scores$alpha[4], 3) -
+                rel_s1$Alpha[rel_s1$Construct == "Punitiveness (8 items)"]) < 1e-9,
+          round(s1p_scores$alpha[1], 3) == 0.802, round(s1p_scores$SD[1], 2) == 0.71,
+          abs(s1p_scores$M[1]) < 1e-12,
+          round(s1p_scores$r_with_published_index[1], 3) == 0.928)
+s1p_write(s1p_scores, "punitiveness_scores")
+knitr::kable(t1, digits = 3, caption = "Study 1, Table 1's last column on the six components")
+knitr::kable(s1p_scores, digits = 3, caption = "Study 1's punitiveness scores")
+```
+
+```{r s1p_h2}
+# === 3c.2 H2, THE OTHER CLUSTERS, TABLE S1 AND THE CHECK WITHOUT PARSIMONY ===
+# WHAT THIS CHUNK DOES, on the six components:
+#   A. Each cluster's correlation with punitiveness against crime concerns'
+#      (Steiger's Z, two-sided, as Study 1's manuscript reports it): hostile
+#      aggression (H2), emotions, personality and ideology, process violations.
+#   B. Table S1: the same test at three levels of strictness (all six hostility
+#      constructs; four, without suffering and harsh conditions; exclusion and
+#      revenge only), each with the 95% BCa bootstrap interval of the
+#      difference from 10,000 resamples. The first level's interval is H2's.
+#   C. H2 with the two parsimony items left out of punitiveness.
+# PREREG: NOT REGISTERED on this score. H2 is registered on the published
+#         index; A to C repeat Study 1's own tests (its 01 section 6.2 and its
+#         03 Phases 2 to 4) on the paper's score.
+# CONSUMES: s1 with punit_six, hostile_cons and hostile_strict (sections 3.0
+#           and 3); s1p_steiger(), s1p_write(), read_s1(), S1_SUPP (3c.0);
+#           h2x_old, Study 1's h2_extended_steiger.csv (3c.1); zmean() (3.0);
+#           LEVELS (section 3).
+# WRITES: S1P_H2_steiger.csv (4 rows), S1P_tableS1_strictness.csv (3 rows),
+#         S1P_parsimony_check.csv (1 row).
+
+# --- A. Each cluster against crime concerns ---------------------------------
+H2_CLUSTERS <- c(hostile_agg = "Hostile aggression", emotions_agg = "Emotions",
+                 personality_agg = "Personality and ideology",
+                 process_agg = "Process violations")
+h2_table <- function(score) do.call(rbind, lapply(names(H2_CLUSTERS), function(v)
+  cbind(comparison = paste(H2_CLUSTERS[[v]], "vs crime concerns"),
+        s1p_steiger(s1, score, v, "crime_concerns_agg"))))
+# GUARD, published index: the differences against Study 1's
+# h2_extended_steiger.csv (three decimals), its two-sided p for personality
+# (.0012) and process violations (.0091) to the four decimals it prints, and
+# H2's Z of 6.26 from the manuscript.
+h2_old <- h2_table("punitiveness_agg")
+stopifnot(all(abs(round(h2_old$diff, 3) - h2x_old$Difference) < 1e-9),
+          all(abs(round(h2_old$p_two[3:4], 4) - h2x_old$Steiger_p[3:4]) < 1e-9),
+          round(h2_old$z[1], 2) == 6.26)
+h2 <- h2_table("punit_six")
+# GUARD, the verified six-component values: H2 .690 against .360, a difference
+# of .331 with Z = 8.54; emotions Z = 6.71; personality and ideology Z = 5.42.
+stopifnot(round(h2$r_jk[1], 3) == 0.690, round(h2$r_jh[1], 3) == 0.360,
+          round(h2$diff[1], 3) == 0.331, round(h2$z[1], 2) == 8.54,
+          round(h2$z[2], 2) == 6.71, round(h2$z[3], 2) == 5.42,
+          all(h2$p_two < .05))
+names(h2)[names(h2) == "r_jk"] <- "r_cluster"
+names(h2)[names(h2) == "r_jh"] <- "r_crime"
+names(h2)[names(h2) == "r_kh"] <- "r_cluster_with_crime"
+s1p_write(h2, "H2_steiger")
+
+# --- B. Table S1: three levels of strictness, with BCa intervals -------------
+# THE BOOTSTRAP, exactly as Study 1's 03_supplementary_analyses.Rmd (Phase 3)
+# runs it: the seed is set to 42 once, then boot::boot() draws 10,000 resamples
+# of participants for each level in turn (all six constructs, then four, then
+# two), and boot::boot.ci() gives the bias-corrected and accelerated (BCa)
+# interval. Because the three levels draw from one random stream in that order,
+# the ORDER OF THE RUNS matters: the same seed and order reproduce Study 1's
+# published intervals exactly. The published index is run first, from seed 42,
+# and checked against Study 1's export; the six components are then run from
+# seed 42 again, so both scorings are judged on the same resamples.
+# The statistic is Study 1's make_h2_boot_fn(): in each resample, the
+# correlation of punitiveness with the hostility composite minus its
+# correlation with crime concerns (use = "p" as there; no value is missing).
+S1P_BOOT_R    <- 10000
+S1P_BOOT_SEED <- 42
+S1P_TARGETS   <- c("hostile_agg", "hostile_cons", "hostile_strict")
+boot_levels <- function(score) {
+  bd <- s1[, c(score, S1P_TARGETS, "crime_concerns_agg")]
+  set.seed(S1P_BOOT_SEED)
+  do.call(rbind, lapply(seq_along(S1P_TARGETS), function(i) {
+    tg <- S1P_TARGETS[i]
+    fn <- function(data, idx) {
+      x <- data[idx, ]
+      cor(x[[score]], x[[tg]], use = "p") - cor(x[[score]], x$crime_concerns_agg, use = "p")
+    }
+    br <- boot::boot(data = bd, statistic = fn, R = S1P_BOOT_R)
+    ci <- boot::boot.ci(br, type = "bca")
+    st <- s1p_steiger(s1, score, tg, "crime_concerns_agg")
+    rc <- cor.test(s1[[score]], s1[[tg]])
+    data.frame(level = LEVELS[i], n = nrow(bd), r_hostile = st$r_jk,
+               r_hostile_lower = rc$conf.int[1], r_hostile_upper = rc$conf.int[2],
+               r_crime = st$r_jh, diff = st$diff, z = st$z, p_two = st$p_two,
+               bca_lower = ci$bca[4], bca_upper = ci$bca[5],
+               boot_se = sd(br$t), resamples = S1P_BOOT_R)
+  }))
+}
+# GUARD, published index: every observed difference, BCa limit and bootstrap SE
+# against Study 1's tautology_bootstrap_cis.csv (to the three decimals it
+# prints: [.174, .367], [.134, .331], [.125, .323]), and r and Z against its
+# tautology_steiger_by_level.csv.
+lev_old <- boot_levels("punitiveness_agg")
+tb <- read_s1(file.path(S1_SUPP, "tautology_bootstrap_cis.csv"))
+ts <- read_s1(file.path(S1_SUPP, "tautology_steiger_by_level.csv"))
+stopifnot(all(abs(round(lev_old$diff, 3) - tb$Observed_Diff) < 1e-9),
+          all(abs(round(lev_old$bca_lower, 3) - tb$BCa_Lower) < 1e-9),
+          all(abs(round(lev_old$bca_upper, 3) - tb$BCa_Upper) < 1e-9),
+          all(abs(round(lev_old$boot_se, 3) - tb$Boot_SE) < 1e-9),
+          all(abs(round(lev_old$r_hostile, 3) - ts$r_Hostile) < 1e-9),
+          all(abs(round(lev_old$z, 2) - ts$Z) < 1e-9),
+          isTRUE(all.equal(lev_old$p_two, ts$p, tolerance = 1e-6)))
+lev <- boot_levels("punit_six")
+# GUARD, the verified six-component values: all six constructs .331 [.240,
+# .431]; four .286 [.193, .391], Z = 6.90; two .263 [.166, .366], Z = 6.38;
+# every interval above zero.
+stopifnot(all(abs(round(lev$diff, 3) - c(.331, .286, .263)) < 1e-9),
+          all(abs(round(lev$bca_lower, 3) - c(.240, .193, .166)) < 1e-9),
+          all(abs(round(lev$bca_upper, 3) - c(.431, .391, .366)) < 1e-9),
+          all(abs(round(lev$z, 2) - c(8.54, 6.90, 6.38)) < 1e-9),
+          all(lev$bca_lower > 0),
+          isTRUE(all.equal(lev$diff[1], h2$diff[1])))
+s1p_write(lev, "tableS1_strictness")
+
+# --- C. H2 without the parsimony items ----------------------------------------
+# Study 1's check (03, Phase 4) rebuilt its published index without the two
+# parsimony items: the four remaining components standardized and averaged,
+# that average and the sentence z-score standardized and averaged. The
+# six-component analogue drops the parsimony component and weights the five
+# remaining parts (four attitude components and the sentence) equally.
+np_old <- rowMeans(scale(cbind(
+  rowMeans(scale(s1[, c("punishmore_comp", "threestrikes_comp", "LWOP", "deathpenalty")])),
+  s1$Sentence_z)))
+np_six <- zmean(s1$punishmore_comp, s1$threestrikes_comp, s1$LWOP, s1$deathpenalty,
+                s1$Sentence_z)
+s1_np <- data.frame(np_old = np_old, np_six = np_six, hostile_agg = s1$hostile_agg,
+                    crime_concerns_agg = s1$crime_concerns_agg)
+# GUARD, published index: r .581 and .334 and Z = 5.87, Study 1's
+# parsimony_sensitivity.csv (second row).
+ps_old <- s1p_steiger(s1_np, "np_old", "hostile_agg", "crime_concerns_agg")
+psx <- read_s1(file.path(S1_SUPP, "parsimony_sensitivity.csv"))
+stopifnot(abs(round(ps_old$r_jk, 3) - psx$r_Hostile[2]) < 1e-9,
+          abs(round(ps_old$r_jh, 3) - psx$r_Crime[2]) < 1e-9,
+          abs(round(ps_old$z, 2) - psx$Z[2]) < 1e-9)
+ps_six <- s1p_steiger(s1_np, "np_six", "hostile_agg", "crime_concerns_agg")
+# GUARD, the verified six-component values: .681 against .374, Z = 7.90.
+stopifnot(round(ps_six$r_jk, 3) == 0.681, round(ps_six$r_jh, 3) == 0.374,
+          round(ps_six$z, 2) == 7.90)
+s1p_write(cbind(check = "Punitiveness without the parsimony component (five parts)",
+                ps_six), "parsimony_check")
+
+cat("Published index, reproduced:\n")
+print(lev_old[, c("level", "diff", "bca_lower", "bca_upper", "z")], digits = 3, row.names = FALSE)
+knitr::kable(h2, digits = 4, caption = "Study 1, each cluster against crime concerns (six components)")
+knitr::kable(lev, digits = 3, caption = "Study 1, Table S1 on the six components")
+```
+
+```{r s1p_moderation}
+# === 3c.3 TABLES S2 AND S3: DO DEMOGRAPHICS MODERATE THE CORRELATES? ===
+# WHAT THIS CHUNK DOES: reruns Study 1's demographic moderation tests (its
+# 03_supplementary_analyses.Rmd, Phase 7) with the paper's scores. Four
+# correlates (hostile aggression, crime concerns, right-wing authoritarianism,
+# racial resentment), each standardized, are crossed with six moderators (age,
+# gender, race White or not, race in seven categories, education, political
+# orientation): 24 models per table.
+#   Table S2: the outcome is punitiveness (the six components).
+#   Table S3: the outcome is the sentence (Sentence_z) and punitiveness enters as
+#             a standardized covariate. The sentence is the outcome, so the
+#             covariate must leave it out: the five attitude components, each
+#             standardized (D2; Study 1's own run used the eight-item scale).
+# Each row is the interaction's coefficient b (in units of the outcome) and its
+# p, or, for the seven-category race factor, which has six interaction terms,
+# the joint F test from car::Anova(type = 3), as Study 1 did. The BH correction
+# runs over the 24 tests of each table.
+# PREREG: NOT REGISTERED (exploratory in Study 1 as well).
+# CONSUMES: s1 with punit_six and punit_five_z (3.0); s1p_write() (3c.0).
+# WRITES: S1P_tableS2_moderation.csv, S1P_tableS3_moderation.csv (24 rows each).
+
+# The moderators, coded exactly as Study 1's Phase 7 codes them: race White (1)
+# against everyone else; race in its seven categories; gender as male (1) or
+# female (2), with the three who gave another answer set to missing (so those
+# models have 493 participants); age, education and political orientation
+# (1 to 7) standardized. s1m is a copy, so s1 itself is unchanged.
+s1m <- s1
+s1m$race_dichot <- factor(ifelse(s1m$race == 1, "White", "NonWhite"),
+                          levels = c("White", "NonWhite"))
+s1m$race_factor <- factor(s1m$race, levels = 1:7,
+                          labels = c("White", "Black", "Asian", "Hispanic",
+                                     "NativeAm", "PacIslander", "Other"))
+s1m$gender_binary <- factor(ifelse(s1m$gender == 1, "Male",
+                                   ifelse(s1m$gender == 2, "Female", NA)),
+                            levels = c("Male", "Female"))
+s1m$education_z <- as.numeric(scale(s1m$education))
+s1m$age_z       <- as.numeric(scale(s1m$age_1))
+s1m$politid_z   <- as.numeric(scale(s1m$politid))
+stopifnot(sum(is.na(s1m$gender_binary)) == 3, !anyNA(s1m$race_factor))
+
+MOD_TARGETS <- c(hostile_agg = "Hostile aggression", crime_concerns_agg = "Crime concerns",
+                 rwa_comp = "Right-wing authoritarianism", raceresent_comp = "Racial resentment")
+MOD_MODS <- c(age_z = "Age", gender_binary = "Gender (women vs men)",
+              race_dichot = "Race (non-White vs White)",
+              race_factor = "Race (seven categories)", education_z = "Education",
+              politid_z = "Political orientation")
+# One model, exactly as Study 1's run_moderation() and
+# run_moderation_with_control() fit it: outcome ~ [control_z +] target_z * mod.
+run_mod <- function(outcome, target, mod, control = NULL) {
+  dd <- s1m
+  dd$target_z <- as.numeric(scale(dd[[target]]))
+  if (!is.null(control)) dd$control_z <- as.numeric(scale(dd[[control]]))
+  fml <- as.formula(sprintf("%s ~ %starget_z * %s", outcome,
+                            if (is.null(control)) "" else "control_z + ", mod))
+  fit <- lm(fml, data = dd)
+  cf <- summary(fit)$coefficients
+  inter <- grep(":", rownames(cf), value = TRUE)
+  out <- data.frame(target = MOD_TARGETS[[target]], moderator = MOD_MODS[[mod]],
+                    n = nobs(fit), b_target = cf["target_z", "Estimate"],
+                    test = NA_character_, b_interaction = NA_real_, F = NA_real_,
+                    df_num = NA_real_, df_den = fit$df.residual, p = NA_real_,
+                    stringsAsFactors = FALSE)
+  if (length(inter) > 1) {
+    # Several interaction terms (the seven race categories): one joint F test.
+    a <- car::Anova(fit, type = 3)
+    lab <- paste("target_z", mod, sep = ":")
+    out$test <- "joint F (type 3)"; out$F <- a[lab, "F value"]
+    out$df_num <- a[lab, "Df"]; out$p <- a[lab, "Pr(>F)"]
+  } else {
+    out$test <- "t on the interaction"; out$b_interaction <- cf[inter, "Estimate"]
+    out$df_num <- 1; out$p <- cf[inter, "Pr(>|t|)"]
+  }
+  out
+}
+mod_table <- function(outcome, control = NULL) {
+  o <- do.call(rbind, lapply(names(MOD_TARGETS), function(t)
+    do.call(rbind, lapply(names(MOD_MODS), function(m) run_mod(outcome, t, m, control)))))
+  o$p_BH <- p.adjust(o$p, method = "BH")
+  o$outcome <- outcome
+  o$covariate <- if (is.null(control)) "" else control
+  o
+}
+# GUARD, published index: all 24 rows of each table against Study 1's exports
+# (interactions_punitiveness_agg.csv, interactions_sentence_z.csv), in the same
+# order: n, b to the three decimals the export prints, p and corrected p to
+# rounding error, and F to its two decimals.
+same_as_export <- function(mine, theirs) {
+  stopifnot(nrow(mine) == 24, nrow(theirs) == 24,
+            all(mine$n == theirs$n),
+            all(is.na(mine$b_interaction) == is.na(theirs$b_inter)),
+            all(abs(round(mine$b_interaction, 3) - theirs$b_inter) < 1e-9, na.rm = TRUE),
+            isTRUE(all.equal(mine$p, theirs$p_inter, tolerance = 1e-8)),
+            isTRUE(all.equal(mine$p_BH, theirs$p_inter_FDR, tolerance = 1e-8)),
+            all(abs(round(mine$F, 2) - theirs$F_omnibus) < 1e-9, na.rm = TRUE))
+}
+same_as_export(mod_table("punitiveness_agg"),
+               read_s1(file.path(S1_SUPP, "interactions_punitiveness_agg.csv")))
+same_as_export(mod_table("Sentence_z", control = "punitiveness_8item"),
+               read_s1(file.path(S1_SUPP, "interactions_sentence_z.csv")))
+
+# The paper's tables.
+tS2 <- mod_table("punit_six")
+tS3 <- mod_table("Sentence_z", control = "punit_five_z")
+# GUARDS, the verified six-component values. Table S2: exactly two interactions
+# survive the correction, crime concerns x age (b = .159) and hostile
+# aggression x political orientation (b = -.072, p = .00058, corrected p =
+# .0069). Table S3: none of the 24.
+s2_sig <- tS2[tS2$p_BH < .05, ]
+row_ca <- tS2[tS2$target == "Crime concerns" & tS2$moderator == "Age", ]
+row_hp <- tS2[tS2$target == "Hostile aggression" & tS2$moderator == "Political orientation", ]
+stopifnot(nrow(s2_sig) == 2,
+          setequal(paste(s2_sig$target, s2_sig$moderator),
+                   c("Crime concerns Age", "Hostile aggression Political orientation")),
+          round(row_ca$b_interaction, 3) == 0.159,
+          round(row_hp$b_interaction, 3) == -0.072,
+          round(row_hp$p, 5) == 0.00058, round(row_hp$p_BH, 4) == 0.0069,
+          sum(tS3$p_BH < .05) == 0)
+s1p_write(tS2, "tableS2_moderation")
+s1p_write(tS3, "tableS3_moderation")
+knitr::kable(tS2, digits = 4, caption = "Study 1, Table S2 on the six components")
+knitr::kable(tS3, digits = 4, caption = "Study 1, Table S3 with the five components as covariate")
+```
+
+```{r s1p_levels}
+# === 3c.4 SECTION S1: PUNITIVENESS BY POLITICAL GROUP, GENDER, RACE, AGE AND
+# EDUCATION ===
+# WHAT THIS CHUNK DOES: reruns Study 1's comparisons of the LEVEL of
+# punitiveness across demographic groups (its 03, Phase 7 descriptives) on the
+# six components: the mean in each political group, a one-way analysis of
+# variance across the three groups, Cohen's d for conservatives against
+# liberals and the correlation with the 1-to-7 political item; women against men
+# and non-White against White participants by Welch's t test with Cohen's d;
+# and the correlations with age and education.
+# PREREG: NOT REGISTERED (descriptive context in Study 1 as well).
+# CONSUMES: s1m (3c.3); s1p_write() (3c.0).
+# WRITES: S1P_levels.csv (one row per statistic).
+
+# Cohen's d with the pooled SD, Study 1's helper.
+cohen_d <- function(x1, x2) {
+  x1 <- x1[!is.na(x1)]; x2 <- x2[!is.na(x2)]
+  n1 <- length(x1); n2 <- length(x2)
+  (mean(x1) - mean(x2)) / sqrt(((n1 - 1) * var(x1) + (n2 - 1) * var(x2)) / (n1 + n2 - 2))
+}
+levels_run <- function(score) {
+  y <- s1m[[score]]
+  pol_aov <- summary(aov(y ~ s1m$political_group))[[1]]
+  pol_r   <- cor.test(s1m$politid, y)
+  g_m <- y[s1m$gender_binary == "Male"]; g_f <- y[s1m$gender_binary == "Female"]
+  gen_t <- t.test(g_f, g_m)                         # women minus men, Welch
+  r_w <- y[s1m$race_dichot == "White"]; r_nw <- y[s1m$race_dichot == "NonWhite"]
+  race_t <- t.test(r_nw, r_w)                       # non-White minus White, Welch
+  age_r <- cor.test(s1m$age_1, y); edu_r <- cor.test(s1m$education, y)
+  pm <- tapply(y, s1m$political_group, mean)
+  list(
+    table = data.frame(
+      demographic = c(rep("Political orientation", 9), rep("Gender", 6),
+                      rep("Race", 6), rep("Age", 2), rep("Education", 2)),
+      statistic = c("M, liberals", "M, moderates", "M, conservatives",
+                    "F (one-way ANOVA, three groups)", "df1", "df2", "p (ANOVA)",
+                    "d, conservatives minus liberals", "r with the 1-to-7 item",
+                    "M, men", "M, women", "t (Welch, women minus men)", "df", "p",
+                    "d, women minus men",
+                    "M, White", "M, non-White", "t (Welch, non-White minus White)", "df",
+                    "p", "d, non-White minus White",
+                    "r", "p", "r", "p"),
+      value = c(pm[["Liberal"]], pm[["Moderate"]], pm[["Conservative"]],
+                pol_aov$`F value`[1], pol_aov$Df[1], pol_aov$Df[2], pol_aov$`Pr(>F)`[1],
+                cohen_d(y[s1m$political_group == "Conservative"],
+                        y[s1m$political_group == "Liberal"]),
+                unname(pol_r$estimate),
+                mean(g_m, na.rm = TRUE), mean(g_f, na.rm = TRUE),
+                unname(gen_t$statistic), unname(gen_t$parameter), gen_t$p.value,
+                cohen_d(g_f, g_m),
+                mean(r_w), mean(r_nw), unname(race_t$statistic),
+                unname(race_t$parameter), race_t$p.value, cohen_d(r_nw, r_w),
+                unname(age_r$estimate), age_r$p.value,
+                unname(edu_r$estimate), edu_r$p.value),
+      stringsAsFactors = FALSE),
+    # The same results as Study 1's export formats them, for the guard.
+    stat = c(sprintf("F(%d,%d)=%.2f", pol_aov$Df[1], pol_aov$Df[2], pol_aov$`F value`[1]),
+             sprintf("t(%.0f)=%.2f", gen_t$parameter, gen_t$statistic),
+             sprintf("t(%.0f)=%.2f", race_t$parameter, race_t$statistic),
+             sprintf("r=%.3f", age_r$estimate), sprintf("r=%.3f", edu_r$estimate)),
+    p = round(c(pol_aov$`Pr(>F)`[1], gen_t$p.value, race_t$p.value,
+                age_r$p.value, edu_r$p.value), 4),
+    means = pm)
+}
+# GUARD, published index: every test statistic, its degrees of freedom and its
+# p against Study 1's punitiveness_levels_by_demographic.csv (formatted and
+# rounded exactly as that file prints them), and the three political means
+# against punitiveness_means_political.csv.
+lv_old <- levels_run("punitiveness_agg")
+lvx <- read_s1(file.path(S1_SUPP, "punitiveness_levels_by_demographic.csv"))
+pmx <- read_s1(file.path(S1_SUPP, "punitiveness_means_political.csv"))
+stopifnot(identical(lv_old$stat, lvx$Stat),
+          all(abs(lv_old$p - lvx$p) < 1e-9),
+          isTRUE(all.equal(as.numeric(lv_old$means[pmx$political_group]), pmx$M,
+                           tolerance = 1e-10)))
+lv <- levels_run("punit_six")
+lvt <- lv$table
+getv <- function(dem, st) lvt$value[lvt$demographic == dem & lvt$statistic == st]
+# GUARDS, the verified six-component values: politics F(2, 493) = 39.13,
+# d = 0.90, r = .43; gender t(490) = 1.97, p = .049, d = 0.18.
+stopifnot(round(getv("Political orientation", "F (one-way ANOVA, three groups)"), 2) == 39.13,
+          getv("Political orientation", "df1") == 2,
+          getv("Political orientation", "df2") == 493,
+          round(getv("Political orientation", "d, conservatives minus liberals"), 2) == 0.90,
+          round(getv("Political orientation", "r with the 1-to-7 item"), 2) == 0.43,
+          round(getv("Gender", "t (Welch, women minus men)"), 2) == 1.97,
+          round(getv("Gender", "df")) == 490,
+          round(getv("Gender", "p"), 3) == 0.049,
+          round(getv("Gender", "d, women minus men"), 2) == 0.18)
+s1p_write(lvt, "levels")
+knitr::kable(lvt, digits = 4, caption = "Study 1, punitiveness (six components) by demographic group")
+```
+
+```{r s1p_vignettes}
+# === 3c.5 SECTION S1: THE CORRELATIONS ACROSS THE THREE VIGNETTES ===
+# WHAT THIS CHUNK DOES: on the six components, each of the eighteen correlates'
+# correlation with punitiveness within each of Study 1's three vignettes; the
+# range of each correlate's three correlations; the median of the eighteen
+# ranges; the smallest within-vignette correlation; and the variance between
+# vignettes in a mixed model with a random intercept for vignette.
+# COMPUTED AS STUDY 1 DID (its 01_main_analysis.Rmd, sections 8.2 and 8.3): each
+# within-vignette correlation is rounded to two decimals BEFORE the range is
+# taken, and the median is the median of those ranges; the mixed model is
+# punitiveness ~ hostile_agg + (1 | vignette), fitted by lme4::lmer() with its
+# default (REML). Because rounding first can move a median that falls between
+# two rounding points, the unrounded median and smallest r are reported beside
+# them.
+# PREREG: NOT REGISTERED (a robustness check in Study 1 as well).
+# CONSUMES: s1 with punit_six (3.0); S1P_CORRELATES (3c.1); s1p_write() (3c.0).
+# WRITES: S1P_vignette_stability.csv (18 rows), S1P_vignette_summary.csv.
+vig_table <- function(score) {
+  v <- t(sapply(names(S1P_CORRELATES), function(x)
+    sapply(1:3, function(k) with(s1[s1$vignette == k, ], cor(get(score), get(x))))))
+  colnames(v) <- c("r_vignette_A", "r_vignette_B", "r_vignette_C")
+  v_round <- round(v, 2)
+  data.frame(measure = unname(S1P_CORRELATES), variable = names(S1P_CORRELATES),
+             v, range_study1_method = apply(v_round, 1, function(z) max(z) - min(z)),
+             range_unrounded = apply(v, 1, function(z) max(z) - min(z)),
+             row.names = NULL, stringsAsFactors = FALSE)
+}
+mixed_var <- function(score) {
+  m <- suppressMessages(suppressWarnings(lme4::lmer(
+    as.formula(paste(score, "~ hostile_agg + (1 | vignette)")), data = s1)))
+  vc <- as.data.frame(lme4::VarCorr(m))
+  c(between = vc$vcov[vc$grp == "vignette"], residual = vc$vcov[vc$grp == "Residual"],
+    singular = as.numeric(lme4::isSingular(m)))
+}
+# GUARD, published index: every within-vignette correlation, rounded to two
+# decimals, against Study 1's vignette_correlation_stability.csv; the median
+# range of .135 (the draft prints .13); and a between-vignette variance of zero
+# (a singular fit), as Study 1 found.
+S1_STAB_NAMES <- c("Crime Rates" = "crime_rates_comp", "Fear" = "fear_comp",
+                   "Due Process" = "dueprocess_comp", "Uncertain Evidence" = "uncertain_comp",
+                   "Hatred" = "hatred_comp", "Anger" = "anger_comp",
+                   "Exclusion" = "exclusion_comp", "Degradation" = "degradation_comp",
+                   "Suffering" = "suffering_comp", "Prison Violence" = "prisonvi_comp",
+                   "Harsh Conditions" = "harsh_comp", "Revenge" = "revenge_comp",
+                   "RWA" = "rwa_comp", "SDO" = "sdo_comp", "Vengefulness" = "venge_comp",
+                   "Violence Proneness" = "vprone_comp",
+                   "Racial Resentment" = "raceresent_comp", "Blood Sports" = "bloodsports_comp")
+vs_x <- read_s1(file.path(S1_ROOT, "output", "tables", "vignette_correlation_stability.csv"))
+stopifnot(setequal(vs_x$Construct, names(S1_STAB_NAMES)),
+          setequal(unname(S1_STAB_NAMES), names(S1P_CORRELATES)))
+vig_old <- vig_table("punitiveness_agg")
+vs_x <- vs_x[match(names(S1P_CORRELATES), S1_STAB_NAMES[vs_x$Construct]), ]
+stopifnot(all(abs(round(as.matrix(vig_old[, c("r_vignette_A", "r_vignette_B", "r_vignette_C")]), 2) -
+                  as.matrix(vs_x[, c("Vignette_1", "Vignette_2", "Vignette_3")])) < 1e-9),
+          round(median(vig_old$range_study1_method), 3) == 0.135)
+mm_old <- mixed_var("punitiveness_agg")
+stopifnot(mm_old[["between"]] < 1e-10, mm_old[["singular"]] == 1)
+
+vig <- vig_table("punit_six")
+mm  <- mixed_var("punit_six")
+vr  <- as.matrix(vig[, c("r_vignette_A", "r_vignette_B", "r_vignette_C")])
+# GUARDS, the verified six-component values: median range .090 by Study 1's
+# method (.088 unrounded); smallest within-vignette correlation .076 (fear of
+# crime; .08 rounded); no correlate negative in any vignette; no variance
+# between vignettes.
+stopifnot(round(median(vig$range_study1_method), 3) == 0.090,
+          round(median(vig$range_unrounded), 3) == 0.088,
+          round(min(vr), 3) == 0.076,
+          vig$measure[which.min(apply(vr, 1, min))] == "Fear of crime",
+          all(vr > 0), mm[["between"]] < 1e-10)
+vig_summary <- data.frame(
+  quantity = c("Median range across the three vignettes (Study 1's method: rounded r)",
+               "Median range across the three vignettes (unrounded r)",
+               "Largest range (Study 1's method)",
+               "Smallest within-vignette r (rounded to two decimals)",
+               "Smallest within-vignette r (unrounded)",
+               "Within-vignette correlations below zero (of 54)",
+               "Mixed model: variance between vignettes",
+               "Mixed model: residual variance",
+               "Mixed model: singular fit (1 = yes)"),
+  value = c(median(vig$range_study1_method), median(vig$range_unrounded),
+            max(vig$range_study1_method), min(round(vr, 2)), min(vr), sum(vr < 0),
+            mm[["between"]], mm[["residual"]], mm[["singular"]]),
+  detail = c("", "", vig$measure[which.max(vig$range_study1_method)],
+             vig$measure[which.min(apply(vr, 1, min))],
+             vig$measure[which.min(apply(vr, 1, min))], "",
+             "punit_six ~ hostile_agg + (1 | vignette), REML", "", ""),
+  stringsAsFactors = FALSE)
+s1p_write(vig, "vignette_stability")
+s1p_write(vig_summary, "vignette_summary")
+knitr::kable(vig_summary, digits = 4, caption = "Study 1, the correlations across vignettes (six components)")
+```
+
+```{r s1p_written}
+# === 3c.6 WHAT SECTION 3c WROTE ===
+# A listing, so the knitted report records every S1P_ table this knit wrote.
+# GUARD: the section wrote exactly the ten tables it promises, once each.
+S1P_EXPECTED <- paste0("S1P_", c("table1_correlations", "punitiveness_scores", "H2_steiger",
+                                 "tableS1_strictness", "parsimony_check",
+                                 "tableS2_moderation", "tableS3_moderation", "levels",
+                                 "vignette_stability", "vignette_summary"))
+stopifnot(setequal(S1P_WRITTEN, S1P_EXPECTED), !anyDuplicated(S1P_WRITTEN),
+          all(file.exists(file.path(OUT_TABLES, paste0(S1P_WRITTEN, ".csv")))))
+print(S1P_WRITTEN)
+```
+
+# 4. Study 2, read from its own exports
+
+```{r study2_scores}
+# === 4.0 STUDY 2'S PUNITIVENESS: THE PAPER'S TWO SCORES ===
+# WHAT THIS CHUNK DOES: adds the paper's two punitiveness scores to s2 for every
+# participant, from 01_main_analysis.Rmd's export PAPER_person_scores (section
+# 9.19A), and rebuilds both from the items here as an independent check.
+#   s2$punit_six     the six components weighted equally (01's punit_parts6,
+#                    section 7.4): the paper's punitiveness in the main text.
+#   s2$punit_five_z  the five attitude components, each standardized, averaged
+#                    (01's punit_parts5z): the paper's punitiveness where the
+#                    sentence or the sentencing ratio is on the other side.
+# PREREG: NOT REGISTERED. The registered scores (punitiveness, the eight-item
+#         scale; punitiveness_full, the full index) stay in s2 unchanged, and
+#         section 2's guards and every registered number read them.
+# CONSUMES: s2, read_s2() (section 1); zmean() (section 3.0).
+ps2 <- read_s2("PAPER_person_scores")
+# GUARD: the export has one row per analyzed participant, no duplicate and no
+# missing score, and its participants are s2's, in s2's order.
+stopifnot(nrow(ps2) == 948, !anyDuplicated(ps2$ResponseId),
+          !anyNA(ps2[, c("punit_six", "punit_five_z", "desert_theory", "just_deserts")]),
+          identical(ps2$ResponseId, s2$ResponseId))
+s2$punit_six    <- ps2$punit_six
+s2$punit_five_z <- ps2$punit_five_z
+
+# GUARD: the same two scores rebuilt here from the items, exactly as 01's
+# section 7.4 builds them (each two-item component the mean of its items after
+# reverse coding; the one-item components as answered; the sentence as its
+# within-vignette z-score; zmean() over the parts). They must agree with the
+# export to rounding error. Every item was required, so no part is missing.
+S2_ITEMS8 <- c("punishmore_1_R", "punishmore_2", "parsimony_1_R", "parsimony_2_R",
+               "threestrikes_1", "threestrikes_2", "LWOP", "deathpenalty")
+stopifnot(!anyNA(s2[, c(S2_ITEMS8, "Sentence1_z")]))
+s2_parts <- data.frame(
+  punish_more        = rowMeans(s2[, c("punishmore_1_R", "punishmore_2")]),
+  parsimony_rejected = rowMeans(s2[, c("parsimony_1_R", "parsimony_2_R")]),
+  three_strikes      = rowMeans(s2[, c("threestrikes_1", "threestrikes_2")]),
+  life_without_parole = as.numeric(s2$LWOP),
+  death_penalty      = as.numeric(s2$deathpenalty))
+stopifnot(max(abs(zmean(s2_parts, s2$Sentence1_z) - s2$punit_six)) < 1e-10,
+          max(abs(zmean(s2_parts) - s2$punit_five_z)) < 1e-10)
+# GUARD: the agreement 01 guards (section 9.19A): six components .945 with the
+# registered full index and .972 with the eight-item scale; five components .99
+# with the eight-item scale.
+stopifnot(round(cor(s2$punit_six, s2$punitiveness_full), 3) == 0.945,
+          round(cor(s2$punit_six, s2$punitiveness), 3) == 0.972,
+          round(cor(s2$punit_five_z, s2$punitiveness), 2) == 0.99)
+cat(sprintf(paste("Study 2: six components vs the registered full index r = %.3f;",
+                  "vs the eight-item scale r = %.3f;",
+                  "five components vs the eight-item scale r = %.3f.\n"),
+            cor(s2$punit_six, s2$punitiveness_full), cor(s2$punit_six, s2$punitiveness),
+            cor(s2$punit_five_z, s2$punitiveness)))
+```
+
+```{r study2}
+# === STUDY 2 QUANTITIES ===
+# WHAT THIS CHUNK DOES: reads every Study 2 number from the tables
+# 01_main_analysis.Rmd wrote. Where a number needed here was never exported (the
+# comparisons between clusters), the clusters are rebuilt from the raw items and
+# checked against the exported correlations before any comparison is run.
+# PUNITIVENESS is the six components (s2$punit_six), matching Study 1's side
+# (section 3): 01's DS_ exports (sections 7.5 and 7.6) label that score FULL
+# below. EIGHT is the eight-item scale, used only for the comparison of the two
+# studies on the attitude items alone (part B).
+# PREREG: NOT REGISTERED (the paper's scoring; see sections 3.0 and 4.0).
+# CONSUMES: read_s2(), s2 with punit_six (4.0); s1_con, s1_eight, s1_clusters,
+#           LEVELS, PARTS, shared_personality_items (section 3).
+FULL  <- "Punitiveness (six components)"
+EIGHT <- "Punitiveness (8 items)"
+s2_label <- c("Harsh prison conditions", "Hatred", "Social exclusion",
+              "Infliction of suffering", "Due-process permissiveness",
+              "Degradation", "Anger", "Perceived crime rates",
+              "Tolerance of prison violence", "Convicting on uncertain evidence",
+              "Fear of crime")
+pers_label <- c("Right-Wing Authoritarianism" = "Right-wing authoritarianism",
+                "Social Dominance Orientation" = "Social dominance orientation",
+                "Racial resentment" = "Racial resentment",
+                "Violence proneness" = "Violence proneness")
+keep <- c("construct", "r", "ci_lower", "ci_upper", "n")
+
+# --- A. The sixteen constructs, six components -------------------------------
+# Eleven come from the registered correlate family on the six components
+# (PAPER_H1, section 9.19B). The four-item revenge row is DROPPED and replaced
+# by the three-item row, which is the one that matches Study 1's scale.
+h1f <- read_s2("PAPER_H1")
+h1f <- h1f[h1f$y != "Revenge", ]
+stopifnot(nrow(h1f) == 11, setequal(h1f$y, s2_label))
+h1f$construct <- h1f$y
+# GUARD: PAPER_H1 is on the six components: its harsh-conditions row equals the
+# correlation recomputed here from s2$punit_six.
+same_r <- function(a, b) isTRUE(all.equal(a, b, tolerance = 1e-10))
+stopifnot(same_r(h1f$r[h1f$y == "Harsh prison conditions"], cor(s2$punit_six, s2$harsh)))
+pers <- read_s2("DS_personality_correlates")
+pers_f <- pers[pers$x == FULL, ]
+stopifnot(nrow(pers_f) == 4, all(pers_f$y %in% names(pers_label)))
+pers_f$construct <- unname(pers_label[pers_f$y])
+rev3 <- read_s2("DS_revenge_darkside")
+rev3_f <- rev3[rev3$x == FULL & grepl("Dark Side scoring", rev3$y), ]
+stopifnot(nrow(rev3_f) == 1)
+rev3_f$construct <- "Revenge (three shared items)"
+s2_con <- rbind(h1f[, keep], pers_f[, keep], rev3_f[, keep])
+# GUARD: the same sixteen constructs in both studies, no more and no fewer.
+stopifnot(nrow(s2_con) == 16, setequal(s2_con$construct, s1_con$construct))
+
+# --- B. The same twelve on the eight-item scale -----------------------------
+h1e <- read_s2("H1_correlations")
+h1e <- h1e[h1e$y != "Revenge", ]
+h1e$construct <- h1e$y
+rev3_e <- rev3[rev3$x == EIGHT & grepl("Dark Side scoring", rev3$y), ]
+stopifnot(nrow(h1e) == 11, nrow(rev3_e) == 1)
+rev3_e$construct <- "Revenge (three shared items)"
+s2_eight <- rbind(h1e[, keep], rev3_e[, keep])
+stopifnot(setequal(s2_eight$construct, s1_eight$construct))
+
+# --- C. The clusters, the levels, the parts ----------------------------------
+clu <- read_s2("DS_cluster_correlations")
+s2_clu <- clu[clu$x == FULL, c("y", "r", "ci_lower", "ci_upper", "n")]
+names(s2_clu)[1] <- "cluster"
+stopifnot(setequal(s2_clu$cluster, unname(s1_clusters)))
+s2_ladder <- read_s2("DS_tautology_ladder")
+# The levels are relabelled only after checking that each row is the level the
+# label names, so a reordering in 01_main_analysis.Rmd cannot mislabel them.
+stopifnot(nrow(s2_ladder) == 3, grepl("^All six", s2_ladder$rung[1]),
+          grepl("^Four", s2_ladder$rung[2]),
+          grepl("exclusion and revenge", s2_ladder$rung[3]))
+s2_ladder$row <- LEVELS
+# GUARD: the ladder is on the six components: its top rung's correlation with
+# punitiveness is the hostile aggression cluster's in DS_cluster_correlations
+# (six-component row), and every rung shares crime concerns' r with it.
+stopifnot(same_r(s2_ladder$r_jk[1], s2_clu$r[s2_clu$cluster == "Hostile aggression"]),
+          all(vapply(s2_ladder$r_jh, same_r, logical(1),
+                     b = s2_clu$r[s2_clu$cluster == "Crime concerns"])))
+s2_bypart <- read_s2("DS_H2_by_part")
+s2_bypart$outcome[s2_bypart$outcome == "Parsimony rejected"] <- "Rejection of parsimony"
+stopifnot(nrow(s2_bypart) == 6, setequal(s2_bypart$outcome, unname(PARTS)))
+s2_bypart <- s2_bypart[match(unname(PARTS), s2_bypart$outcome), ]
+s2_bypart$row <- s2_bypart$outcome
+
+# --- D. Clusters rebuilt from raw items, for comparisons between clusters ---
+# Study 2's clusters, built as Study 1 built them (raw items, plain means),
+# exactly as section 7.6 of 01_main_analysis.Rmd builds them. GUARD: each must
+# reproduce the correlation 01 exported before it is used.
+s2_items <- list(
+  hostile = c(paste0("exclusion_", 1:3), "degrad_1_R", "degrad_2", "degrad_3",
+              "suffer_1", "suffer_2", "prisonvi_1_R", "prisonvi_2_R",
+              "harsh_1", "harsh_2_R", "harsh_3", "revenge_1", "revenge_2",
+              "revenge_3"),
+  emotions = c("hate_1", "hate_2_R", "hate_3", "anger_1", "anger_2"),
+  personality = shared_personality_items,
+  crime = c("rates_1", "rates_2", "fear_1_R", "fear_2", "fear_3"))
+stopifnot(all(unlist(s2_items) %in% names(s2)))
+for (k in names(s2_items))
+  s2[[paste0("cl_", k)]] <- rowMeans(s2[, s2_items[[k]]], na.rm = TRUE)
+s2_rebuilt <- sapply(paste0("cl_", names(s2_items)),
+                     function(v) cor(s2$punit_six, s2[[v]]))
+stopifnot(all(abs(s2_rebuilt - s2_clu$r[match(unname(s1_clusters),
+                                              s2_clu$cluster)]) < 1e-10))
+```
+
+# 5. The two studies compared
+
+```{r compare}
+# === CROSS-STUDY QUANTITIES ===
+# WHAT THIS CHUNK DOES: computes the handful of cross-study numbers the text
+# reports, and writes every table the figures and the text draw on.
+# PUNITIVENESS is the six components in both studies (Supplement S3 and
+# Figures S1 to S3); the eight-item scale appears only in part A's second pair
+# of rows, the comparison on the attitude items alone.
+# PREREG: NOT REGISTERED (cross-study comparisons were never registered).
+# CONSUMES: sections 3 and 4.
+S1_NAME <- "Study 1 (N = 496)"
+S2_NAME <- "Study 2 (N = 948)"
+
+# --- A. How closely the two orderings agree ---------------------------------
+# Spearman's rank correlation between the two studies' sixteen correlations on
+# the six components: 1 would mean the same ordering exactly.
+m16 <- merge(s1_con[, c("construct", "r")], s2_con[, c("construct", "r")],
+             by = "construct", suffixes = c("_s1", "_s2"))
+rho16 <- cor(m16$r_s1, m16$r_s2, method = "spearman")
+# On the eight-item scale, which contains no sentencing data, how far apart are
+# the two studies' correlations for the same twelve constructs?
+m12 <- merge(s1_eight[, c("construct", "r")], s2_eight[, c("construct", "r")],
+             by = "construct", suffixes = c("_s1", "_s2"))
+agreement <- data.frame(
+  quantity = c("Spearman rho, 16 constructs, six components",
+               "Constructs larger in Study 2, six components (of 16)",
+               "Largest absolute difference, 12 shared constructs, eight-item scale",
+               "Constructs larger in Study 2, eight-item scale (of 12)"),
+  value = c(rho16, sum(m16$r_s2 >= m16$r_s1),
+            max(abs(m12$r_s2 - m12$r_s1)), sum(m12$r_s2 >= m12$r_s1)))
+write.csv(agreement, file.path(OUT_TABLES, "two_study_agreement.csv"),
+          row.names = FALSE)
+knitr::kable(agreement, digits = 3, caption = "How closely the two studies agree")
+
+# --- B. Is crime concerns the lowest cluster, by test? ---------------------
+# Each cluster against crime concerns, as Study 1 tested it, plus the top pair
+# (hostile aggression against emotions). One-sided and two-sided p are both
+# reported; Study 1's manuscript used two-sided.
+gap_rows <- function(data, punit, host, emo, pers, crime, study) {
+  rbind(
+    cbind(study = study, comparison = "Hostile aggression vs crime concerns",
+          two_steiger(data, punit, host, crime)),
+    cbind(study = study, comparison = "Emotions vs crime concerns",
+          two_steiger(data, punit, emo, crime)),
+    cbind(study = study, comparison = "Personality and ideology vs crime concerns",
+          two_steiger(data, punit, pers, crime)),
+    cbind(study = study, comparison = "Hostile aggression vs emotions",
+          two_steiger(data, punit, host, emo)))
+}
+cluster_gaps <- rbind(
+  gap_rows(s1, "punit_six", "hostile_agg", "emotions_agg",
+           "personality_agg", "crime_concerns_agg", S1_NAME),
+  gap_rows(s2, "punit_six", "cl_hostile", "cl_emotions",
+           "cl_personality", "cl_crime", S2_NAME))
+# GUARDS. Study 1's three rows against crime concerns are the ones section 3c.2
+# computed with its own two-sided call (h2: difference, Zou interval and Z), so
+# the two routes agree. (Study 1's published-index rows were checked against
+# its export in sections 3 and 3c.) Study 1's hostile-versus-emotions row is the
+# verified six-component value, .068 [.019, .118], two-sided p = .006. Study
+# 2's hostile-versus-crime row equals the top rung of 01's ladder
+# (DS_tautology_ladder), which is on the six components.
+for (f in c("diff", "diff_lower", "diff_upper", "z"))
+  stopifnot(isTRUE(all.equal(cluster_gaps[[f]][1:3], h2[[f]][1:3], tolerance = 1e-10)))
+stopifnot(round(cluster_gaps$diff[4], 3) == 0.068,
+          round(cluster_gaps$diff_lower[4], 3) == 0.019,
+          round(cluster_gaps$diff_upper[4], 3) == 0.118,
+          round(cluster_gaps$p_two_sided[4], 3) == 0.006,
+          isTRUE(all.equal(cluster_gaps$diff[5], s2_ladder$diff[1], tolerance = 1e-10)),
+          isTRUE(all.equal(cluster_gaps$z[5], s2_ladder$z[1], tolerance = 1e-10)))
+write.csv(cluster_gaps, file.path(OUT_TABLES, "two_study_cluster_tests.csv"),
+          row.names = FALSE)
+knitr::kable(cluster_gaps[, c("study", "comparison", "diff", "diff_lower",
+                              "diff_upper", "z", "p_two_sided")], digits = 4,
+             caption = "Comparisons between clusters, both studies")
+
+# --- C. The long tables the figures draw ----------------------------------
+stack <- function(a, b, key) {
+  a$study <- S1_NAME; b$study <- S2_NAME
+  cols <- c("study", key, "r", "ci_lower", "ci_upper")
+  rbind(a[, cols], b[, cols])
+}
+two_con <- stack(s1_con, s2_con, "construct")
+two_clu <- stack(s1_clu, s2_clu, "cluster")
+adv_cols <- c("diff", "diff_lower", "diff_upper", "z")
+two_adv <- rbind(
+  data.frame(study = S1_NAME, panel = "levels", row = s1_ladder$row, s1_ladder[, adv_cols]),
+  data.frame(study = S2_NAME, panel = "levels", row = s2_ladder$row, s2_ladder[, adv_cols]),
+  data.frame(study = S1_NAME, panel = "parts",  row = s1_bypart$row, s1_bypart[, adv_cols]),
+  data.frame(study = S2_NAME, panel = "parts",  row = s2_bypart$row, s2_bypart[, adv_cols]))
+clusters_out <- rbind(two_clu, data.frame(
+  study = S1_NAME, cluster = "Personality and ideology (21 shared items)",
+  r = s1_pers_shared$r, ci_lower = s1_pers_shared$ci_lower,
+  ci_upper = s1_pers_shared$ci_upper))
+write.csv(two_con, file.path(OUT_TABLES, "two_study_constructs.csv"), row.names = FALSE)
+write.csv(clusters_out, file.path(OUT_TABLES, "two_study_clusters.csv"), row.names = FALSE)
+write.csv(two_adv, file.path(OUT_TABLES, "two_study_hostility_advantage.csv"),
+          row.names = FALSE)
+knitr::kable(clusters_out, digits = 3, caption = "The clusters, both studies")
+knitr::kable(two_adv, digits = 3, caption = "The hostility advantage, both studies")
+```
+
+# 6. The sentencing decision in both studies
+
+```{r sentences}
+# === THE SENTENCE, BOTH STUDIES ===
+# WHAT THIS CHUNK DOES: describes each study's sentencing decisions on the same
+# terms. Both studies gave the same instruction: "Most sentences given by judges
+# for similar charges range from 20 to 30 years." Sentences are compared with
+# the midpoint of that range, 25 years, as Study 1's manuscript did.
+sent <- rbind(
+  data.frame(study = S1_NAME, years = s1$Sentence_1),
+  data.frame(study = S2_NAME, years = s2$Sentence1))
+sent <- sent[!is.na(sent$years), ]
+describe_sentences <- function(x) {
+  top6 <- sort(table(x), decreasing = TRUE)[1:6]
+  m <- mean(x); s <- sd(x)
+  tt <- t.test(x, mu = 25)
+  # Skew defined exactly as section 6.2 of 01_main_analysis.Rmd defines it: the
+  # third central moment over the cube of the sample SD. (A population-moment
+  # definition would differ in the fourth decimal, and the guard below would
+  # rightly refuse it.)
+  g1 <- mean((x - m)^3) / s^3
+  data.frame(n = length(x), mean = m, sd = s, median = median(x),
+             t_vs_25 = unname(tt$statistic), df = unname(tt$parameter),
+             p_two_sided = tt$p.value, d_vs_25 = (m - 25) / s,
+             share_below_20 = mean(x < 20),
+             share_20_to_30 = mean(x >= 20 & x <= 30),
+             share_above_30 = mean(x > 30),
+             share_at_50 = mean(x == 50),
+             six_modal_values = paste(names(top6), collapse = ", "),
+             share_on_six = mean(x %in% as.numeric(names(top6))),
+             skew = g1)
+}
+sent_summary <- do.call(rbind, lapply(split(sent$years, sent$study),
+                                      describe_sentences))
+sent_summary <- cbind(study = rownames(sent_summary), sent_summary)
+rownames(sent_summary) <- NULL
+
+# GUARDS, Study 1, against its manuscript: t(495) = 18.14, d = 0.81, 32.3% at 50,
+# 86% on six values. The skew is not printed in the manuscript (which calls the
+# distribution right-skewed; it is left-skewed), so it is not guarded here.
+s1r <- sent_summary[sent_summary$study == S1_NAME, ]
+stopifnot(abs(s1r$t_vs_25 - 18.14) < .005, abs(round(s1r$d_vs_25, 2) - .81) < 1e-9,
+          abs(round(100 * s1r$share_at_50, 1) - 32.3) < 1e-9,
+          abs(round(100 * s1r$share_on_six) - 86) < 1e-9)
+# GUARDS, Study 2, against 01_main_analysis.Rmd's exports.
+s2r <- sent_summary[sent_summary$study == S2_NAME, ]
+s2desc <- read_s2("descriptives"); s2desc <- s2desc[s2desc$variable == "Sentence1", ]
+stopifnot(isTRUE(all.equal(s2r$mean, s2desc$mean, tolerance = 1e-10)),
+          isTRUE(all.equal(s2r$sd, s2desc$sd, tolerance = 1e-10)),
+          isTRUE(all.equal(s2r$skew, s2desc$skew, tolerance = 1e-8)),
+          isTRUE(all.equal(s2r$share_at_50, read_s2("sentence_ceiling_share")$prop,
+                           tolerance = 1e-10)),
+          isTRUE(all.equal(s2r$share_on_six, read_s2("sentence_modal_share")$prop,
+                           tolerance = 1e-10)))
+
+# Is the ceiling more crowded in Study 2? A two-sample test of proportions with
+# the 95% interval for the difference (Study 2 minus Study 1).
+k  <- c(sum(s2$Sentence1 == 50, na.rm = TRUE), sum(s1$Sentence_1 == 50, na.rm = TRUE))
+nn <- c(sum(!is.na(s2$Sentence1)), sum(!is.na(s1$Sentence_1)))
+pt <- prop.test(k, nn, correct = FALSE)
+sent_summary$ceiling_diff_s2_minus_s1 <- unname(pt$estimate[1] - pt$estimate[2])
+sent_summary$ceiling_diff_lower <- pt$conf.int[1]
+sent_summary$ceiling_diff_upper <- pt$conf.int[2]
+sent_summary$ceiling_diff_p <- pt$p.value
+write.csv(sent_summary, file.path(OUT_TABLES, "two_study_sentences.csv"),
+          row.names = FALSE)
+knitr::kable(t(sent_summary[, -1]), digits = 3, col.names = sent_summary$study,
+             caption = "The sentencing decision, both studies")
+```
+
+# 7. The figures
+
+```{r figure_style}
+# === ONE STYLE FOR ALL OF THE PAPER'S FIGURES ===
+# WHAT THIS CHUNK DOES: sets the look every figure shares and names the files.
+#
+# GRAYSCALE. The figures print in grays only, so they read the same in a printed
+# journal, on screen, and to a reader who cannot tell colours apart. Where two
+# studies sit side by side, Study 1 is the lighter gray and Study 2 the darker,
+# and a legend names both. Study 1's two correlation matrices (fig2 and fig4)
+# are drawn here too, on the six components, in the same grays (they replace
+# Study 1's own colour versions).
+# THE SHADES were checked with the data-visualization palette validator: each is
+# visibly darker than the one before, and the lightest still stands apart from
+# the white page.
+S1_FILL <- "#b0b0b0"   # Study 1, and any lighter series
+S2_FILL <- "#404040"   # Study 2, and any darker series
+VIOLIN  <- "#d9d9d9"   # violin bodies, light so the points and means show
+POINTS  <- "#595959"   # individual participants (jittered)
+INK  <- "#000000"; INK2 <- "#404040"; GRID <- "#e6e6e6"; BAND <- "#efefef"
+STUDY_FILL <- setNames(c(S1_FILL, S2_FILL), c(S1_NAME, S2_NAME))
+# Figures are drawn at the width they will print (5.8 inches), so the type sizes
+# set here are the sizes a reader sees. Journal figures carry no title inside
+# the image; the caption in the manuscript is the title.
+FIG_W <- 5.8
+theme_paper <- function() {
+  theme_minimal(base_size = 9.5, base_family = "sans") +
+    theme(text = element_text(colour = INK),
+          axis.text = element_text(colour = INK2),
+          axis.title = element_text(colour = INK2),
+          panel.grid.minor = element_blank(),
+          legend.position = "top", legend.title = element_blank(),
+          legend.justification = "center",
+          legend.key.size = unit(0.8, "lines"),
+          plot.title = element_text(face = "bold", size = 10, hjust = 0),
+          plot.title.position = "plot")
+}
+theme_hbar <- function() theme_paper() +
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line(colour = GRID, linewidth = 0.3),
+        axis.text.y = element_text(colour = INK))
+theme_vbar <- function() theme_paper() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = GRID, linewidth = 0.3),
+        axis.text.x = element_text(colour = INK))
+# Correlations and differences print without the leading zero, with a true minus.
+axis_r <- function(x) sub("^-", "−", sub("^(-?)0\\.", "\\1.", sprintf("%.1f", x)))
+lab_r  <- expression(paste("Correlation with punitiveness (", italic(r), ") and 95% CI"))
+lab_dr <- expression(paste("Hostility minus crime concerns (difference in ",
+                           italic(r), ") and 95% CI"))
+
+# WHERE THE FIGURES GO. Every figure is written to this document's output folder
+# as PNG and PDF, and the PNG is copied to the manuscript's figure folder for
+# the paper's figures, which the Word draft embeds.
+DOCS_PAPER <- file.path("..", "..", "Docs", "Writing", "figures", "paper")
+dir.create(DOCS_PAPER, recursive = TRUE, showWarnings = FALSE)
+# THE OVERLEAF VERSION of the manuscript uses the PDF of each figure (vector
+# graphics, sharp at any size). Each PDF is copied into that project's figures
+# folder, so the Overleaf project always carries the figures this knit drew.
+OVERLEAF_FIG <- file.path("..", "..", "Docs", "Writing", "overleaf",
+                          "retribution-results", "figures")
+dir.create(OVERLEAF_FIG, recursive = TRUE, showWarnings = FALSE)
+# The Supplement has its own Overleaf project, whose figures folder must carry
+# the same PDFs: every paper figure's PDF is copied there too, so the two
+# projects can never show different versions of a figure (the Supplement uses
+# fig5, fig6, fig7, fig9, fig12 and fig14; a copy of the others is harmless).
+OVERLEAF_SUPP_FIG <- file.path("..", "..", "Docs", "Writing", "overleaf",
+                               "retribution-supplement", "figures")
+dir.create(OVERLEAF_SUPP_FIG, recursive = TRUE, showWarnings = FALSE)
+# Earlier versions of this document wrote three colour figures under other
+# names. They are this document's own outputs; removing them from its output
+# folder keeps only the current set there. (Copies in the manuscript's
+# figures/study2 folder are left alone.)
+unlink(file.path(OUT_FIGURES, paste0(c("fig_sentences_both_studies",
+                                       "fig_correlates_both_studies",
+                                       "fig_hostility_advantage_both_studies"),
+                                     rep(c(".png", ".pdf"), each = 3))))
+# THE PDF DEVICE. R's default pdf() device cannot encode a Greek letter such as
+# the kappa in Figure 14 (it prints a period instead), draws every hyphen as a
+# long minus sign, and does not embed its fonts, which journal PDF checks flag.
+# On a Mac the figures are drawn with the system's own quartz PDF device, which
+# has none of these faults and spaces letters evenly. Elsewhere cairo_pdf() is
+# used: it too prints the kappa and real hyphens and embeds its fonts, though it
+# rounds each letter's width, so letter spacing is slightly uneven.
+PDF_DEVICE <- if (capabilities("aqua")) {
+  function(filename, width, height, bg = "white", ...)
+    grDevices::quartz(type = "pdf", file = filename, width = width, height = height, bg = bg,
+                      title = tools::file_path_sans_ext(basename(filename)))
+} else {
+  grDevices::cairo_pdf
+}
+# save_fig(): writes the figure as PNG and PDF to this document's output folder
+# and, for a figure in the paper (paper = TRUE, the default), copies the PNG to
+# the manuscript's figure folder and the PDF to the Overleaf figure folder. A
+# figure that is no longer in the paper (fig3) is written with paper = FALSE,
+# so a knit never puts it back in the manuscript's folders. (A copy left there
+# by an earlier knit is not deleted here: the drafts decide which figures they
+# embed, and removing a file a draft still names would break its build.)
+save_fig <- function(p, name, h, paper = TRUE) {
+  png_path <- file.path(OUT_FIGURES, paste0(name, ".png"))
+  ggsave(png_path, p, width = FIG_W, height = h, dpi = 300, bg = "white")
+  pdf_path <- file.path(OUT_FIGURES, paste0(name, ".pdf"))
+  ggsave(pdf_path, p, width = FIG_W, height = h, bg = "white", device = PDF_DEVICE)
+  if (paper) {
+    stopifnot(file.copy(png_path, file.path(DOCS_PAPER, basename(png_path)), overwrite = TRUE),
+              file.copy(pdf_path, file.path(OVERLEAF_FIG, basename(pdf_path)), overwrite = TRUE),
+              file.copy(pdf_path, file.path(OVERLEAF_SUPP_FIG, basename(pdf_path)), overwrite = TRUE))
+    PAPER_FIGS <<- c(PAPER_FIGS, name)
+  }
+  invisible(NULL)
+}
+# The paper figures this knit writes, listed at the end (section 10).
+PAPER_FIGS <- character(0)
+# A 95% interval for a mean.
+mean_ci <- function(x) {
+  tt <- t.test(x)
+  data.frame(mean = mean(x), lower = tt$conf.int[1], upper = tt$conf.int[2])
+}
+
+# VIOLIN WITH JITTERED POINTS, used by fig5 and fig13. The violin is the shape
+# of the sentences (wider where more participants chose that sentence). Each
+# small point is one participant, spread sideways at random so that people who
+# chose the same sentence do not sit on top of one another; the spread is
+# sideways only, so every point stays at the sentence the participant chose.
+# The seed fixes the random spread, so every knit draws the same figure. The
+# large black point is the mean and the black bar its 95% interval. The shaded
+# band is the 20-to-30-year range the instructions gave; the dashed line is its
+# 25-year midpoint.
+violin_sentences <- function(long, stats) {
+  ggplot(long, aes(x = group, y = years)) +
+    annotate("rect", xmin = -Inf, xmax = Inf, ymin = 20, ymax = 30,
+             fill = BAND, colour = NA) +
+    geom_hline(yintercept = 25, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+    geom_violin(fill = VIOLIN, colour = "#7a7a7a", linewidth = 0.35, width = 0.85,
+                adjust = 1.4, trim = TRUE) +
+    geom_point(position = position_jitter(width = 0.2, height = 0, seed = 1),
+               size = 0.7, alpha = 0.45, colour = POINTS, stroke = 0) +
+    geom_errorbar(data = stats, aes(x = group, ymin = lower, ymax = upper),
+                  inherit.aes = FALSE, width = 0.12, linewidth = 0.6, colour = INK) +
+    geom_point(data = stats, aes(x = group, y = mean), inherit.aes = FALSE,
+               size = 2.2, colour = INK) +
+    scale_y_continuous(breaks = seq(0, 50, 10), limits = c(0, 50),
+                       expand = expansion(add = 1)) +
+    labs(x = NULL, y = "Years in prison (50 = life)") +
+    theme_vbar()
+}
+```
+
+## Figure 1: Study 1's first sentences
+
+```{r figure1_study1_sentences, fig.width = 5.8, fig.height = 3.0}
+# === FIGURE 1: HOW MANY PARTICIPANTS CHOSE EACH SENTENCE IN STUDY 1 (HISTOGRAM) ===
+# WHAT THIS CHUNK DOES: draws the share of Study 1's 496 participants who chose
+# each sentence, 0 to 50 years in whole years, built exactly like fig17 (Study
+# 2's first sentences): the 20-to-30-year range the instructions called typical
+# shaded, a dashed line at the mean, and the three vignettes together (no
+# vignette split). It replaces the earlier violins, one per vignette.
+# PREREG: descriptive; no test, no punitiveness score.
+# CONSUMES: s1 (section 1); s1r, Study 1's row of the sentence summary, which
+#           section 6 checked against Study 1's manuscript (t against 25 years,
+#           d, the share at 50 years, the share on the six most common values).
+yrs1 <- s1$Sentence_1
+stopifnot(!anyNA(yrs1), length(yrs1) == 496, all(yrs1 == round(yrs1)),
+          all(yrs1 >= 0 & yrs1 <= 50))
+# GUARD: the vignette means and sizes against Study 1's exported table, so the
+# sentences drawn are the ones Study 1 analysed.
+s1_vig <- read.csv(file.path(S1_ROOT, "output", "tables", "sentence_by_vignette.csv"))
+stopifnot(all(as.numeric(table(s1$vignette)) == s1_vig$n),
+          all(abs(round(tapply(s1$Sentence_1, s1$vignette, mean), 2) - s1_vig$mean) < 1e-9))
+hist1 <- data.frame(years = 0:50,
+                    pct = vapply(0:50, function(y) 100 * mean(yrs1 == y), numeric(1)))
+# GUARDS: the shares sum to 100%; the share at 50 years and the mean are
+# section 6's (checked there against the manuscript's 32.3% and its t test).
+stopifnot(isTRUE(all.equal(sum(hist1$pct), 100)),
+          isTRUE(all.equal(hist1$pct[hist1$years == 50] / 100, s1r$share_at_50)),
+          isTRUE(all.equal(mean(yrs1), s1r$mean)))
+# The two text labels sit just below the tallest bar (the 50-year bar), level
+# with each other, as in fig17.
+LAB_Y1 <- 0.92 * max(hist1$pct)
+fig1 <- ggplot(hist1, aes(x = years, y = pct)) +
+  annotate("rect", xmin = 19.5, xmax = 30.5, ymin = -Inf, ymax = Inf, fill = BAND, colour = NA) +
+  geom_col(width = 0.75, fill = S2_FILL) +
+  geom_vline(xintercept = s1r$mean, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+  annotate("text", x = s1r$mean + 0.8, y = LAB_Y1, hjust = 0, size = 2.7, colour = INK,
+           label = sprintf("Mean, %.1f years", s1r$mean)) +
+  annotate("text", x = 25, y = LAB_Y1, size = 2.5, colour = INK2, lineheight = 0.9,
+           label = "Range called\ntypical") +
+  scale_x_continuous(breaks = seq(0, 50, 5), expand = expansion(add = 0.8)) +
+  scale_y_continuous(breaks = seq(0, 40, 10), labels = function(x) paste0(x, "%"),
+                     expand = expansion(mult = c(0, 0.04))) +
+  labs(x = "Years in prison (50 = life)", y = "Participants") +
+  theme_vbar()
+save_fig(fig1, "fig1_study1_sentences", 3.0)
+fig1
+```
+
+```{r corr_matrix_tools}
+# === THE CORRELATION-MATRIX FIGURES (fig2 AND fig4): SHARED DRAWING FUNCTION ===
+# WHAT THIS CHUNK DOES: defines corr_matrix_fig(), which draws the correlations
+# among a set of Study 1 measures as a triangle of gray cells, each with its r
+# printed in it.
+# DESIGN. Only the cells below the diagonal are drawn: the matrix is symmetric,
+# so the upper triangle would repeat them, and the diagonal is 1 by definition.
+# Punitiveness is the first measure, so the first column is every measure's
+# correlation with punitiveness, the quantity the paper's H1 and H2 are about.
+# The shade runs from a very light gray (r = 0, still visible against the white
+# page) to near black (r = 1): one ramp, because every correlation here is
+# positive (guarded below; a negative r would need a second ramp, and the knit
+# stops rather than draw it misleadingly). The number in each cell carries the
+# exact value, so the figure has no colour key. Each number is printed in
+# white or black, whichever contrasts more with its own cell; the guard below
+# confirms every number keeps a contrast of at least 4.5 to 1 (the WCAG level
+# for normal text).
+# CONSUMES: s1 with punit_six (section 3.0); theme_paper(), INK (figure_style).
+MAT_LOW <- "#f0f0f0"; MAT_HIGH <- "#1a1a1a"
+# Relative luminance of a gray (WCAG 2 definition), for the text contrast.
+gray_lum <- function(hex) {
+  v <- grDevices::col2rgb(hex)[1, ] / 255
+  ifelse(v <= 0.03928, v / 12.92, ((v + 0.055) / 1.055)^2.4)
+}
+corr_matrix_fig <- function(vars, labels, text_size, x_angle = 0, wrap = 12) {
+  stopifnot(length(vars) == length(labels), all(vars %in% names(s1)), !anyNA(s1[, vars]))
+  R <- cor(s1[, vars])
+  k <- length(vars)
+  cells <- expand.grid(i = seq_len(k), j = seq_len(k))
+  cells <- cells[cells$i > cells$j, ]          # below the diagonal: row i, column j
+  cells$r <- R[cbind(cells$i, cells$j)]
+  # GUARD: every correlation drawn is positive, so the one-ramp shading is
+  # honest (see DESIGN above).
+  stopifnot(all(cells$r > 0))
+  # The gray each cell will be drawn in: the same palette scale_fill_gradient()
+  # uses below (interpolated in Lab space between the two ends; with limits 0
+  # to 1, r needs no rescaling). The text takes whichever of white and black
+  # contrasts more with that gray. GUARD: at least 4.5 to 1 in every cell.
+  lum <- gray_lum(scales::seq_gradient_pal(MAT_LOW, MAT_HIGH, "Lab")(cells$r))
+  c_white <- 1.05 / (lum + 0.05); c_black <- (lum + 0.05) / 0.05
+  cells$white_text <- c_white > c_black
+  stopifnot(all(pmax(c_white, c_black) >= 4.5))
+  # Rows run top to bottom in the measures' order, columns left to right.
+  cells$row <- factor(labels[cells$i], levels = rev(labels))
+  cells$col <- factor(labels[cells$j], levels = labels)
+  cells$lab <- sub("^0\\.", ".", sprintf("%.2f", cells$r))
+  x_lab <- if (x_angle == 0) function(x) vapply(x, function(s)
+    paste(strwrap(s, width = wrap), collapse = "\n"), character(1)) else waiver()
+  p <- ggplot(cells, aes(x = col, y = row, fill = r)) +
+    geom_tile(colour = "white", linewidth = 0.6) +
+    geom_text(aes(label = lab, colour = white_text), size = text_size,
+              show.legend = FALSE) +
+    scale_fill_gradient(low = MAT_LOW, high = MAT_HIGH, limits = c(0, 1), guide = "none") +
+    scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+    scale_x_discrete(labels = x_lab, drop = TRUE) +
+    scale_y_discrete(drop = TRUE) +
+    coord_fixed(clip = "off") +
+    labs(x = NULL, y = NULL) +
+    theme_paper() +
+    theme(panel.grid = element_blank(),
+          axis.text.y = element_text(colour = INK, hjust = 1),
+          axis.text.x = if (x_angle == 0) element_text(colour = INK, lineheight = 0.9) else
+            element_text(colour = INK, angle = x_angle, hjust = 1, vjust = 1))
+  list(plot = p, R = R)
+}
+```
+
+## Figure 2: correlations among punitiveness and the clusters in Study 1
+
+```{r figure2_study1_clusters, fig.width = 5.8, fig.height = 3.5}
+# === FIGURE 2: PUNITIVENESS AND THE FIVE CLUSTERS, STUDY 1 (CORRELATION MATRIX) ===
+# WHAT THIS CHUNK DOES: draws the correlations among punitiveness (the six
+# components) and Study 1's five clusters, in Study 1's order, with the full
+# label "Personality and ideology" and no title inside the image. It replaces
+# Study 1's colour heatmap (its 01_main_analysis.Rmd, section 6.1d), which was
+# drawn on the published index.
+# PREREG: NOT REGISTERED (the paper's scoring; see section 3.0). Only the
+#         punitiveness column differs from Study 1's figure; the correlations
+#         among the clusters do not involve punitiveness.
+# CONSUMES: corr_matrix_fig() (above); t1 (section 3c.1).
+F2_VARS <- c(punit_six = "Punitiveness", crime_concerns_agg = "Crime concerns",
+             process_agg = "Process violations", emotions_agg = "Emotions",
+             hostile_agg = "Hostile aggression", personality_agg = "Personality and ideology")
+f2 <- corr_matrix_fig(names(F2_VARS), unname(F2_VARS), text_size = 3.0, wrap = 12)
+# GUARD: the punitiveness column is Table 1's cluster column (section 3c.1).
+stopifnot(isTRUE(all.equal(unname(f2$R["punit_six", -1]),
+                           t1$r[match(names(F2_VARS)[-1], t1$variable)])))
+fig2 <- f2$plot
+save_fig(fig2, "fig2_study1_cluster_matrix", 3.5)
+fig2
+```
+
+## Figure 4: correlations among punitiveness and the eighteen correlates in Study 1
+
+```{r figure4_study1_constructs, fig.width = 5.8, fig.height = 5.9}
+# === FIGURE 4: PUNITIVENESS AND THE EIGHTEEN CORRELATES, STUDY 1 (CORRELATION
+# MATRIX) ===
+# WHAT THIS CHUNK DOES: draws the correlations among punitiveness (the six
+# components) and Study 1's eighteen correlates, in Study 1's order (grouped by
+# cluster: crime concerns, process violations, emotions, hostile aggression,
+# personality and ideology), with the paper's labels and no title inside the
+# image. It replaces Study 1's colour heatmap, drawn on the published index.
+# PREREG: NOT REGISTERED (the paper's scoring). Only the punitiveness column
+#         differs from Study 1's figure.
+# CONSUMES: corr_matrix_fig() (above); S1P_CORRELATES and t1 (section 3c.1).
+F4_VARS <- c(punit_six = "Punitiveness", S1P_CORRELATES)
+f4 <- corr_matrix_fig(names(F4_VARS), unname(F4_VARS), text_size = 1.85, x_angle = 45)
+# GUARD: the punitiveness column is Table 1's last column (section 3c.1).
+stopifnot(isTRUE(all.equal(unname(f4$R["punit_six", -1]),
+                           t1$r[match(names(S1P_CORRELATES), t1$variable)])))
+fig4 <- f4$plot + theme(axis.text = element_text(size = 6.8))
+save_fig(fig4, "fig4_study1_construct_matrix", 5.9)
+fig4
+```
+
+## Figure 3 (output folder only): Study 1's hostility advantage at three levels of strictness
+
+```{r figure3_study1_sensitivity, fig.width = 5.8, fig.height = 2.6}
+# === FIGURE 3: STUDY 1'S SENSITIVITY ANALYSIS (BAR CHART), NOT A PAPER FIGURE ===
+# NO LONGER IN THE PAPER (27 September 2026): it is drawn to this document's
+# output folder only (save_fig(paper = FALSE)) and is not copied to the
+# manuscript's folders. It shows Study 1's PUBLISHED index, as Study 1's own
+# analysis exported it; the six-component values are in S1P_tableS1_strictness
+# (section 3c.2).
+# The difference between punitiveness's correlation with hostile aggression and
+# with crime concerns at each of Study 1's three levels, with the 95% BCa
+# bootstrap intervals exactly as Study 1's own analysis exported them
+# (tautology_bootstrap_cis.csv; 10,000 resamples). Nothing is re-estimated here.
+s1_boot <- read.csv(file.path(S1_ROOT, "output", "tables", "supplementary",
+                              "tautology_bootstrap_cis.csv"))
+stopifnot(nrow(s1_boot) == 3, grepl("^Original", s1_boot$Level[1]),
+          grepl("^Conservative", s1_boot$Level[2]), grepl("^Strictest", s1_boot$Level[3]))
+# GUARD: the exported differences must be the ones this document computes from
+# Study 1's data on the published index (section 3C), at the three decimals the
+# export prints.
+stopifnot(all(abs(round(s1_ladder_old$diff, 3) - s1_boot$Observed_Diff) < 1e-9))
+f3 <- data.frame(row = factor(LEVELS, levels = rev(LEVELS)),
+                 diff = s1_boot$Observed_Diff,
+                 lower = s1_boot$BCa_Lower, upper = s1_boot$BCa_Upper)
+fig3 <- ggplot(f3, aes(x = diff, y = row)) +
+  geom_col(width = 0.6, fill = S1_FILL) +
+  geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.2, orientation = "y",
+                linewidth = 0.5, colour = INK) +
+  geom_vline(xintercept = 0, colour = INK2, linewidth = 0.4) +
+  scale_x_continuous(breaks = seq(0, 0.4, 0.1), labels = axis_r) +
+  coord_cartesian(xlim = c(0, 0.42)) +
+  labs(x = expression(paste("Hostility minus crime concerns (difference in ",
+                            italic(r), ") and 95% BCa CI")), y = NULL) +
+  theme_hbar()
+save_fig(fig3, "fig3_study1_sensitivity", 2.6, paper = FALSE)
+fig3
+```
+
+## Figure 5: the sentencing decisions in both studies
+
+```{r figure5_sentences, fig.width = 5.8, fig.height = 3.8}
+# === FIGURE 5: SENTENCES, BOTH STUDIES (VIOLIN PLOT WITH JITTER) ===
+# One violin per study, same scale, same reference band. Every point is one
+# participant.
+f5_long <- data.frame(group = factor(sent$study, levels = c(S1_NAME, S2_NAME)),
+                      years = sent$years)
+f5_stats <- do.call(rbind, lapply(c(S1_NAME, S2_NAME), function(g)
+  cbind(group = g, mean_ci(f5_long$years[f5_long$group == g]))))
+f5_stats$group <- factor(f5_stats$group, levels = c(S1_NAME, S2_NAME))
+# GUARD: the means drawn are the means section 6 checked against both records.
+stopifnot(isTRUE(all.equal(f5_stats$mean, sent_summary$mean[match(c(S1_NAME, S2_NAME),
+                                                                  sent_summary$study)])))
+fig5 <- violin_sentences(f5_long, f5_stats)
+save_fig(fig5, "fig5_sentences_both_studies", 3.8)
+fig5
+```
+
+## Figure 6: punitiveness and its correlates in both studies
+
+```{r figure6_correlates, fig.width = 5.8, fig.height = 7.4}
+# === FIGURE 6: THE CORRELATES AND THE CLUSTERS, BOTH STUDIES (BAR CHART) ===
+# WHAT THIS CHUNK DOES: Panel A: every construct both studies fielded, each
+# study's correlation with punitiveness (the six components, in both studies)
+# and its 95% interval. Panel B: the four clusters.
+# PREREG: NOT REGISTERED (the paper's scoring; cross-study comparisons were
+#         never registered).
+# CONSUMES: two_con, two_clu (section 5); s1_con, s1_clu (section 3); STUDY_FILL,
+#           theme_hbar(), lab_r, axis_r (figure style).
+# GUARD: the row order factors cover every row (no construct or cluster lost).
+# Rows are ORDERED BY STUDY 1 (its correlations on the six components, largest
+# at the top), so a reader can see directly whether Study 2 keeps that order.
+# Panel B shows Study 1's thirty-item
+# personality cluster; the twenty-one-item version is in two_study_clusters.csv.
+# position_dodge() places the FIRST level lowest; ordering the studies Study 2
+# then Study 1 puts Study 1's bar on top in every row, as the legend reads.
+bar_panel <- function(df, key, title) {
+  df$study <- factor(df$study, levels = c(S2_NAME, S1_NAME))
+  dodge <- position_dodge(width = 0.8)
+  ggplot(df, aes(x = r, y = .data[[key]], fill = study)) +
+    geom_col(width = 0.76, position = dodge) +
+    geom_errorbar(aes(xmin = ci_lower, xmax = ci_upper), width = 0.25,
+                  orientation = "y", linewidth = 0.35, colour = INK, position = dodge) +
+    geom_vline(xintercept = 0, colour = INK2, linewidth = 0.4) +
+    scale_fill_manual(values = STUDY_FILL, breaks = c(S1_NAME, S2_NAME)) +
+    scale_x_continuous(breaks = seq(0, 0.8, 0.1), labels = axis_r) +
+    coord_cartesian(xlim = c(0, 0.8)) +
+    labs(x = lab_r, y = NULL, title = title) +
+    theme_hbar()
+}
+# Study 1's order is the order of ITS correlations on the six components,
+# largest at the top (the published order was on the published index, and a
+# few adjacent rows swap places under the six components, e.g. hatred and
+# social exclusion). order() puts the smallest first, which ggplot draws at the
+# bottom.
+two_con$construct <- factor(two_con$construct,
+                            levels = s1_con$construct[order(s1_con$r)])
+two_clu$cluster <- factor(two_clu$cluster, levels = s1_clu$cluster[order(s1_clu$r)])
+stopifnot(!anyNA(two_con$construct), !anyNA(two_clu$cluster))
+fig6 <- bar_panel(two_con, "construct", "A. Each construct") /
+  (bar_panel(two_clu, "cluster", "B. The four clusters") +
+     theme(legend.position = "none")) +
+  plot_layout(heights = c(16, 4.6))
+save_fig(fig6, "fig6_correlates_both_studies", 7.4)
+fig6
+```
+
+## Figure 7: the hostility advantage in both studies
+
+```{r figure7_advantage, fig.width = 5.8, fig.height = 5.2}
+# === FIGURE 7: HOW MUCH MORE CLOSELY PUNITIVENESS TRACKS HOSTILITY (BAR CHART) ===
+# PREREG: NOT REGISTERED as scored (see below). CONSUMES: two_adv (section 5),
+# LEVELS and PARTS (section 3), whose values sections 3 and 4 guarded.
+# WHAT THIS CHUNK DOES: the difference between the two correlations (hostile aggression minus crime
+# concerns) with its 95% interval. Panel A: the three levels of the sensitivity
+# analysis. Panel B: the all-six-construct comparison on each part of
+# punitiveness separately. Panel A's punitiveness is the six components in both
+# studies (NOT REGISTERED); Panel B's rows are single parts, so no weighting
+# enters. INTERVALS are Zou's (2007), computed identically in both studies.
+# Study 1's Table S1 reports BCa bootstrap intervals for the three levels
+# (S1P_tableS1_strictness, section 3c.2); those are close to these but are not
+# the same interval.
+adv_panel <- function(df, title) {
+  df$study <- factor(df$study, levels = c(S2_NAME, S1_NAME))
+  dodge <- position_dodge(width = 0.8)
+  ggplot(df, aes(x = diff, y = row, fill = study)) +
+    geom_col(width = 0.76, position = dodge) +
+    geom_errorbar(aes(xmin = diff_lower, xmax = diff_upper), width = 0.25,
+                  orientation = "y", linewidth = 0.35, colour = INK, position = dodge) +
+    geom_vline(xintercept = 0, colour = INK2, linewidth = 0.4) +
+    scale_fill_manual(values = STUDY_FILL, breaks = c(S1_NAME, S2_NAME)) +
+    scale_x_continuous(breaks = seq(0, 0.4, 0.1), labels = axis_r) +
+    coord_cartesian(xlim = c(-0.05, 0.45)) +
+    labs(x = lab_dr, y = NULL, title = title) +
+    theme_hbar()
+}
+lev_df  <- two_adv[two_adv$panel == "levels", ]
+lev_df$row <- factor(lev_df$row, levels = rev(LEVELS))
+part_df <- two_adv[two_adv$panel == "parts", ]
+part_df$row <- factor(part_df$row, levels = rev(unname(PARTS)))
+fig7 <- adv_panel(lev_df, "A. Three levels of strictness") /
+  (adv_panel(part_df, "B. Each component of punitiveness") +
+     theme(legend.position = "none")) +
+  plot_layout(heights = c(3, 6))
+save_fig(fig7, "fig7_hostility_advantage_both_studies", 5.2)
+fig7
+```
+
+
+# 8. Study 2's own figures (Results, Part 2)
+
+These six figures show Study 2 alone, for Part 2 of its Results ("What people
+mean by retribution"). They use the same grayscale style as the figures above
+and the same checks: every number that also exists in `01_main_analysis.Rmd`'s
+exports is compared with it, and the knit stops if any disagrees.
+
+```{r study2_paper_tools}
+# === SHARED PIECES FOR THE STUDY 2 FIGURES ===
+# fmt_r prints a correlation without the leading zero and with a true minus
+# sign; a correlation smaller than .01 in size gets three decimals (.007), since
+# two would misstate it as .00 or .01.
+fmt_r <- function(x) {
+  dg <- ifelse(abs(x) < 0.01, 3, 2)
+  s <- vapply(seq_along(x), function(i) formatC(x[i], format = "f", digits = dg[i]),
+              character(1))
+  sub("^-", "−", sub("^(-?)0\\.", "\\1.", s))
+}
+# A Pearson correlation with its Fisher-z 95% interval, as cor.test() gives it.
+cor_ci2 <- function(x, y) {
+  tt <- cor.test(x, y)
+  data.frame(r = unname(tt$estimate), lower = tt$conf.int[1], upper = tt$conf.int[2])
+}
+# GUARD: two numbers must agree to within a tolerance, or the knit stops and
+# names the check that failed.
+same <- function(a, b, what, tol = 1e-8) {
+  if (!isTRUE(all.equal(as.numeric(a), as.numeric(b), tolerance = tol)))
+    stop("Guard failed: ", what)
+  invisible(TRUE)
+}
+# Four evenly spaced grays for stacked bars, darkest first (validated as an
+# ordered ramp: each step visibly darker than the next, the lightest still
+# distinct from the white page).
+RAMP4 <- c("#1a1a1a", "#4f4f4f", "#808080", "#b0b0b0")
+# Horizontal bars with a 95% interval and the value printed past the interval.
+# `fill` names the column that sets each bar's gray; dodge > 0 puts two bars in
+# each row. position_dodge() places the first factor level lowest, so callers
+# order the levels to put the series named first in the legend on top.
+bars_r <- function(df, y, fill, fills, xlim, xbreaks, xlab, dodge = 0,
+                   legend_breaks = names(fills)) {
+  pos <- if (dodge > 0) position_dodge(width = dodge) else position_identity()
+  ggplot(df, aes(x = r, y = .data[[y]], fill = .data[[fill]])) +
+    geom_col(width = if (dodge > 0) dodge * 0.95 else 0.65, position = pos) +
+    geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.25, orientation = "y",
+                  linewidth = 0.35, colour = INK, position = pos) +
+    geom_text(aes(x = pmax(upper, 0) + 0.012, label = fmt_r(r)), hjust = 0,
+              size = 2.6, colour = INK, position = pos, show.legend = FALSE) +
+    geom_vline(xintercept = 0, colour = INK2, linewidth = 0.4) +
+    scale_fill_manual(values = fills, breaks = legend_breaks) +
+    scale_x_continuous(breaks = xbreaks, labels = axis_r) +
+    coord_cartesian(xlim = xlim, clip = "off") +
+    labs(x = xlab, y = NULL) +
+    theme_hbar()
+}
+# Violins of 1-to-7 scores: the shape of everyone's answers, each participant as
+# a point jittered sideways only (so it stays at its score; the seed fixes the
+# jitter), and the mean with its 95% interval in black. The dashed line is the
+# neutral midpoint.
+violins_1to7 <- function(long, stats, levels) {
+  long$measure <- factor(long$measure, levels = levels)
+  stats$measure <- factor(stats$measure, levels = levels)
+  ggplot(long, aes(x = measure, y = score)) +
+    geom_hline(yintercept = 4, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+    geom_violin(fill = VIOLIN, colour = "#7a7a7a", linewidth = 0.35, width = 0.85,
+                scale = "width", adjust = 1.2, trim = TRUE) +
+    geom_point(position = position_jitter(width = 0.2, height = 0, seed = 1),
+               size = 0.6, alpha = 0.35, colour = POINTS, stroke = 0) +
+    geom_errorbar(data = stats, aes(x = measure, ymin = lower, ymax = upper),
+                  inherit.aes = FALSE, width = 0.12, linewidth = 0.6, colour = INK) +
+    geom_point(data = stats, aes(x = measure, y = mean), inherit.aes = FALSE,
+               size = 2.2, colour = INK) +
+    scale_y_continuous(breaks = 1:7, limits = c(1, 7),
+                       labels = c("1 Strongly\ndisagree", "2", "3", "4 Neutral", "5",
+                                  "6", "7 Strongly\nagree")) +
+    labs(x = NULL, y = NULL) +
+    theme_vbar() + theme(axis.text.y = element_text(size = 7.5, lineheight = 0.9))
+}
+```
+
+## The paper's scorings of Study 2
+
+```{r study2_paper_scorings}
+# === THE PAPER'S SCORINGS OF STUDY 2 ===
+# WHAT THIS CHUNK DOES: builds s2p, a copy of the scored data with the paper's
+# scores added, each built exactly as section 9.19 of 01_main_analysis.Rmd
+# builds it and checked against what 9.19 exported. fig10 to fig13, fig15 and
+# fig18 read from s2p; every other figure reads s2 and is unchanged.
+#
+# THE PAPER'S SCORINGS (none registered; the Method lists them, and the
+# Supplement lists each as a departure), as settled on 27 September 2026:
+#   desert_theory       "desert theory": the mean of Retribution_1 to _5, the
+#                       five retribution items (alpha .913, M 5.60). The
+#                       registered desert score is items 1 to 4.
+#   just_deserts_paper  the paper's "just deserts": the plain mean of desert
+#                       theory and the proportionality principle item (both 1
+#                       to 7, so the mean stays on the 1-to-7 scale and can be
+#                       compared with revenge's mean). The registered
+#                       composite, s2$just_deserts, is "just deserts
+#                       (registered)" and stays in s2p unchanged.
+#   punit_parts6        punitiveness, the six components weighted equally
+#                       (s2$punit_six, section 4.0), under the variable name
+#                       01's contrast exports use for it.
+#   punit_parts5z       punitiveness, the five attitude components each
+#                       standardized (s2$punit_five_z), used wherever the
+#                       sentence or the sentencing ratio is on the other side.
+# Revenge (four items) and the hostile aggression cluster are used as
+# registered, so s2p carries them unchanged from s2.
+PAPER_NEEDED <- c("PAPER_reliability", "PAPER_H6", "PAPER_H6_cors", "PAPER_H9",
+                  "PAPER_H10_cors", "PAPER_goals_by_limits", "PAPER_ratio_cors",
+                  "PAPER_ratio_continuous", "PAPER_contrasts_rank",
+                  "PAPER_contrasts_vs_deter_incap", "PAPER_H1",
+                  "PAPER_H12_shares_vs_deter_incap", "PAPER_person_scores",
+                  "PAPER_JD_parts", "PAPER_JD_H9", "PAPER_JD_H10_cors")
+PAPER_MISSING <- PAPER_NEEDED[!file.exists(file.path(S2_TABLES,
+                                                     paste0(PAPER_NEEDED, ".csv")))]
+if (length(PAPER_MISSING)) stop("Knit 01_main_analysis.Rmd first (the PAPER_ files ",
+                                "come from its section 9.19). Missing: ",
+                                paste(PAPER_MISSING, collapse = ", "))
+
+# Every item was required, so no row is missing an item; checked here because
+# a missing item would silently turn a row mean into a mean of fewer items.
+RET_ITEMS <- paste0("Retribution_", 1:5)
+stopifnot(!anyNA(s2[, RET_ITEMS]), !anyNA(s2$proportionality_principle),
+          all(s2$proportionality_principle %in% 1:7))
+s2p <- s2
+s2p$desert_theory      <- rowMeans(s2[, RET_ITEMS])
+s2p$just_deserts_paper <- (s2p$desert_theory + s2$proportionality_principle) / 2
+s2p$punit_parts6       <- s2$punit_six
+s2p$punit_parts5z      <- s2$punit_five_z
+
+# GUARDS against section 9.19's exports:
+#   desert theory's mean and SD (PAPER_reliability's "Desert theory (paper)"
+#   row) and its value for every participant (PAPER_person_scores);
+#   the paper's just deserts for every participant (PAPER_person_scores) and
+#   its mean (PAPER_JD_parts, whole sample: 5.66);
+#   the six-component score's mean and SD (PAPER_reliability); and
+#   the retributivists' and the other participants' means on the hostile
+#   aggression cluster (PAPER_contrasts_rank), which confirm that 9.19 used the
+#   registered cluster that s2 carries.
+prel <- read_s2("PAPER_reliability")
+p_ret <- prel[grepl("^Desert theory \\(paper\\)", prel$score), ]
+p_six <- prel[grepl("^Punitiveness \\(six components\\)", prel$score), ]
+stopifnot(nrow(p_ret) == 1, nrow(p_six) == 1, p_ret$k == 5, p_six$k == 6)
+same(mean(s2p$desert_theory), p_ret$M, "desert theory, mean")
+same(sd(s2p$desert_theory), p_ret$SD, "desert theory, SD")
+same(s2p$desert_theory, ps2$desert_theory, "desert theory, every participant")
+same(s2p$just_deserts_paper, ps2$just_deserts, "just deserts (paper), every participant")
+pjd <- read_s2("PAPER_JD_parts")
+pjd_all <- pjd[pjd$sample == "Whole sample", ]
+stopifnot(nrow(pjd_all) == 1)
+same(mean(s2p$just_deserts_paper), pjd_all$M_just_deserts, "just deserts (paper), mean")
+same(mean(s2p$punit_parts6), p_six$M, "six components, mean", tol = 1e-6)
+same(sd(s2p$punit_parts6), p_six$SD, "six components, SD")
+pcr <- read_s2("PAPER_contrasts_rank")
+p_hag <- pcr[pcr$outcome == "Hostile-aggression cluster (z)", ]
+stopifnot(nrow(p_hag) == 1, p_hag$variable == "hostile_agg")
+RET_P <- s2$grp_rank == "Retributivist"
+stopifnot(!anyNA(RET_P), sum(RET_P) == 371)
+same(mean(s2p$hostile_agg[RET_P]), p_hag$M1, "cluster, retributivists")
+same(mean(s2p$hostile_agg[!RET_P]), p_hag$M2, "cluster, the others")
+cat(sprintf(paste("Desert theory M = %.2f; just deserts (paper) M = %.2f;",
+                  "revenge (four items) M = %.2f.\n"),
+            mean(s2p$desert_theory), mean(s2p$just_deserts_paper), mean(s2p$revenge)))
+```
+
+## Figure 17: the first sentence in Study 2
+
+```{r figure17_study2_sentences, fig.width = 5.8, fig.height = 3.0}
+# === FIGURE 17: HOW MANY PARTICIPANTS CHOSE EACH SENTENCE IN STUDY 2 ===
+# WHAT THIS CHUNK DOES: draws the share of the 948 participants who chose each
+# first sentence, 0 to 50 years in whole years, with the 20-to-30-year range
+# the instructions called typical shaded and the mean marked by a dashed line.
+# It is the paper version of the talk slide s2_01 (no title inside the image;
+# the caption in the manuscript is the title). The mean and the share at 50
+# years are checked against the sentence summary of section 6 (s2r), which
+# section 6 checked against 01_main_analysis.Rmd's exports.
+yrs <- s2$Sentence1
+stopifnot(!anyNA(yrs), length(yrs) == 948, all(yrs == round(yrs)), all(yrs >= 0 & yrs <= 50))
+hist_df <- data.frame(years = 0:50,
+                      pct = vapply(0:50, function(y) 100 * mean(yrs == y), numeric(1)))
+same(sum(hist_df$pct), 100, "shares sum to 100%")
+same(hist_df$pct[hist_df$years == 50] / 100, s2r$share_at_50, "share at 50 years")
+same(mean(yrs), s2r$mean, "mean sentence")
+fig17 <- ggplot(hist_df, aes(x = years, y = pct)) +
+  annotate("rect", xmin = 19.5, xmax = 30.5, ymin = -Inf, ymax = Inf, fill = BAND, colour = NA) +
+  geom_col(width = 0.75, fill = S2_FILL) +
+  geom_vline(xintercept = s2r$mean, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+  annotate("text", x = s2r$mean + 0.8, y = 30, hjust = 0, size = 2.7, colour = INK,
+           label = sprintf("Mean, %.1f years", s2r$mean)) +
+  annotate("text", x = 25, y = 30, size = 2.5, colour = INK2, lineheight = 0.9,
+           label = "Range called\ntypical") +
+  scale_x_continuous(breaks = seq(0, 50, 5), expand = expansion(add = 0.8)) +
+  scale_y_continuous(breaks = seq(0, 40, 10), labels = function(x) paste0(x, "%"),
+                     expand = expansion(mult = c(0, 0.04))) +
+  labs(x = "Years in prison (50 = life)", y = "Participants") +
+  theme_vbar()
+save_fig(fig17, "fig17_study2_sentences", 3.0)
+fig17
+```
+
+## Figure 18: the twelve H1 correlations in Study 2
+
+```{r figure18_study2_correlates, fig.width = 5.8, fig.height = 3.6}
+# === FIGURE 18: EACH REGISTERED CORRELATE WITH PUNITIVENESS (H1) ===
+# WHAT THIS CHUNK DOES: plots each of the twelve registered correlates'
+# correlation with punitiveness, the six components, with its 95% interval, as
+# 01_main_analysis.Rmd exported them (PAPER_H1, section 9.19B), shaded by the
+# H2 cluster each correlate belongs to. It is the paper version of the talk
+# slide s2_02, on the paper's punitiveness measure. Each correlation is
+# recomputed from the scored data as a check.
+# PREREG: H1 is registered on the eight-item scale (Supplement); this is the
+#         same family on the paper's score, NOT REGISTERED.
+ph1 <- read_s2("PAPER_H1")
+H1_VARS <- c("Harsh prison conditions" = "harsh", "Hatred" = "hatred",
+             "Social exclusion" = "exclusion", "Infliction of suffering" = "suffering",
+             "Due-process permissiveness" = "dueprocess", "Revenge" = "revenge",
+             "Degradation" = "degradation", "Anger" = "anger",
+             "Perceived crime rates" = "crimerates",
+             "Tolerance of prison violence" = "prisonviol",
+             "Convicting on uncertain evidence" = "uncertain", "Fear of crime" = "fear")
+stopifnot(setequal(ph1$y, names(H1_VARS)), nrow(ph1) == 12)
+# The registered H2 clusters (prereg 2.1): hostile aggression has five members
+# and crime concerns two; the other five correlates belong to neither.
+H1_HOSTILE <- c("hatred", "revenge", "degradation", "suffering", "prisonviol")
+H1_CRIME   <- c("crimerates", "fear")
+f18 <- data.frame(measure = ph1$y, r = ph1$r, lower = ph1$ci_lower, upper = ph1$ci_upper,
+                  stringsAsFactors = FALSE)
+f18$var <- unname(H1_VARS[f18$measure])
+for (i in seq_len(nrow(f18)))
+  same(cor(s2p$punit_parts6, s2p[[f18$var[i]]]), f18$r[i], paste("r,", f18$measure[i]))
+CL18 <- c("Hostile aggression cluster", "Crime concerns cluster", "Neither cluster")
+f18$cluster <- ifelse(f18$var %in% H1_HOSTILE, CL18[1], ifelse(f18$var %in% H1_CRIME, CL18[2], CL18[3]))
+f18$measure <- factor(f18$measure, levels = f18$measure[order(f18$r)])
+fig18 <- bars_r(f18, "measure", "cluster",
+                fills = setNames(c(S2_FILL, S1_FILL, "#7a7a7a"), CL18),
+                xlim = c(0, 0.72), xbreaks = seq(0, 0.6, 0.2), xlab = lab_r,
+                legend_breaks = CL18)
+save_fig(fig18, "fig18_study2_correlates", 3.6)
+fig18
+```
+
+## Figure 8: ranking the goals of punishment
+
+```{r figure8_goals, fig.width = 5.8, fig.height = 2.4}
+# === FIGURE 8: RANKING THE FOUR GOALS ===
+# WHAT THIS CHUNK DOES: draws the share of participants placing each goal 1st
+# to 4th, from the exported rank matrix (goal_rank_matrix, registered). Since
+# 27 September 2026 the figure is this ranking alone: the panel of the goal
+# ratings (violins of each goal scale) was dropped, and the ratings are
+# reported in the text and the Supplement. With one panel, the figure carries
+# no panel letter or title inside the image.
+# PREREG: the ranking is registered (prereg 5.5); descriptive, no test.
+# CONSUMES: read_s2() (section 1); RAMP4, theme_hbar() (figure style).
+rk <- read_s2("goal_rank_matrix")
+rk$goal <- ifelse(grepl("retribution", rk$goal), "Retribution",
+           ifelse(grepl("incapacitation", rk$goal), "Incapacitation",
+           ifelse(grepl("deterrence", rk$goal), "Deterrence", "Rehabilitation")))
+GOALS <- c("Retribution", "Incapacitation", "Deterrence", "Rehabilitation")
+stopifnot(setequal(rk$goal, GOALS),
+          all(rowSums(rk[, c("first", "second", "third", "fourth")]) == 948))
+PLACES <- c(first = "1st", second = "2nd", third = "3rd", fourth = "4th")
+rank_long <- do.call(rbind, lapply(names(PLACES), function(p)
+  data.frame(goal = rk$goal, place = PLACES[[p]], pct = 100 * rk[[p]] / 948)))
+rank_long$place <- factor(rank_long$place, levels = unname(PLACES))
+rank_long$goal <- factor(rank_long$goal, levels = rev(GOALS))
+f8a <- ggplot(rank_long, aes(x = pct, y = goal, fill = place)) +
+  # reverse = TRUE puts 1st place at the left of each bar; group = place keeps
+  # the labels in the same stacking order as the bars.
+  geom_col(width = 0.7, colour = "white", linewidth = 0.5,
+           position = position_stack(reverse = TRUE)) +
+  geom_text(aes(label = sprintf("%.0f%%", pct), group = place,
+                colour = place %in% c("1st", "2nd", "3rd")),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 2.6,
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = setNames(RAMP4, unname(PLACES))) +
+  scale_x_continuous(labels = function(x) paste0(x, "%"),
+                     expand = expansion(mult = c(0, 0.01))) +
+  labs(x = "Participants", y = NULL) +
+  theme_hbar() +
+  # A right margin wide enough for the "100%" tick label, which would otherwise
+  # be cut at the image's edge.
+  theme(plot.margin = margin(5.5, 14, 5.5, 5.5))
+fig8 <- f8a
+save_fig(fig8, "fig8_study2_goals", 2.4)
+fig8
+```
+
+## Figure 9: proportionality and its departures
+
+```{r figure9_proportionality, fig.width = 5.8, fig.height = 2.6}
+# === FIGURE 9: DISAGREE / NEUTRAL / AGREE ON THE THREE ITEMS (H4, H5) ===
+ITEMS <- c(proportionality = "“Proportionate to the severity\nof the crime, no more and no less”",
+           severity_1 = "“Greater than the\nseriousness of the crime”",
+           severity_2 = "“Less severe than the\nharmfulness of the crime”")
+for (v in names(ITEMS)) stopifnot(!anyNA(s2[[v]]), all(s2[[v]] %in% 1:7))
+h4 <- read_s2("H4_midpoint_tests"); h4s <- read_s2("H4_shares"); h5 <- read_s2("H5_paired")
+same(mean(s2$proportionality), h4$mean[h4$variable == "proportionality"], "proportionality mean")
+same(mean(s2$severity_1), h5$M1, "severity_1 mean"); same(mean(s2$severity_2), h5$M2, "severity_2 mean")
+same(sum(s2$proportionality <= 4), h4s$k[3], "proportionality at or below 4")
+same(sum(s2$severity_1 > 4), h4s$k[1], "severity_1 above 4")
+ANS <- c("Disagree (1 to 3)", "Neutral (4)", "Agree (5 to 7)")
+prop_long <- do.call(rbind, lapply(names(ITEMS), function(v) data.frame(
+  item = ITEMS[[v]], answer = ANS,
+  pct = 100 * c(mean(s2[[v]] < 4), mean(s2[[v]] == 4), mean(s2[[v]] > 4)))))
+prop_long$item <- factor(prop_long$item, levels = rev(unname(ITEMS)))
+prop_long$answer <- factor(prop_long$answer, levels = ANS)
+fig9 <- ggplot(prop_long, aes(x = pct, y = item, fill = answer)) +
+  geom_col(width = 0.65, colour = "white", linewidth = 0.5,
+           position = position_stack(reverse = TRUE)) +
+  geom_text(data = prop_long[prop_long$pct >= 5, ],
+            aes(label = sprintf("%.0f%%", pct), group = answer,
+                colour = answer != ANS[2]),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 2.6,
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = setNames(c("#808080", "#d0d0d0", "#1a1a1a"), ANS)) +
+  scale_x_continuous(labels = function(x) paste0(x, "%"),
+                     expand = expansion(mult = c(0, 0.01))) +
+  coord_cartesian(clip = "off") +
+  labs(x = "Participants", y = "Punishment should be ...") +
+  theme_hbar() + theme(axis.title.y = element_text(size = 8),
+                       plot.margin = margin(5.5, 14, 5.5, 5.5))
+save_fig(fig9, "fig9_study2_proportionality", 2.6)
+fig9
+```
+
+## Figure 10: what desert theory goes with
+
+```{r figure10_retribution, fig.width = 5.8, fig.height = 1.6}
+# === FIGURE 10: DESERT THEORY WITH THE PROPORTIONALITY PRINCIPLE AND WITH THE
+# SEVERITY INDEX (H6, ON THE PAPER'S SCORING) ===
+# WHAT THIS CHUNK DOES: draws desert theory's correlation with the
+# proportionality principle (.199) and with the severity index (.474), each
+# with its 95% interval, as 01 exported them (PAPER_H6_cors, rows 1 and 2), and
+# recomputes both from the scored data as a check. Since 27 September 2026 the
+# figure shows these two bars only: the rows for the two single severity items
+# and every punitiveness bar were dropped (punitiveness's correlations with the
+# principle and the severity index, now on the six components, .038 and .588,
+# are reported in the text from PAPER_H6).
+# PREREG: H6 is registered on the registered desert score; this is the paper's
+#         desert theory (Retribution_1 to _5), NOT REGISTERED as scored.
+# CONSUMES: s2p (study2_paper_scorings); read_s2(), bars_r(), same().
+h6c <- read_s2("PAPER_H6_cors"); h6s <- read_s2("PAPER_H6")
+MEAS <- c("Proportionality principle", "Severity index")
+MEAS_VAR <- c("proportionality_principle", "severity_index")
+stopifnot(h6c$x[1] == "Desert theory", h6c$x[2] == "Desert theory",
+          grepl("^Proportionality principle", h6c$y[1]), grepl("^Severity index", h6c$y[2]))
+f10 <- data.frame(series = "Desert theory", measure = MEAS, r = h6c$r[1:2],
+                  lower = h6c$ci_lower[1:2], upper = h6c$ci_upper[1:2])
+same(f10$r, vapply(MEAS_VAR, function(v) cor(s2p$desert_theory, s2[[v]]), numeric(1)),
+     "desert theory rows")
+# GUARD: the two bars are the two correlations H6's test compares (PAPER_H6,
+# desert theory row: r_jk with the severity index, r_jh with the principle).
+p_dt <- h6s[h6s$pair == "Desert theory", ]
+stopifnot(nrow(p_dt) == 1)
+same(f10$r, c(p_dt$r_jh, p_dt$r_jk), "the two correlations H6 compares")
+f10$measure <- factor(f10$measure, levels = rev(MEAS))
+fig10 <- bars_r(f10, "measure", "series", fills = c(`Desert theory` = S2_FILL),
+                xlim = c(0, 0.6), xbreaks = seq(0, 0.6, 0.2),
+                xlab = expression(paste("Correlation with desert theory (", italic(r),
+                                        ") and 95% CI"))) +
+  theme(legend.position = "none")
+save_fig(fig10, "fig10_study2_desert_direction", 1.6)
+fig10
+```
+
+## Figure 11: each goal against each limit
+
+```{r figure11_limits, fig.width = 5.8, fig.height = 3.2}
+# === FIGURE 11: GOALS AGAINST PARSIMONY AND AGAINST THE PROPORTIONALITY
+# PRINCIPLE (PAPER_goals_by_limits, section 9.19) ===
+# WHAT THIS CHUNK DOES: each goal's correlation with the two limits, with 95%
+# intervals, read from 01's export; desert theory's correlation with the
+# principle is recomputed from the scored data as a check (GUARD, below).
+# CONSUMES: s2p (study2_paper_scorings); read_s2(), same(), fmt_r().
+# Retribution is desert theory (the five retribution items; its label in the
+# figure is "Desert theory"); the limit of proportionality is the principle
+# item, the paper's measure of it. Parsimony is its two items, scored so that
+# agreement means accepting the limit. NOT REGISTERED (the paper's scoring).
+gl <- read_s2("PAPER_goals_by_limits")
+stopifnot(nrow(gl) == 12, setequal(gl$x, c("Desert theory", "Deterrence",
+                                           "Incapacitation", "Rehabilitation")))
+LIM <- c("Parsimony (2 items)" = "Parsimony (two items)",
+         "Proportionality principle item alone" = "Proportionality principle")
+gl$goal <- gl$x
+same(gl$r[gl$goal == "Desert theory" & gl$y == "Proportionality principle item alone"],
+     cor(s2p$desert_theory, s2$proportionality_principle),
+     "desert theory x proportionality principle (H6)")
+g11 <- gl[gl$y %in% names(LIM), ]
+g11$limit <- factor(LIM[g11$y], levels = unname(LIM))
+g11$goal <- factor(g11$goal, levels = c("Desert theory", "Deterrence", "Incapacitation",
+                                        "Rehabilitation"))
+stopifnot(nrow(g11) == 8, !anyNA(g11$limit), !anyNA(g11$goal))
+DG <- position_dodge(width = 0.8)
+fig11 <- ggplot(g11, aes(x = goal, y = r, fill = limit)) +
+  geom_hline(yintercept = 0, colour = INK2, linewidth = 0.4) +
+  geom_col(width = 0.76, position = DG) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, linewidth = 0.35,
+                colour = INK, position = DG) +
+  geom_text(aes(y = ifelse(r >= 0, ci_upper + 0.02, ci_lower - 0.02),
+                vjust = ifelse(r >= 0, 0, 1), label = fmt_r(r)),
+            position = DG, size = 2.6, colour = INK) +
+  scale_fill_manual(values = setNames(c(S2_FILL, S1_FILL), unname(LIM))) +
+  scale_y_continuous(breaks = seq(-0.5, 0.3, 0.1), labels = axis_r) +
+  coord_cartesian(ylim = c(-0.56, 0.34), clip = "off") +
+  labs(x = NULL, y = expression(paste("Correlation with the limit (", italic(r), ") and 95% CI"))) +
+  theme_vbar()
+save_fig(fig11, "fig11_study2_goals_limits", 3.2)
+fig11
+```
+
+## Figure 12: desert theory, just deserts and revenge
+
+```{r figure12_revenge, fig.width = 5.8, fig.height = 5.4}
+# === FIGURE 12: ENDORSEMENT (A) AND CORRELATION WITH PUNITIVENESS (B) ===
+# WHAT THIS CHUNK DOES: each panel shows four scores side by side, so the
+# Supplement can set the registered H9 and H10 beside the paper's versions:
+#   Desert theory              the five retribution items (paper);
+#   Just deserts               the paper's just deserts: the mean of desert
+#                              theory and the proportionality principle;
+#   Just deserts (registered)  the registered composite (desert, items 1 to 4,
+#                              with the registered proportionality component);
+#   Revenge                    its four registered items.
+# Panel A: each score's distribution, mean and 95% interval (1 to 7). Panel B:
+# each score's correlation with punitiveness, the six components, for every
+# row; the registered H10 test used the eight-item scale (H10_steiger), and the
+# Supplement's text reports it there.
+# PREREG: H9 and H10 are registered on the registered just-deserts score; the
+#         desert-theory and paper just-deserts rows are NOT REGISTERED.
+# CONSUMES: s2p (study2_paper_scorings); read_s2(), mean_ci(), cor_ci2(),
+#           violins_1to7(), bars_r(), same().
+ENDORSE <- c("Desert theory", "Just deserts", "Just deserts (registered)", "Revenge")
+END_COL <- list(s2p$desert_theory, s2p$just_deserts_paper, s2$just_deserts, s2$revenge)
+h9p <- read_s2("PAPER_H9"); h9 <- read_s2("H9_paired"); h9j <- read_s2("PAPER_JD_H9")
+stopifnot(h9$var1[1] == "just_deserts", h9$var2[1] == "revenge", h9p$var2 == "revenge",
+          h9j$comparison[1] == "Just deserts vs revenge", h9j$var2[1] == "revenge")
+endorse <- do.call(rbind, lapply(seq_along(ENDORSE), function(i)
+  cbind(measure = ENDORSE[i], mean_ci(END_COL[[i]]))))
+# GUARDS: each mean is the one its H9 test compared. Desert theory and revenge
+# against PAPER_H9; the paper's just deserts against PAPER_JD_H9 (5.66 against
+# revenge's 4.14); the registered just deserts and revenge against the
+# registered H9_paired.
+same(endorse$mean[1], h9p$M1, "desert theory mean"); same(endorse$mean[4], h9p$M2, "revenge mean")
+same(endorse$mean[2], h9j$M1[1], "just deserts (paper) mean")
+same(endorse$mean[4], h9j$M2[1], "revenge mean, paper's just-deserts H9")
+same(endorse$mean[3], h9$M1[1], "just deserts (registered) mean")
+same(endorse$mean[4], h9$M2[1], "revenge mean, registered H9")
+endorse_long <- do.call(rbind, lapply(seq_along(ENDORSE), function(i)
+  data.frame(measure = ENDORSE[i], score = END_COL[[i]])))
+# The registered score's label breaks onto two lines so the four labels fit
+# under their violins.
+END_LAB <- c("Desert theory", "Just deserts", "Just deserts\n(registered)", "Revenge")
+endorse_long$measure <- END_LAB[match(endorse_long$measure, ENDORSE)]
+endorse_plot <- endorse; endorse_plot$measure <- END_LAB[match(endorse$measure, ENDORSE)]
+f12a <- violins_1to7(endorse_long, endorse_plot, END_LAB) +
+  labs(title = "A. Endorsement")
+assoc <- do.call(rbind, lapply(seq_along(ENDORSE), function(i)
+  cbind(measure = ENDORSE[i], cor_ci2(s2p$punit_parts6, END_COL[[i]]))))
+# GUARDS: each correlation against 01's export for it, on the six components:
+# desert theory and revenge (PAPER_H10_cors, .674 and .676), the paper's just
+# deserts (PAPER_JD_H10_cors, .432), and the registered just deserts
+# (DS_revenge_darkside's reference row, .468).
+h10c <- read_s2("PAPER_H10_cors")
+h10f <- h10c[h10c$x == "Punitiveness (six components)" & h10c$sample == "Whole sample", ]
+h10j <- read_s2("PAPER_JD_H10_cors")
+h10j <- h10j[h10j$x == "Punitiveness (six components)" & h10j$sample == "Whole sample", ]
+jd_reg <- rev3[rev3$x == FULL & grepl("^Just deserts \\(registered\\)", rev3$y), ]
+stopifnot(sum(h10f$y == "Desert theory") == 1, sum(h10f$y == "Revenge") == 1,
+          sum(h10j$y == "Just deserts") == 1, nrow(jd_reg) == 1)
+same(assoc$r[1], h10f$r[h10f$y == "Desert theory"], "desert theory x punitiveness")
+same(assoc$r[2], h10j$r[h10j$y == "Just deserts"], "just deserts (paper) x punitiveness")
+same(assoc$r[3], jd_reg$r, "just deserts (registered) x punitiveness")
+same(assoc$r[4], h10f$r[h10f$y == "Revenge"], "revenge x punitiveness")
+assoc$family <- ifelse(assoc$measure == "Revenge", "Revenge", "Retribution")
+assoc$measure <- factor(assoc$measure, levels = rev(ENDORSE))
+f12b <- bars_r(assoc, "measure", "family", fills = c(Retribution = S2_FILL, Revenge = S1_FILL),
+               xlim = c(0, 0.8), xbreaks = seq(0, 0.8, 0.2),
+               xlab = expression(paste("Correlation with punitiveness (", italic(r), ") and 95% CI"))) +
+  theme(legend.position = "none") + labs(title = "B. Correlation with punitiveness")
+fig12 <- f12a / f12b + plot_layout(heights = c(1.3, 0.95))
+save_fig(fig12, "fig12_study2_desert_revenge", 5.4)
+fig12
+```
+
+## Figure 13: the second sentence
+
+```{r figure13_second_sentence, fig.width = 5.8, fig.height = 7.4}
+# === FIGURE 13: BOTH SENTENCES (A), WHAT PARTICIPANTS DID (B), AND WHAT
+# KEEPING THE SENTENCE GOES WITH (C) ===
+# WHAT THIS CHUNK DOES: A, the two sentences as violins; B, the share who
+# reduced, kept or raised the sentence, by whether the first was 50 years; C,
+# the sentencing ratio's correlation with desert theory, revenge, punitiveness
+# (the five attitude components) and the principle. Every plotted number is
+# checked against 01's exports (GUARDS below).
+# PREREG: A and B are descriptive; C's rows are NOT REGISTERED as scored.
+# CONSUMES: s2, s2p (sections 4.0 and 8); read_s2(), same(), mean_ci(),
+#           cor_ci2(), violin_sentences(), bars_r().
+sc <- read_s2("P2_sentence_change")
+same(mean(s2$Sentence2), sc$M1, "mean second sentence"); same(mean(s2$Sentence1), sc$M2, "mean first sentence")
+SENT <- c("First sentence", "Second sentence")
+f13a_long <- rbind(data.frame(group = SENT[1], years = s2$Sentence1),
+                   data.frame(group = SENT[2], years = s2$Sentence2))
+f13a_long$group <- factor(f13a_long$group, levels = SENT)
+f13a_stats <- rbind(cbind(group = SENT[1], mean_ci(s2$Sentence1)),
+                    cbind(group = SENT[2], mean_ci(s2$Sentence2)))
+f13a_stats$group <- factor(f13a_stats$group, levels = SENT)
+f13a <- violin_sentences(f13a_long, f13a_stats) + labs(title = "A. Both sentences")
+# B: reduced / kept / raised, by whether the first sentence was the maximum.
+ok <- s2$Sentence1 > 0
+dirn <- ifelse(s2$Sentence2 < s2$Sentence1, "Reduced",
+        ifelse(s2$Sentence2 == s2$Sentence1, "Kept", "Raised"))[ok]
+GRP <- c("First sentence 50 years (n = 360)", "First sentence under 50 years (n = 587)")
+grp <- ifelse(s2$Sentence1[ok] == 50, GRP[1], GRP[2])
+tab <- table(factor(grp, levels = GRP), factor(dirn, levels = c("Reduced", "Kept", "Raised")))
+cells <- read_s2("sentencing_ratio_direction_cells"); ce <- read_s2("P2_sentence_ceiling")
+same(colSums(tab), cells$n, "reduced / kept / raised counts")
+same(tab[1, "Kept"], ce$k[1], "kept at 50"); same(tab[2, ], ce$k[2:4], "below 50")
+stopifnot(rowSums(tab)[1] == 360, rowSums(tab)[2] == 587)
+b_long <- as.data.frame(tab); names(b_long) <- c("group", "choice", "n")
+b_long$pct <- 100 * b_long$n / ave(b_long$n, b_long$group, FUN = sum)
+b_long$group <- factor(b_long$group, levels = rev(GRP))
+f13b <- ggplot(b_long, aes(x = pct, y = group, fill = choice)) +
+  geom_col(width = 0.6, colour = "white", linewidth = 0.5,
+           position = position_stack(reverse = TRUE)) +
+  geom_text(data = b_long[b_long$pct >= 4, ],
+            aes(label = sprintf("%.0f%%", pct), group = choice, colour = choice != "Reduced"),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 2.6,
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = c(Reduced = "#b0b0b0", Kept = "#666666", Raised = "#1a1a1a")) +
+  scale_x_continuous(labels = function(x) paste0(x, "%"), expand = expansion(mult = c(0, 0.01))) +
+  labs(x = "Participants", y = NULL, title = "B. The second sentence against the first") +
+  theme_hbar()
+# C: the sentencing ratio with desert theory, revenge (four items, as
+# registered), punitiveness and the principle, from s2p. Punitiveness here is
+# the five attitude components, each standardized (punit_parts5z), because the
+# ratio is built from the sentences and the six-component score contains the
+# first sentence. Each r and its interval are checked against PAPER_ratio_cors,
+# and revenge and punitiveness also against the paper's continuous analysis of
+# the ratio (PAPER_ratio_continuous; its revenge row is 9.10's registered one),
+# whose standardized slope equals r. NOT REGISTERED as scored (desert theory,
+# the five components).
+MEAS13 <- c(desert_theory = "Desert theory", revenge = "Revenge",
+            punit_parts5z = "Punitiveness (five attitude components)",
+            proportionality_principle = "Proportionality principle")
+MEAS13_EXPORT <- c(desert_theory = "Desert theory", revenge = "Revenge",
+                   punit_parts5z = "Punitiveness (five attitude components)",
+                   proportionality_principle = "Proportionality principle")
+rat <- do.call(rbind, lapply(names(MEAS13), function(v)
+  cbind(measure = MEAS13[[v]], cor_ci2(s2p$sentence_ratio, s2p[[v]]))))
+prc <- read_s2("PAPER_ratio_cors"); pcc <- read_s2("PAPER_ratio_continuous")
+for (i in seq_along(MEAS13)) {
+  e <- prc[prc$y == MEAS13_EXPORT[[i]], ]
+  stopifnot(nrow(e) == 1)
+  same(c(rat$r[i], rat$lower[i], rat$upper[i]), c(e$r, e$ci_lower, e$ci_upper),
+       paste("ratio x", MEAS13[[i]]))
+}
+# GUARD: the continuous analysis has exactly one punitiveness row, the five
+# components (01 guards that no six-component row reads the ratio).
+stopifnot(sum(pcc$outcome == "Revenge") == 1, sum(grepl("^Punitiveness", pcc$outcome)) == 1,
+          pcc$outcome[grepl("^Punitiveness", pcc$outcome)] == MEAS13_EXPORT[["punit_parts5z"]])
+same(rat$r[2], pcc$beta[pcc$outcome == "Revenge"], "ratio x revenge (slope)", tol = 1e-6)
+same(rat$r[3], pcc$beta[grepl("^Punitiveness", pcc$outcome)], "ratio x punitiveness (slope)", tol = 1e-6)
+rat$measure <- factor(rat$measure, levels = rev(unname(MEAS13)))
+rat$shade <- ifelse(rat$measure == "Proportionality principle", "light", "dark")
+f13c <- bars_r(rat, "measure", "shade", fills = c(dark = S2_FILL, light = S1_FILL),
+               xlim = c(-0.1, 0.42), xbreaks = seq(-0.1, 0.4, 0.1),
+               xlab = expression(paste("Correlation with the sentencing ratio (", italic(r), ") and 95% CI"))) +
+  theme(legend.position = "none") + labs(title = "C. What keeping the sentence goes with")
+fig13 <- f13a / f13b / f13c + plot_layout(heights = c(1.6, 0.8, 0.9))
+save_fig(fig13, "fig13_study2_second_sentence", 7.4)
+fig13
+```
+
+
+# 9. Study 2's own figures (Results, Part 3)
+
+These three figures show Study 2 alone, for Part 3 of its Results ("The people
+who rank retribution first"). They use the grayscale style of the figures above and
+the same kind of checks. Where a plotted number is rebuilt from the scored
+data, it is compared with the value `01_main_analysis.Rmd` exported, and the
+knit stops if any disagrees. Figure 14B's intervals for the two means have no
+exported counterpart and are computed here, and Figure 15's intervals and its
+second comparison group's means are read from the exports.
+
+```{r study2_part3_inputs}
+# === INPUTS FOR THE PART 3 FIGURES ===
+# WHAT THIS CHUNK DOES: confirms that the exports these figures read exist, and
+# fixes the primary grouping from the scored data.
+#
+# The P3_ files are written by section 9.17 of 01_main_analysis.Rmd. If any is
+# missing, 01 has not been knitted since that section was added; knit it first.
+P3_NEEDED <- c("P3_grouping_agreement", "P3_sentence_direction_by_ranking",
+               "P3_H12_everyone_else", "H12_retributivist_endorsement",
+               "retributivist_measure_contrasts", "contrasts_ranking",
+               "contrasts_vs_deter_incap")
+P3_MISSING <- P3_NEEDED[!file.exists(file.path(S2_TABLES, paste0(P3_NEEDED, ".csv")))]
+if (length(P3_MISSING)) stop("Knit 01_main_analysis.Rmd first (the P3_ files come from ",
+                             "section 9.17, the others from 5.5, 9.2, 9.3 and 9.12b). ",
+                             "Missing: ", paste(P3_MISSING, collapse = ", "))
+# The primary grouping exactly as 01 froze it in the scored data: the 371
+# participants who ranked "Criminals deserve to be punished" first, against the
+# other 577.
+RET <- s2$grp_rank == "Retributivist"
+stopifnot(!anyNA(RET), sum(RET) == 371, sum(!RET) == 577)
+RANK_LAB <- c("Ranked retribution first\n(n = 371)", "Ranked another goal first\n(n = 577)")
+```
+
+## Figure 14: how far the groupings agree
+
+```{r figure14_groupings, fig.width = 5.8, fig.height = 6.6}
+# === FIGURE 14: AGREEMENT BETWEEN THE GROUPINGS (A), RELATIVE RETRIBUTION BY
+# RANKING GROUP (B), AND WHAT EACH RANKING GROUP DID WITH THE SENTENCE (C) ===
+# A: for each pair of the three groupings that classify (nearly) the whole
+# sample (the ratio has no value for one participant), the
+# share of participants the two place on the same side, beside the share
+# expected by chance given how many each places on its retributive side. Both
+# are rebuilt from the grouping factors 01 froze in the scored data and checked
+# against P3_grouping_agreement, together with kappa, which the panel prints
+# under each pair's name. (The thirds are left out of the panel: they classify
+# only two thirds of the sample. Table 14 gives their agreement.)
+side <- data.frame(ranking = as.integer(s2$grp_rank == "Retributivist"),
+                   median  = as.integer(s2$grp_med == "High rel. retribution"),
+                   ratio   = as.integer(s2$grp_ratio == "High sentencing ratio"))
+agr <- read_s2("P3_grouping_agreement")
+# The export's first three rows are these three pairs, in this order.
+stopifnot(grepl("^Ranking", agr$first[1]), grepl("^Median", agr$second[1]),
+          grepl("^Ranking", agr$first[2]), grepl("^Sentencing", agr$second[2]),
+          grepl("^Median", agr$first[3]), grepl("^Sentencing", agr$second[3]))
+PAIRS <- list(c("ranking", "median", "Ranking and median split"),
+              c("ranking", "ratio",  "Ranking and sentencing ratio"),
+              c("median",  "ratio",  "Median split and sentencing ratio"))
+f14a_df <- do.call(rbind, lapply(seq_along(PAIRS), function(i) {
+  pr <- PAIRS[[i]]
+  ok <- !is.na(side[[pr[1]]]) & !is.na(side[[pr[2]]])
+  x <- side[[pr[1]]][ok]; y <- side[[pr[2]]][ok]
+  po <- mean(x == y)
+  pe <- mean(x) * mean(y) + (1 - mean(x)) * (1 - mean(y))
+  kap <- (po - pe) / (1 - pe)
+  same(po, agr$agreement[i], paste("agreement,", pr[3]))
+  same(pe, agr$chance_agreement[i], paste("chance agreement,", pr[3]))
+  same(kap, agr$kappa[i], paste("kappa,", pr[3]))
+  data.frame(pair = sprintf("%s\n(κ = %s)", pr[3], fmt_r(kap)),
+             kind = c("Classified the same way", "Expected by chance"),
+             pct = 100 * c(po, pe))
+}))
+f14a_df$pair <- factor(f14a_df$pair, levels = rev(unique(f14a_df$pair)))
+# position_dodge() puts the first level lowest in each row, so the levels are
+# reversed to put the observed bar on top.
+f14a_df$kind <- factor(f14a_df$kind, levels = c("Expected by chance", "Classified the same way"))
+# The 50% line is drawn first, under the bars and labels, and each label sits
+# on a white ground (group = kind keeps each label with its own bar).
+f14a <- ggplot(f14a_df, aes(x = pct, y = pair, fill = kind)) +
+  geom_vline(xintercept = 50, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+  geom_col(width = 0.75, position = position_dodge(width = 0.8)) +
+  # pmax() starts every label past the 50% line, so none touches it.
+  geom_label(aes(x = pmax(pct, 50) + 1.2, label = sprintf("%.1f%%", pct), group = kind),
+             hjust = 0, size = 2.6, colour = INK, fill = "white", linewidth = 0,
+             label.padding = unit(0.06, "lines"), position = position_dodge(width = 0.8)) +
+  scale_fill_manual(values = c(`Classified the same way` = S2_FILL,
+                               `Expected by chance` = S1_FILL),
+                    breaks = c("Classified the same way", "Expected by chance")) +
+  scale_x_continuous(limits = c(0, 100), breaks = seq(0, 100, 25),
+                     labels = function(x) paste0(x, "%"), expand = expansion(mult = c(0, 0.02))) +
+  labs(x = "Participants", y = NULL, title = "A. Agreement between the groupings") +
+  theme_hbar()
+
+# B: relative retribution by ranking group. Relative retribution is the
+# retribution mean minus the mean of the other three goals, so 0 (the dashed
+# line) means retribution rated level with the average of the others. The two
+# means are checked against retributivist_measure_contrasts; the 95% intervals
+# are t intervals computed here (that export has no interval for a mean).
+mc <- read_s2("retributivist_measure_contrasts")
+mc_rel <- mc[mc$outcome == "Relative retribution", ]
+same(mean(s2$retribution_rel[RET]), mc_rel$M1, "relative retribution, retributivists")
+same(mean(s2$retribution_rel[!RET]), mc_rel$M2, "relative retribution, others")
+f14b_long <- data.frame(group = ifelse(RET, RANK_LAB[1], RANK_LAB[2]),
+                        score = s2$retribution_rel)
+f14b_long$group <- factor(f14b_long$group, levels = RANK_LAB)
+f14b_stats <- rbind(cbind(group = RANK_LAB[1], mean_ci(s2$retribution_rel[RET])),
+                    cbind(group = RANK_LAB[2], mean_ci(s2$retribution_rel[!RET])))
+f14b_stats$group <- factor(f14b_stats$group, levels = RANK_LAB)
+f14b <- ggplot(f14b_long, aes(x = group, y = score)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+  geom_violin(fill = VIOLIN, colour = "#7a7a7a", linewidth = 0.35, width = 0.85,
+              adjust = 1.2, trim = TRUE) +
+  geom_point(position = position_jitter(width = 0.2, height = 0, seed = 1),
+             size = 0.6, alpha = 0.35, colour = POINTS, stroke = 0) +
+  geom_errorbar(data = f14b_stats, aes(x = group, ymin = lower, ymax = upper),
+                inherit.aes = FALSE, width = 0.12, linewidth = 0.6, colour = INK) +
+  geom_point(data = f14b_stats, aes(x = group, y = mean), inherit.aes = FALSE,
+             size = 2.2, colour = INK) +
+  scale_y_continuous(breaks = -3:3, labels = function(x) sub("^-", "−", x)) +
+  labs(x = NULL, y = "Relative retribution",
+       title = "B. Relative retribution by ranking group") +
+  theme_vbar()
+
+# C: reduced, kept, or raised the second sentence, by ranking group, for the 947
+# participants with a sentencing ratio. Counts are checked against
+# P3_sentence_direction_by_ranking.
+okr <- !is.na(s2$sentence_ratio)
+dir14 <- ifelse(s2$sentence_ratio < 1, "Reduced",
+                ifelse(s2$sentence_ratio == 1, "Kept", "Raised"))[okr]
+grp14 <- ifelse(RET[okr], RANK_LAB[1], RANK_LAB[2])
+tab14 <- table(factor(grp14, levels = RANK_LAB),
+               factor(dir14, levels = c("Reduced", "Kept", "Raised")))
+pd <- read_s2("P3_sentence_direction_by_ranking")
+stopifnot(pd$group[1] == "Retributivist", pd$group[2] == "Other")
+same(tab14[1, ], unlist(pd[1, c("reduced", "kept", "raised")]), "directions, retributivists")
+same(tab14[2, ], unlist(pd[2, c("reduced", "kept", "raised")]), "directions, others")
+# Panel C rests on the 947 participants with a ratio, so its row labels carry
+# the group sizes of that subset (371 and 576), not of the whole sample.
+C_LAB <- sprintf(c("Ranked retribution first\n(n = %d)", "Ranked another goal first\n(n = %d)"),
+                 as.integer(rowSums(tab14)))
+c_long <- as.data.frame(tab14); names(c_long) <- c("group", "choice", "n")
+c_long$pct <- 100 * c_long$n / ave(c_long$n, c_long$group, FUN = sum)
+c_long$group <- factor(C_LAB[match(as.character(c_long$group), RANK_LAB)], levels = rev(C_LAB))
+f14c <- ggplot(c_long, aes(x = pct, y = group, fill = choice)) +
+  geom_col(width = 0.6, colour = "white", linewidth = 0.5,
+           position = position_stack(reverse = TRUE)) +
+  # Segments narrower than 6% are left unlabelled; the label would not fit.
+  geom_text(data = c_long[c_long$pct >= 6, ],
+            aes(label = sprintf("%.0f%%", pct), group = choice,
+                colour = choice != "Reduced"),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 2.6,
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = c(Reduced = "#b0b0b0", Kept = "#666666", Raised = "#1a1a1a")) +
+  scale_x_continuous(labels = function(x) paste0(x, "%"), expand = expansion(mult = c(0, 0.01))) +
+  labs(x = "Participants", y = NULL, title = "C. The second sentence against the first") +
+  theme_hbar()
+fig14 <- f14a / f14b / f14c + plot_layout(heights = c(1, 1.5, 0.6))
+save_fig(fig14, "fig14_study2_groupings", 6.6)
+fig14
+```
+
+## Figure 15: retributivists against the participants who ranked deterrence or incapacitation first
+
+```{r figure15_contrasts, fig.width = 5.8, fig.height = 6.6}
+# === FIGURE 15: COHEN'S d FOR EVERY CONTRAST, RETRIBUTIVISTS AGAINST THE
+# PARTICIPANTS WHO RANKED DETERRENCE OR INCAPACITATION FIRST (NOT REGISTERED),
+# GROUPED AS IN TABLE S19 ===
+# CONSUMES: s2p with punit_parts6 (study2_paper_scorings); RET (Part 3 inputs);
+#           read_s2(), same().
+# The paper's main text reports this comparison, which leaves out the 124 who
+# ranked rehabilitation first; the registered comparison with all 577 other
+# participants is in Table S19. The d values and intervals are read from 9.19's
+# export (PAPER_contrasts_vs_deter_incap, identical to 9.12b's run). Two checks
+# tie them to the data: each retributivist mean is rebuilt from the scored
+# data, and each d is rebuilt from its own means and SDs (the difference in
+# means divided by the square root of the mean of the two variances), the
+# standardizer 01 uses. The comparison group's means cannot be rebuilt here,
+# because the scored data do not carry the goal each participant ranked first.
+# Punitiveness is the six components (H21, once; NOT REGISTERED as scored),
+# cognitive reflection the two-item score, and revenge and the cluster are as
+# registered; the five-component punitiveness row, the three-item reflection
+# score and the shark decision are not plotted, and Table S19 reports them.
+# s2p carries the six-component score under the variable name the export uses
+# (punit_parts6), so the retributivist-mean check below reads it directly.
+cq15 <- read_s2("PAPER_contrasts_vs_deter_incap")
+stopifnot(all(cq15$n1 %in% c(369, 371)), all(cq15$n2 %in% c(452, 453)))
+ROWS15 <- data.frame(
+  outcome = c("Hostile-aggression cluster (z)",
+              "Degradation", "Social exclusion",
+              "Punitiveness (six components)",
+              "Sentence 1 (z within vignette)", "Harsh prison conditions",
+              "Infliction of suffering", "Tolerance of prison violence",
+              "Due-process permissiveness", "Convicting on uncertain evidence",
+              "Revenge", "Hatred", "Anger",
+              "Essentialism about criminals", "Crime is a choice",
+              "Leaning toward the prosecution", "Rejecting society's responsibility",
+              "Perceived crime rates", "Fear of crime", "Shark: how painful the death should be",
+              "Right-Wing Authoritarianism", "Social Dominance Orientation",
+              "Violence proneness", "Racial resentment",
+              "Cognitive reflection (0-2, lily pad dropped)"),
+  label = c("Hostile aggression cluster (H13)",
+            "Degradation of prisoners (H13)", "Social exclusion (H13)",
+            "Punitiveness (H21)",
+            "First sentence (H14)", "Harsh prison conditions (H13)",
+            "Infliction of suffering (H13)", "Tolerance of prison violence (H13)",
+            "Due-process permissiveness (H20)", "Convicting on uncertain evidence (H20)",
+            "Revenge (H13)", "Hatred (H13)", "Anger (H13)",
+            "Essentialism (H16)", "Crime is a choice (H17)",
+            "Prosecution leaning (H18)", "Rejecting society’s responsibility (H19)",
+            "Perceived crime rates (H13)", "Fear of crime (H13)", "Painful death, shark (H15)",
+            "Authoritarianism", "Social dominance",
+            "Violence proneness", "Racial resentment", "Cognitive reflection"),
+  # The same blocks, in the same order, as Table 15's subheadings, less its
+  # shark-decision block (an odds ratio, not a d).
+  block = rep(c("Summary\nof H13", "Dignity", "Leniency", "Hard\ntreatment", "Certainty\nof guilt",
+                "Transcending\nrevenge", "Beliefs about\noffenders\nand trials",
+                "Crime\nconcerns and\nthe shark", "Exploratory\n(E1)"),
+              times = c(1, 2, 3, 2, 2, 3, 4, 3, 5)),
+  stringsAsFactors = FALSE)
+stopifnot(all(ROWS15$outcome %in% cq15$outcome), nrow(ROWS15) == 25)
+d_from <- function(r) (r$M1 - r$M2) / sqrt((r$SD1^2 + r$SD2^2) / 2)
+for (o in ROWS15$outcome) {
+  b <- cq15[cq15$outcome == o, ]
+  y <- s2p[[b$variable]]
+  same(mean(y[RET], na.rm = TRUE), b$M1, paste("retributivist mean,", o))
+  same(d_from(b), b$d, paste("d against deterrence or incapacitation first,", o), tol = 1e-6)
+}
+f15_df <- do.call(rbind, lapply(seq_len(nrow(ROWS15)), function(i) {
+  b <- cq15[cq15$outcome == ROWS15$outcome[i], ]
+  data.frame(label = ROWS15$label[i], block = ROWS15$block[i],
+             d = b$d, lower = b$d_lower, upper = b$d_upper)
+}))
+f15_df$label <- factor(f15_df$label, levels = rev(ROWS15$label))
+f15_df$block <- factor(f15_df$block, levels = unique(ROWS15$block))
+fig15 <- ggplot(f15_df, aes(x = d, y = label)) +
+  geom_col(width = 0.62, fill = S2_FILL) +
+  geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.3, orientation = "y",
+                linewidth = 0.3, colour = INK) +
+  geom_vline(xintercept = 0, colour = INK2, linewidth = 0.4) +
+  facet_grid(block ~ ., scales = "free_y", space = "free_y") +
+  scale_x_continuous(breaks = seq(-0.2, 1, 0.2),
+                     labels = function(x) sub("^-", "−", sprintf("%.1f", x))) +
+  coord_cartesian(xlim = c(-0.2, 1.0)) +
+  labs(x = expression(paste("Retributivists minus deterrence- or incapacitation-first (Cohen’s ",
+                            italic(d), ") and 95% CI")), y = NULL) +
+  theme_hbar() +
+  theme(strip.text.y = element_text(angle = 0, hjust = 0, size = 7.5, colour = INK2),
+        panel.spacing.y = unit(0.35, "lines"))
+save_fig(fig15, "fig15_study2_retributivist_contrasts", 6.6)
+fig15
+```
+
+## Figure 16: endorsement of the hostile attitudes
+
+```{r figure16_endorsement, fig.width = 5.8, fig.height = 4.0}
+# === FIGURE 16: SHARE ENDORSING EACH HOSTILE ATTITUDE, RETRIBUTIVISTS (H12)
+# AND THE PARTICIPANTS WHO RANKED DETERRENCE OR INCAPACITATION FIRST (NOT
+# REGISTERED) ===
+# Endorsing means a mean above 4, the scale midpoint; the shark decision is the
+# share answering yes. The comparison group is the paper's: the 453 who ranked
+# deterrence or incapacitation first, leaving out those who ranked
+# rehabilitation first. The retributivists' shares and exact (Clopper-Pearson)
+# 95% intervals are rebuilt from the scored data and checked against the H12
+# export. The comparison group's are read from 01's export
+# (PAPER_H12_shares_vs_deter_incap, section 9.19D), because the scored data do
+# not record which goal each participant ranked first.
+h12x <- read_s2("H12_retributivist_endorsement"); dix <- read_s2("PAPER_H12_shares_vs_deter_incap")
+VAR12 <- data.frame(
+  var = c("hatred", "suffering", "degradation", "harsh", "dueprocess", "prisonviol",
+          "uncertain", "Shark_3", "shark_kill"),
+  export = c("Hatred toward offenders", "Infliction of suffering", "Degradation of prisoners",
+             "Harsh prison conditions", "Restricting due-process rights",
+             "Tolerance of prison violence", "Convicting on substandard evidence",
+             "A painful death for the shark", "Putting the shark to death (yes)"),
+  label = c("Hatred", "Infliction of suffering", "Degradation of prisoners",
+            "Harsh prison conditions", "Due-process permissiveness",
+            "Tolerance of prison violence", "Convicting on uncertain evidence",
+            "Painful death for the shark", "Would put the shark to death"),
+  block = c(rep("Attitudes H12 lists", 8), "Added in\nthe analysis"),
+  stringsAsFactors = FALSE)
+share_ci <- function(x) {
+  k <- sum(x); n <- length(x); bt <- binom.test(k, n)
+  data.frame(pct = 100 * k / n, lower = 100 * bt$conf.int[1], upper = 100 * bt$conf.int[2])
+}
+GRP16 <- c("Ranked retribution first (n = 371)",
+           "Ranked deterrence or incapacitation first (n = 453; not registered)")
+f16_df <- do.call(rbind, lapply(seq_len(nrow(VAR12)), function(i) {
+  v <- VAR12$var[i]
+  endorse <- if (v == "shark_kill") s2[[v]] == 1 else s2[[v]] > 4
+  stopifnot(!anyNA(endorse))
+  a <- share_ci(endorse[RET])
+  ea <- h12x[h12x$attitude == VAR12$export[i], ]; eb <- dix[dix$attitude == VAR12$export[i], ]
+  stopifnot(nrow(ea) == 1, nrow(eb) == 1, eb$n == 453)
+  same(a$pct / 100, ea$share, paste("retributivist share,", v))
+  same(a$lower / 100, ea$share_ci_lower, paste("retributivist lower limit,", v))
+  same(a$upper / 100, ea$share_ci_upper, paste("retributivist upper limit,", v))
+  b <- data.frame(pct = 100 * eb$share, lower = 100 * eb$share_ci_lower,
+                  upper = 100 * eb$share_ci_upper)
+  same(eb$share, eb$k_endorsing / eb$n, paste("comparison share is k / n,", v))
+  cbind(label = VAR12$label[i], block = VAR12$block[i], group = GRP16, rbind(a, b))
+}))
+f16_df$label <- factor(f16_df$label, levels = rev(VAR12$label))
+f16_df$block <- factor(f16_df$block, levels = unique(VAR12$block))
+f16_df$group <- factor(f16_df$group, levels = rev(GRP16))
+fig16 <- ggplot(f16_df, aes(x = pct, y = label, fill = group)) +
+  geom_col(width = 0.78, position = position_dodge(width = 0.82)) +
+  geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.3, orientation = "y",
+                linewidth = 0.3, colour = INK, position = position_dodge(width = 0.82)) +
+  # The 50% line is drawn before the labels, and each label sits on a white
+  # ground.
+  geom_vline(xintercept = 50, linetype = "dashed", colour = INK2, linewidth = 0.4) +
+  # group = group keeps each label with its own bar: the fixed white fill
+  # replaces the fill mapping, which would otherwise carry the grouping.
+  # A label that would start just short of the 50% line is moved past it, so no
+  # label sits on the line.
+  geom_label(aes(x = ifelse(upper + 1.2 > 45 & upper + 1.2 < 50.5, 51.2, upper + 1.2),
+                 label = sprintf("%.0f%%", pct), group = group), hjust = 0, size = 2.4,
+             colour = INK, fill = "white", linewidth = 0,
+             label.padding = unit(0.06, "lines"), position = position_dodge(width = 0.82)) +
+  facet_grid(block ~ ., scales = "free_y", space = "free_y") +
+  scale_fill_manual(values = setNames(c(S2_FILL, S1_FILL), GRP16), breaks = GRP16) +
+  scale_x_continuous(limits = c(0, 70), breaks = seq(0, 70, 10),
+                     labels = function(x) paste0(x, "%"), expand = expansion(mult = c(0, 0.02))) +
+  guides(fill = guide_legend(ncol = 1)) +
+  labs(x = "Participants endorsing, with 95% CI", y = NULL) +
+  theme_hbar() +
+  theme(strip.text.y = element_text(angle = 0, hjust = 0, size = 7.5, colour = INK2))
+save_fig(fig16, "fig16_study2_endorsement", 4.0)
+fig16
+```
+
+
+# 10. What was written
+
+```{r written}
+# === 10. WHAT THIS KNIT WROTE ===
+# WHAT THIS CHUNK DOES: lists the outputs, so the knitted report records what
+# it produced.
+# GUARD: the paper figures this knit wrote are exactly the seventeen the paper
+# uses (fig1, fig2, fig4 to fig18; fig3 is no longer a paper figure), each once,
+# and each is now in the manuscript's and the Overleaf figure folders.
+PAPER_FIGS_EXPECTED <- c("fig1_study1_sentences", "fig2_study1_cluster_matrix",
+                         "fig4_study1_construct_matrix", "fig5_sentences_both_studies",
+                         "fig6_correlates_both_studies",
+                         "fig7_hostility_advantage_both_studies", "fig17_study2_sentences",
+                         "fig18_study2_correlates", "fig8_study2_goals",
+                         "fig9_study2_proportionality", "fig10_study2_desert_direction",
+                         "fig11_study2_goals_limits", "fig12_study2_desert_revenge",
+                         "fig13_study2_second_sentence", "fig14_study2_groupings",
+                         "fig15_study2_retributivist_contrasts", "fig16_study2_endorsement")
+stopifnot(setequal(PAPER_FIGS, PAPER_FIGS_EXPECTED), !anyDuplicated(PAPER_FIGS),
+          all(file.exists(file.path(DOCS_PAPER, paste0(PAPER_FIGS, ".png")))),
+          all(file.exists(file.path(OVERLEAF_FIG, paste0(PAPER_FIGS, ".pdf")))))
+cat("Paper figures written this knit (PNG to figures/paper, PDF to Overleaf):\n")
+print(PAPER_FIGS)
+# A copy of fig3 left in the manuscript's folders by an earlier knit is not
+# this knit's output; it is named here so it is not mistaken for a current one.
+stale <- c(file.path(DOCS_PAPER, "fig3_study1_sensitivity.png"),
+           file.path(OVERLEAF_FIG, "fig3_study1_sensitivity.pdf"))
+if (any(file.exists(stale)))
+  cat("Left from an earlier knit, NOT a current paper figure:",
+      paste(basename(stale[file.exists(stale)]), collapse = ", "), "\n")
+print(list.files(OUT_FIGURES))
+print(list.files(DOCS_PAPER))
+print(list.files(OVERLEAF_FIG))
+print(list.files(OUT_TABLES, pattern = "^two_study_"))
+print(list.files(OUT_TABLES, pattern = "^S1P_"))
+```

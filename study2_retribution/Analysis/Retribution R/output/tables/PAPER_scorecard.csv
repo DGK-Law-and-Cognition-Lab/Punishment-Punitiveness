@@ -1,0 +1,55 @@
+run,row_set,n_rows,n_predicted_sign,n_one_sided_p05,n_interval_clears_zero,median_abs_estimate,statistic
+Ranking (primary),Registered (H13 to H21),21,21,21,20,0.5155891327692761,d
+Ranking (primary),"E1, registered scorings",5,4,4,4,0.38690736970909584,d
+Ranking (primary),All rows run (as counted in 9.12),27,25,25,24,0.4704894871691494,d
+Ranking (primary),"Registered (H13 to H21), punitiveness once",20,20,20,19,0.5126767908165317,d
+Ranking (primary),"E1, two-item reflection score",5,4,4,4,0.38690736970909584,d
+Ranking (primary),"All rows, paper scorings",25,24,24,23,0.4704894871691494,d
+Median split,Registered (H13 to H21),21,19,16,15,0.20386250681196957,d
+Median split,"E1, registered scorings",5,4,3,3,0.14342611962145918,d
+Median split,All rows run (as counted in 9.12),27,23,19,18,0.18788063331962895,d
+Median split,"Registered (H13 to H21), punitiveness once",20,18,15,14,0.200800354843018,d
+Median split,"E1, two-item reflection score",5,4,3,3,0.14342611962145918,d
+Median split,"All rows, paper scorings",25,22,18,17,0.18788063331962895,d
+Tertiles,Registered (H13 to H21),21,20,18,16,0.31605954119303226,d
+Tertiles,"E1, registered scorings",5,4,4,3,0.2398412976731186,d
+Tertiles,All rows run (as counted in 9.12),27,24,22,19,0.2614538278291148,d
+Tertiles,"Registered (H13 to H21), punitiveness once",20,19,17,15,0.2989313832475975,d
+Tertiles,"E1, two-item reflection score",5,4,4,3,0.2398412976731186,d
+Tertiles,"All rows, paper scorings",25,23,21,18,0.2614538278291148,d
+Sentencing ratio grouping,Registered (H13 to H21),19,18,17,17,0.3998384433199104,d
+Sentencing ratio grouping,"E1, registered scorings",5,5,4,4,0.2911750683842031,d
+Sentencing ratio grouping,All rows run (as counted in 9.12),25,24,21,21,0.3358880804915176,d
+Sentencing ratio grouping,"Registered (H13 to H21), punitiveness once",19,18,17,17,0.3998384433199104,d
+Sentencing ratio grouping,"E1, two-item reflection score",5,5,4,4,0.2911750683842031,d
+Sentencing ratio grouping,"All rows, paper scorings",24,23,21,21,0.3568610572922295,d
+"Ranking, against deterrence- or incapacitation-first (not registered)",Registered (H13 to H21),21,21,20,20,0.4129537311013226,d
+"Ranking, against deterrence- or incapacitation-first (not registered)","E1, registered scorings",5,4,4,4,0.3248654011603639,d
+"Ranking, against deterrence- or incapacitation-first (not registered)",All rows run (as counted in 9.12),27,25,24,24,0.36480632563326515,d
+"Ranking, against deterrence- or incapacitation-first (not registered)","Registered (H13 to H21), punitiveness once",20,20,19,19,0.41046196113512096,d
+"Ranking, against deterrence- or incapacitation-first (not registered)","E1, two-item reflection score",5,4,4,4,0.3248654011603639,d
+"Ranking, against deterrence- or incapacitation-first (not registered)","All rows, paper scorings",25,24,23,23,0.36480632563326515,d
+"Relative retribution, continuous",Registered (H13 to H21),21,19,17,16,0.155096590475045,beta
+"Relative retribution, continuous","E1, registered scorings",5,5,4,4,0.12820669862794107,beta
+"Relative retribution, continuous",All rows run (as counted in 9.12),27,25,21,20,0.1389872891228634,beta
+"Relative retribution, continuous","Registered (H13 to H21), punitiveness once",20,18,16,15,0.15103176422074063,beta
+"Relative retribution, continuous","E1, two-item reflection score",5,5,4,4,0.12820669862794107,beta
+"Relative retribution, continuous","All rows, paper scorings",25,23,20,19,0.1389872891228634,beta
+"Retribution subscale, continuous",Registered (H13 to H21),21,21,21,21,0.46853535648481187,beta
+"Retribution subscale, continuous","E1, registered scorings",5,5,4,4,0.3952185983220285,beta
+"Retribution subscale, continuous",All rows run (as counted in 9.12),27,27,25,25,0.41712069525942214,beta
+"Retribution subscale, continuous","Registered (H13 to H21), punitiveness once",20,20,20,20,0.4564203021083262,beta
+"Retribution subscale, continuous","E1, two-item reflection score",5,5,4,4,0.3952185983220285,beta
+"Retribution subscale, continuous","All rows, paper scorings",25,25,24,24,0.41712069525942214,beta
+"Sentencing ratio, continuous",Registered (H13 to H21),19,19,18,17,0.19220441279512965,beta
+"Sentencing ratio, continuous","E1, registered scorings",5,5,4,4,0.15259324620778147,beta
+"Sentencing ratio, continuous",All rows run (as counted in 9.12),25,25,23,21,0.18395570075376264,beta
+"Sentencing ratio, continuous","Registered (H13 to H21), punitiveness once",19,19,18,17,0.19220441279512965,beta
+"Sentencing ratio, continuous","E1, two-item reflection score",5,5,5,4,0.15259324620778147,beta
+"Sentencing ratio, continuous","All rows, paper scorings",24,24,23,21,0.1847251927411191,beta
+"Second sentence residualized on the first, continuous",Registered (H13 to H21),19,19,17,15,0.10949834947846997,beta
+"Second sentence residualized on the first, continuous","E1, registered scorings",5,5,4,3,0.09346196805487553,beta
+"Second sentence residualized on the first, continuous",All rows run (as counted in 9.12),25,25,21,18,0.09821818725453534,beta
+"Second sentence residualized on the first, continuous","Registered (H13 to H21), punitiveness once",19,19,17,15,0.10949834947846997,beta
+"Second sentence residualized on the first, continuous","E1, two-item reflection score",5,5,4,3,0.09346196805487553,beta
+"Second sentence residualized on the first, continuous","All rows, paper scorings",24,24,21,18,0.10126589966958649,beta

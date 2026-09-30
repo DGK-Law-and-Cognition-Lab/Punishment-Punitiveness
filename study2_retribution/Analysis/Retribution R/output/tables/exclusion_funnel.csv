@@ -1,0 +1,6 @@
+step,n_remaining,n_excluded
+Loaded (raw),1015,NA
+Finished == 1,965,50
+Progress == 100,965,0
+AttnCheck1 == 9,958,7
+AttnCheck2 == 4,948,10

@@ -1,0 +1,13 @@
+slice,construction,n_outcomes,n_predicted_sign,n_p05,median_abs_beta
+"1. Soft core R1,R3,R4",raw subscale mean,27,27,25,0.41134363854473055
+"2. Soft core strict R1,R4",raw subscale mean,27,27,25,0.417666696285225
+"3. Obligation R2,R5",raw subscale mean,27,27,25,0.40990615432668787
+"4. Rationales R6,R7",raw subscale mean,27,27,27,0.363758155369427
+5. REGISTERED deserved R1-R4,raw subscale mean,27,27,25,0.418055742287507
+"6. REGISTERED retribution, 7 items",raw subscale mean,27,27,25,0.41712069525942214
+"1. Soft core R1,R3,R4",relative (primary),27,24,21,0.15606465661505917
+"2. Soft core strict R1,R4",relative (primary),27,23,20,0.15220982142717143
+"3. Obligation R2,R5",relative (primary),27,20,16,0.08804168992241532
+"4. Rationales R6,R7",relative (primary),27,26,17,0.0669115272973374
+5. REGISTERED deserved R1-R4,relative (primary),27,23,20,0.13531044532644274
+"6. REGISTERED retribution, 7 items",relative (primary),27,25,21,0.1389872891228634

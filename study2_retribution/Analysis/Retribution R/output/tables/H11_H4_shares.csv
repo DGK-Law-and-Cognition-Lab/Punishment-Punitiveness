@@ -1,0 +1,4 @@
+measure,n,k,prop,ci_lower,ci_upper
+Endorse punishment GREATER than the crime (severity_1 > 4),371,119,0.32075471698113206,0.2735079776968941,0.370890403168054
+At least neutral on punishment greater than the crime (severity_1 >= 4),371,197,0.5309973045822103,0.478795548077345,0.5827005990508822
+Do NOT endorse strict proportionality (proportionality <= 4),371,58,0.15633423180592992,0.12090173705970261,0.19736052410245064

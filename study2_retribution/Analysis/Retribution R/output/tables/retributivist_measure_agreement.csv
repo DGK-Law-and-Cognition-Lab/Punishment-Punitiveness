@@ -1,0 +1,10 @@
+kind,measure_1,measure_2,r,p,n
+continuous r,retributivist,retribution_rel,0.20437360026071558,2.1331413794714433e-10,948
+continuous r,retributivist,sentence_ratio,0.1378938851561664,2.0606877763851996e-5,947
+continuous r,retributivist,semantic_retributivism,NA,NA,0
+continuous r,retribution_rel,sentence_ratio,0.03981258152537139,0.22093930406078757,947
+continuous r,retribution_rel,semantic_retributivism,NA,NA,0
+continuous r,sentence_ratio,semantic_retributivism,NA,NA,0
+group overlap kappa,ranking,relative,0.13370567675492032,NA,948
+group overlap kappa,ranking,ratio,0.17680482234780723,NA,947
+group overlap kappa,relative,ratio,0.05765257629372458,NA,947

@@ -1,0 +1,22 @@
+variable,level,n,percent
+Gender,Male,451,47.573839662447256
+Gender,Female,489,51.58227848101266
+Gender,Other,8,0.8438818565400844
+Race/ethnicity,"White, non-Hispanic",624,65.82278481012658
+Race/ethnicity,Black / African-American,143,15.084388185654008
+Race/ethnicity,Asian,66,6.962025316455696
+Race/ethnicity,Hispanic / Latino,86,9.071729957805907
+Race/ethnicity,Middle Eastern,6,0.6329113924050633
+Race/ethnicity,Native American,17,1.7932489451476794
+Race/ethnicity,Pacific Islander,6,0.6329113924050633
+Education,Did not graduate HS,8,0.8438818565400844
+Education,High school only,149,15.717299578059071
+Education,1-2 years post-HS,209,22.046413502109704
+Education,3-4 years post-HS,307,32.38396624472574
+Education,5-6 years post-HS,97,10.232067510548523
+Education,More than 6 years post-HS,178,18.776371308016877
+Party identification,Democrat,311,32.80590717299578
+Party identification,Republican,269,28.37552742616034
+Party identification,Independent,348,36.70886075949367
+Party identification,Other,6,0.6329113924050633
+Party identification,Not politically identified,14,1.4767932489451476

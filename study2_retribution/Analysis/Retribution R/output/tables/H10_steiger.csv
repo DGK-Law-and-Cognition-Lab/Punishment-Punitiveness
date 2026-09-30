@@ -1,0 +1,2 @@
+comparison,r_jk,r_jh,r_kh,n,z,p,diff,diff_lower,diff_upper,alternative
+"r(punitiveness, revenge) > r(punitiveness, just deserts)",0.6926240244483632,0.441477497252182,0.3158182461283378,948,8.960484476848169,0,0.25114652719618125,0.19525549043549428,0.3080952210950889,greater

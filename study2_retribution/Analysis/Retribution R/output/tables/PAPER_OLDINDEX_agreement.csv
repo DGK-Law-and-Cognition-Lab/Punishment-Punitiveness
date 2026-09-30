@@ -1,0 +1,8 @@
+x,y,n,r,ci_lower,ci_upper,p_two,p_dir,alternative
+Punitiveness (full index),Punitiveness (six components),948,0.9451045155980795,0.9378705347721595,0.9515172879092549,0,0,two.sided
+Punitiveness (eight-item scale),Punitiveness (six components),948,0.9720813394055,0.9683444379215759,0.9753826212498427,0,0,two.sided
+Punitiveness (five attitude components),Punitiveness (six components),948,0.9798448974605133,0.9771350968907072,0.982236435330547,0,0,two.sided
+Punitiveness (full index),Punitiveness (eight-item scale),948,0.8569766050332407,0.8390900766492939,0.873012177897848,1.3606232164945587e-274,1.3606232164945587e-274,two.sided
+Punitiveness (full index),Punitiveness (five attitude components),948,0.8618784586807895,0.8445536408133163,0.8774007272555115,3.227772084672797e-281,3.227772084672797e-281,two.sided
+Punitiveness (eight-item scale),Punitiveness (five attitude components),948,0.9946738071615217,0.9939516238039235,0.9953099637850323,0,0,two.sided
+"Punitiveness (five attitude components, plain mean of the raw parts; 7.4)",Punitiveness (five attitude components),948,0.9981611652459308,0.9979113408259852,0.9983811323918002,0,0,two.sided

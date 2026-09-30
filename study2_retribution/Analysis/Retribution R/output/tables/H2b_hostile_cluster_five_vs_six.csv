@@ -1,0 +1,3 @@
+cluster,comparison,r_jk,r_jh,r_kh,n,z,p,diff,diff_lower,diff_upper,alternative
+"5 constituents (registered, prereg 5.8)","r(punitiveness, hostile aggression) > r(punitiveness, crime concerns)",0.7697993697116379,0.42696084940414375,0.3731321390101928,948,13.64915273588857,0,0.3428385203074941,0.29055932455899125,0.3968807873440263,greater
+"6 constituents (companion, adds harsh conditions)","r(punitiveness, hostile aggression, 6 constituents) > r(punitiveness, crime concerns)",0.7842027697000145,0.42696084940414375,0.3818496795723444,948,14.569310209925552,0,0.3572419202958707,0.30556077139858084,0.41082015252938653,greater

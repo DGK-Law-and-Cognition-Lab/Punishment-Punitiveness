@@ -1,0 +1,21 @@
+
+BOTTOM-UP CODEBOOK (definitions only; NO pinned tokens, NO example anchors).
+Score each facet 0 (absent) or 1 (clearly present) [or 0-2 intensity]; several may
+be 1 at once. Do NOT pick one winner. Do NOT infer a facet from the crime. Handle
+negation/stance: "I do NOT want him to suffer" -> suffering 0; a passage calling
+deserving-punishment "just revenge" to REJECT it critiques desert, does not endorse it.
+
+  DESERT           the OFFENDER earned/merited punishment as a backward fact about
+                   what they did or are (agent-focused, magnitude-unbounded).
+  PROPORTIONALITY  the PUNISHMENT's calibration/amount -- a bounded fit, an explicit
+                   ceiling/floor ("fit the crime", "not too harsh/lenient").
+  CENSURE          the social MESSAGE -- condemnation/accountability, satisfiable
+                   symbolically ("send a message it's wrong", "society condemns").
+  MORAL_BALANCE    restoring a LEDGER -- righting the wrong, paying a debt, closure
+                   (distinct from sizing: about closure, not calibration).
+  REVENGE          retaliation, getting even, symmetric hitting-back.
+  SUFFERING        wanting pain beyond any instrumental aim.
+  DETERRENCE       preventing future crime by warning/example.
+  INCAPACITATION   protecting society by removing/containing the offender.
+  REHABILITATION   reform, treatment, second chance.
+  holistic:        one of principled | vengeful | both | neither.

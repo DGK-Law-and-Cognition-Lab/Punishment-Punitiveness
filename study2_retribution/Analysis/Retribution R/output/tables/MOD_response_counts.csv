@@ -1,0 +1,19 @@
+item,value,answer,n,pct
+Political orientation,1,strongly liberal,128,13.50210970464135
+Political orientation,2,,150,15.822784810126583
+Political orientation,3,,130,13.713080168776372
+Political orientation,4,,212,22.362869198312236
+Political orientation,5,,124,13.080168776371307
+Political orientation,6,,122,12.869198312236287
+Political orientation,7,strongly conservative,82,8.649789029535865
+leanPros_1: whom do you identify with at a trial,1,prosecutor,333,35.12658227848101
+leanPros_1: whom do you identify with at a trial,2,defense attorney,133,14.029535864978904
+leanPros_1: whom do you identify with at a trial,3,about the same,482,50.84388185654009
+leanPros_2: which role would you rather serve,1,prosecutor,428,45.14767932489451
+leanPros_2: which role would you rather serve,2,defense attorney,240,25.31645569620253
+leanPros_2: which role would you rather serve,3,about the same,280,29.535864978902953
+"Prosecution leaning (mean of the two, recoded)",-1,defense on both,108,11.39240506329114
+"Prosecution leaning (mean of the two, recoded)",-0.5,,125,13.185654008438819
+"Prosecution leaning (mean of the two, recoded)",0,neutral or split,278,29.324894514767934
+"Prosecution leaning (mean of the two, recoded)",0.5,,145,15.29535864978903
+"Prosecution leaning (mean of the two, recoded)",1,prosecution on both,292,30.80168776371308

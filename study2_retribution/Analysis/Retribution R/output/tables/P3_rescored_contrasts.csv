@@ -1,0 +1,35 @@
+run,outcome,n1,n2,estimate,lower,upper,p_one_sided,statistic
+Ranking (primary),"Hostile-aggression cluster, registered five constituents (z)",371,577,0.6410948651920462,0.5068554134511141,0.7749521767845284,3.4447654068405495e-21,d
+Ranking (primary),"Hostile-aggression cluster, six constituents (z)",371,577,0.655858870447548,0.5210908001932983,0.7902311642236953,6.200467099215274e-22,d
+Ranking (primary),"Punitiveness, registered eight-item scale",371,577,0.7797632093163231,0.6462329380899487,0.9128788515873817,9.25969134587717e-31,d
+Ranking (primary),"Punitiveness, five parts weighted equally",371,577,0.7751449718789761,0.6417281211556011,0.9081500295243832,1.8195096827342595e-30,d
+Ranking (primary),"Punitiveness, registered full index (with the sentence)",371,577,0.7620097654373759,0.6289111036441196,0.8947045308402438,1.2316681677066174e-29,d
+Ranking (primary),"Punitiveness, six parts weighted equally (with the sentence)",371,577,0.7975175693873061,0.6639381946826136,0.9306767112717002,4.5428172182001384e-32,d
+Median split,"Hostile-aggression cluster, registered five constituents (z)",470,478,0.3086674114462982,0.18042599674877427,0.4367441984036155,1.1829929772572583e-6,d
+Median split,"Hostile-aggression cluster, six constituents (z)",470,478,0.29438555253016374,0.16620919292218161,0.42240424251306463,3.3479747252629725e-6,d
+Median split,"Punitiveness, registered eight-item scale",470,478,0.25958301019723573,0.13158322366456626,0.3874440404268076,3.505271264182823e-5,d
+Median split,"Punitiveness, five parts weighted equally",470,478,0.25744673141046304,0.1294597483171589,0.3852962623687848,4.013685025414871e-5,d
+Median split,"Punitiveness, registered full index (with the sentence)",470,478,0.1767689480099343,0.049105005176761744,0.30433879735620634,0.0033224932253810113,d
+Median split,"Punitiveness, six parts weighted equally (with the sentence)",470,478,0.23582432255211214,0.10792943046011319,0.36359316136010383,1.502911093049526e-4,d
+Tertiles,"Hostile-aggression cluster, registered five constituents (z)",314,317,0.421722270120894,0.26359051260796684,0.5795080809156226,8.429359537738224e-8,d
+Tertiles,"Hostile-aggression cluster, six constituents (z)",314,317,0.40134083648656094,0.24338414027907534,0.5589671531604997,3.1238419340646667e-7,d
+Tertiles,"Punitiveness, registered eight-item scale",314,317,0.36119051292317844,0.20360474577311144,0.5184819117132621,3.481751727092371e-6,d
+Tertiles,"Punitiveness, five parts weighted equally",314,317,0.3728588691240131,0.21518306655461605,0.5302322825506872,1.7629839540302722e-6,d
+Tertiles,"Punitiveness, registered full index (with the sentence)",314,317,0.3004688826362707,0.14335300409229101,0.4573441127029094,8.853345397979209e-5,d
+Tertiles,"Punitiveness, six parts weighted equally (with the sentence)",314,317,0.35649007869832056,0.19894743307797363,0.5137439802972065,4.551217958708342e-6,d
+Sentencing ratio grouping,"Hostile-aggression cluster, registered five constituents (z)",514,433,0.496706250959675,0.36751916909549653,0.6256377676167013,2.3074765378844114e-14,d
+Sentencing ratio grouping,"Hostile-aggression cluster, six constituents (z)",514,433,0.5022423614750688,0.3730045732750196,0.6312218924230546,1.2337563928667923e-14,d
+Sentencing ratio grouping,"Punitiveness, registered eight-item scale",514,433,0.6022922463807054,0.4715770928045123,0.732696419898176,7.686181662354546e-20,d
+Sentencing ratio grouping,"Punitiveness, five parts weighted equally",514,433,0.6079059878308066,0.47690010356964996,0.7385947999828681,4.257495631370267e-20,d
+"Relative retribution, continuous","Hostile-aggression cluster, registered five constituents (z)",948,NA,0.2195076393798334,0.15725824686474546,0.28175703189492135,4.15368546761452e-12,beta
+"Relative retribution, continuous","Hostile-aggression cluster, six constituents (z)",948,NA,0.20611165030562908,0.1436760923324221,0.2685472082788361,7.438329846495351e-11,beta
+"Relative retribution, continuous","Punitiveness, registered eight-item scale",948,NA,0.1949062245407652,0.13232433483352846,0.25748811424800194,7.184359995975006e-10,beta
+"Relative retribution, continuous","Punitiveness, five parts weighted equally",948,NA,0.19938565793644372,0.1368612432023992,0.26191007267048827,2.9478616194112864e-10,beta
+"Relative retribution, continuous","Punitiveness, registered full index (with the sentence)",948,NA,0.16524938222472338,0.1023210326110331,0.22817773183841367,1.5565697156819002e-7,beta
+"Relative retribution, continuous","Punitiveness, six parts weighted equally (with the sentence)",948,NA,0.1925571274508516,0.12994563940771725,0.25516861549398595,1.1367247098659974e-9,beta
+"Retribution subscale, continuous","Hostile-aggression cluster, registered five constituents (z)",948,NA,0.57950333731552,0.5275037284132661,0.6315029462177738,1.9444611511602764e-86,beta
+"Retribution subscale, continuous","Hostile-aggression cluster, six constituents (z)",948,NA,0.5767895668588552,0.5246672660545825,0.6289118676631279,1.815754177822193e-85,beta
+"Retribution subscale, continuous","Punitiveness, registered eight-item scale",948,NA,0.6628287244552873,0.6150529682207292,0.7106044806898454,2.6610981417123686e-121,beta
+"Retribution subscale, continuous","Punitiveness, five parts weighted equally",948,NA,0.6688365547934559,0.6214028960528929,0.716270213534019,2.9427026531520562e-124,beta
+"Retribution subscale, continuous","Punitiveness, registered full index (with the sentence)",948,NA,0.6046491551252116,0.5538285410786106,0.6554697691718125,7.049232677341833e-96,beta
+"Retribution subscale, continuous","Punitiveness, six parts weighted equally (with the sentence)",948,NA,0.6644239284103957,0.6167384663854292,0.7121093904353621,4.4341634588578195e-122,beta

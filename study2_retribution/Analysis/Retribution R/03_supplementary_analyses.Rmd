@@ -1,0 +1,3522 @@
+---
+title: "Retribution Study — Supplementary and Exploratory Analyses"
+subtitle: "Pre-registration Section 6.6: E1, E2, Factor Structure, Sentence Change, Moderators, Measure Agreement, and Response Quality"
+author: "David G. Kamper"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    number_sections: false
+  pdf_document:
+    toc: true
+---
+
+```{r knitr_setup, include=FALSE}
+# === GLOBAL KNITR OPTIONS ===
+# echo = TRUE      : the code is shown in the knitted HTML. This document is an
+#                    exploratory appendix that a reviewer should be able to audit
+#                    line by line, so nothing is hidden.
+# warning/message  : suppressed in the OUTPUT only (they still fire in the
+#                    console). psych::alpha, psych::fa, and psych::omega are all
+#                    chatty about Heywood cases and reversed keys; silencing them
+#                    keeps the appendix readable. It does NOT silence errors.
+# fig.width/height : defaults; individual figure chunks override fig.height.
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 10,
+  fig.height = 7
+)
+```
+
+# Overview
+
+This document is the **supplementary / exploratory** analysis for the Retribution
+study. It sits downstream of `01_main_analysis.Rmd`, which owns cleaning, the
+pre-registered exclusions, scoring, reliability, and the confirmatory tests
+H1–H21, and which writes the scored dataset this document consumes,
+`data/cleaned/retribution_scored.csv`. The language hypotheses E3–E7 live in
+`02_nlp_integration.Rmd`; nothing in this file duplicates them.
+
+Everything here is **exploratory**. Pre-registration Section 6.6 states that these
+analyses "are exploratory and are not corrected as a confirmatory family." No
+false-discovery-rate correction is applied across the tests in this document.
+Where a prediction names a direction (E1, E2) we report the one-sided p-value in
+the predicted direction alongside the two-sided p-value, per Section 6.8.
+
+## Why nothing in this document is FDR-corrected (Section 6.6)
+
+This is the single most important thing to understand before reading any p-value
+below, so it is stated once here and repeated at each phase.
+
+The pre-registration nominates exactly two multiplicity families, and this
+document belongs to neither:
+
+  1. **H1** — the set of correlations between punitiveness and each correlate.
+     Sections 6.1 and 6.3 control the false discovery rate with
+     Benjamini–Hochberg *across that set*, and report adjusted and unadjusted
+     p-values side by side. That correction lives in `01_main_analysis.Rmd`.
+  2. **E3–E7** — the language hypotheses. Section 6.7: "E3 through E7 form one
+     exploratory family; we control the false discovery rate within it." That
+     correction lives in `02_nlp_integration.Rmd`, not here.
+
+Everything in *this* file — E1, E2, the factor structure, the sentence change,
+the moderators, the measure agreement, the response-quality report — is covered
+by the closing sentence of Section 6.6: "These analyses are exploratory and are
+not corrected as a confirmatory family."
+
+Three reasons make that the right call rather than a loophole, and a reader
+should hold all three:
+
+  - **A family is a pre-specified set, not a page of a document.** BH-FDR
+    controls the expected proportion of false discoveries *within a declared
+    family*. The tests below do not form one: E1 is five personality outcomes,
+    E2 is a single Steiger comparison of two correlations, the EFA is a
+    descriptive decomposition with no null hypothesis at all, the moderator
+    models are eight interaction terms, and the agreement analysis is a
+    reliability report. Pooling them into one BH sweep would be an
+    *un*-preregistered analytic choice — it would invent a family the plan never
+    declared, and the number it produced would be a researcher degree of freedom
+    rather than a control.
+  - **The inferential weight was never placed here.** Section 2.4 labels E1 and
+    E2 "exploratory predictions"; Section 6.6 keeps them out of the confirmatory
+    machinery. Nothing below is offered as a confirmed effect, so there is no
+    confirmatory error rate to protect. The correct reading of a small p-value
+    in this document is "worth a confirmatory test in a future study," not
+    "established."
+  - **Correcting would be misleading in the other direction.** Applying BH here
+    would dress these analyses in confirmatory clothing and invite exactly the
+    over-reading the exploratory label is meant to prevent. It would also imply
+    the family had been fixed in advance, which it was not.
+
+**Practical consequence for the reader.** Every p-value printed below is
+unadjusted. Treat them descriptively, alongside the effect size and confidence
+interval that Section 6.8 requires for every test. A nominally significant
+result here is a lead, not a finding.
+
+One deliberate exception to the "no correction" rule is worth naming: the
+alpha = .05 threshold and the one-sided/two-sided rule from Section 6.8 are
+still applied, because those are *inference conventions*, not multiplicity
+adjustments. Directional predictions (E1's five signed predictions, E2's
+"more strongly than") are tested one-sided in the predicted direction; the
+report-only analyses, which name no direction, stay two-sided.
+
+## Pre-registered hypotheses
+
+  - **E1** — Retributivists score higher than non-retributivists on Right-Wing
+    Authoritarianism, Social Dominance Orientation, violence proneness, and
+    racial resentment, and **lower** on cognitive reflection (CRT). Tested "with
+    the same methods" as the confirmatory group contrasts (Section 6.5): Welch
+    t-tests with Cohen's d, run under **each** retributivist definition, plus a
+    continuous regression so the result does not depend on a split.
+  - **E2** — Hostile solidarity (social exclusion of offenders,
+    `exclusion_1`–`exclusion_3`) relates to punitiveness more strongly than
+    Durkheimian solidarity (`Solidarity_2`, `Solidarity_3`). Compared with
+    **Steiger's test** for dependent, overlapping correlations.
+    Per Section 5.3, `Solidarity_1` ("Removing criminals from society helps
+    society cleanse itself") is **dropped** from the Durkheimian reading because
+    it is exclusionary rather than Durkheimian; a sensitivity check that puts it
+    back is reported alongside.
+
+Section 6.6 names three further report-only analyses, and Sections 5.3 and 6.2
+add two more. Together they make up the rest of this document:
+
+  - the **factor structure of the correlates** (EFA + scree, extending H3);
+  - the **change from the first to the second sentence** as a function of
+    retributivism, including the pre-registered regression-adjusted robustness
+    version in which the second sentence is residualized on the first
+    (Sections 5.3, 5.11);
+  - **political orientation** and the **prosecution–defense leaning** as
+    moderators (Section 5.13);
+  - the **agreement among the four retributivist definitions** required by
+    Section 5.3 ("we report their pairwise agreement and the overlap among the
+    groups they define"): the ranking, the relative retribution subscale, the
+    sentencing ratio, and the exploratory semantic measure;
+  - the **completion-time and long-string response-quality report** that
+    Section 6.2 asks for as a diagnostic that does **not** remove anyone from the
+    confirmatory analyses.
+
+## Phases
+
+  1. **Phase 0** — Setup, paths, packages, helper functions
+  2. **Phase 1** — Load the scored data (or rebuild it), derive supplementary variables
+  3. **Phase 2** — E1: personality and cognitive reflection between groups
+  4. **Phase 3** — E2: hostile vs. Durkheimian solidarity (Steiger's test)
+  5. **Phase 4** — Factor structure of the correlates (EFA + scree)
+  6. **Phase 5** — Change from the first to the second sentence
+  7. **Phase 6** — Political orientation and prosecution–defense leaning as moderators
+  8. **Phase 7** — Agreement and overlap among the four retributivist definitions
+  9. **Phase 8** — Response-quality report (completion time, long strings)
+  10. **Phase 9** — Save all output files
+
+## Data note
+
+The analysis file is the Qualtrics **Values** export (numeric, 1–7). The
+companion **Labels** export is a codebook only — it mixes anchor text with bare
+numbers at the middle scale points, so it cannot be used for numeric work.
+
+The export carries three header rows (variable names, question text, ImportId
+JSON), so it is read by taking the names from row 1 and then skipping three rows.
+The sentencing block is **vignette-split**: `Sentence1_V1_1` / `_V2_1` / `_V3_1`,
+and likewise for `Sentence2` and the two open-ends. These are coalesced using the
+embedded `Vignette` field (1/2/3). Slider exports carry a trailing `_1`
+(`CRT_1_1`, `age_1`, `Sentence1_V1_1`). The ranking explanation exports as
+`Priorit_Explain`; the pre-registration calls it `Q333`.
+
+Two measurement rules matter throughout and are enforced here:
+
+  - `severity_1` is reverse-keyed **only** inside the just-deserts proportionality
+    component, never for the standalone H4/H5 severity items.
+  - `punitiveness` (the 8 self-report items) is used wherever the sentence
+    appears on the other side of a test; `punitiveness_full` (which adds the
+    within-vignette standardized sentence) is **never** used in that situation.
+    Section 5.3 and 5.11 require this, and it binds most of Phase 5 and Phase 7
+    of this document.
+
+The analysis file is `Data/FullData_Values.csv`: 1,015 raw responses, N = 948
+after the Section 6.2 exclusions, with the three vignettes at 315 / 317 / 316.
+Collection stopped at the target under the Section 4.4 stopping rule, so
+everything below runs on the final sample. `Data/` also holds an interim partial
+export (`Pilot_300_*`); always read the full file.
+
+## Output organization
+
+  - `output/tables/` — CSV tables (contrasts, correlations, EFA loadings, agreement)
+  - `output/figures/` — PNG figures (scree plot, sentence change, response quality)
+  - `data/cleaned/` — the supplementary variables derived here, for downstream use
+
+# PHASE 0: SETUP AND PACKAGE LOADING
+
+```{r phase0_paths}
+# ===========================================================================
+# PHASE 0.1 — PATH CONFIGURATION
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: declares every input and output path used by the whole
+# document, creates the three output directories if they do not exist, and
+# prints a existence check so a failed knit reports WHICH file was missing
+# rather than dying with an opaque read error 400 lines later.
+#
+# WRITES: nothing to disk except three (possibly empty) directories.
+# OBJECTS CREATED: SCORED_CSV, DATA_RAW, SEMANTIC_CSV, OUT_TABLES, OUT_FIGURES,
+#                  OUT_DATA — all consumed by later phases.
+# ===========================================================================
+
+# === PATH CONFIGURATION ===
+# All paths are relative to this .Rmd file's folder,
+#   Retribution/Analysis/Retribution R/ .
+# Knit from that folder (RStudio does this automatically).
+#
+# WHY RELATIVE PATHS: this pipeline lives in a shared Google Drive folder whose
+# absolute prefix differs on every collaborator's machine. Relative paths make
+# the document portable; the cost is that the working directory must be the
+# .Rmd's own folder, which is what knitr does by default.
+
+# Primary input: the scored file written by 01_main_analysis.Rmd.
+# This is the intended path. 01 owns cleaning, exclusions, reverse coding, and
+# the composites; this document should consume its output, not re-derive it.
+SCORED_CSV <- file.path("data", "cleaned", "retribution_scored.csv")
+
+# Fallback input: the raw Qualtrics VALUES export, two levels up.
+# NOTE ON WHICH EXPORT: the VALUES export is numeric (1-7). The companion LABELS
+# export writes anchor TEXT at the endpoints but bare NUMBERS at the middle
+# scale points, so coercing it to numeric silently produces NAs at exactly the
+# scale positions that matter most. Never point DATA_RAW at the Labels file.
+# FullData_Values.csv is the complete collection: 1,015 raw responses, N = 948
+# after the Section 6.2 exclusions. Data/ also holds an interim partial export
+# (Pilot_300_*); always read the full file.
+DATA_RAW <- file.path("..", "..", "Data", "FullData_Values.csv")
+
+# Optional input: the dictionary-based facet scores from the NLP pipeline.
+# Used only as a PROVISIONAL stand-in for the semantic measure (Phase 7).
+# The word list is one of the two NON-MODEL safeguards named in Section 6.7, so
+# it is a defensible placeholder, but it is NOT the validated LLM-ensemble
+# semantic measure the pre-registration calls the fourth retributivist
+# definition. Phase 1.4 labels it as provisional wherever it is used.
+SEMANTIC_CSV <- file.path("..", "NLP", "outputs", "facet_dictionary_scores.csv")
+
+# Output directories
+# Kept separate so the knitted appendix, the machine-readable tables, and the
+# derived variables can be shared or re-generated independently.
+OUT_TABLES  <- file.path("output", "tables")   # CSV tables (contrasts, r's, EFA)
+OUT_FIGURES <- file.path("output", "figures")  # PNG figures (scree, histograms)
+OUT_DATA    <- file.path("data", "cleaned")    # derived supplementary variables
+
+# recursive = TRUE creates intermediate folders; showWarnings = FALSE keeps the
+# knit quiet when the directory already exists (the normal case on a re-knit).
+for (dir_ in c(OUT_TABLES, OUT_FIGURES, OUT_DATA)) {
+  dir.create(dir_, recursive = TRUE, showWarnings = FALSE)
+}
+
+# normalizePath() is called only AFTER dir.create(), because it errors on a
+# path that does not yet exist. Printing the absolute path here is the fastest
+# way to diagnose a knit that silently wrote its output to the wrong folder.
+
+cat("Output directories ready:\n")
+cat("  Tables:  ", normalizePath(OUT_TABLES),  "\n")
+cat("  Figures: ", normalizePath(OUT_FIGURES), "\n")
+cat("  Cleaned: ", normalizePath(OUT_DATA),    "\n\n")
+cat("Inputs:\n")
+cat(sprintf("  scored CSV (from 01):  %-55s exists = %s\n",
+            SCORED_CSV, file.exists(SCORED_CSV)))
+cat(sprintf("  raw VALUES export:     %-55s exists = %s\n",
+            DATA_RAW, file.exists(DATA_RAW)))
+cat(sprintf("  NLP facet scores:      %-55s exists = %s\n",
+            SEMANTIC_CSV, file.exists(SEMANTIC_CSV)))
+```
+
+```{r phase0_packages}
+# ===========================================================================
+# PHASE 0.2 — PACKAGE LOADING
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: reports any missing package (rather than crashing at
+# the first library() call), loads whatever IS installed, and records whether
+# GPArotation is present, which decides the EFA rotation in Phase 4.
+#
+# WHY THE "REPORT, DON'T STOP" DESIGN: a collaborator opening this file for the
+# first time gets one readable list of what to install, instead of fixing one
+# missing package per failed knit.
+# ===========================================================================
+
+# === PACKAGE LOADING ===
+# Each package's purpose is annotated for transparency.
+
+required_packages <- c(
+  "readr",        # Fast CSV reading with explicit header handling
+  "dplyr",        # Data manipulation
+  "tidyr",        # Reshaping for the figures
+  "ggplot2",      # Figures
+  "psych",        # Alpha/omega, EFA, parallel analysis, Cohen's kappa
+  "cocor",        # Steiger's test for dependent, overlapping correlations
+  "broom",        # tidy() for regression output
+  "knitr"         # kable() tables in the knitted document
+)
+
+# Report-then-continue: name every missing package in one message rather than
+# aborting the knit on the first one.
+installed <- rownames(installed.packages())
+missing_pkgs <- setdiff(required_packages, installed)
+if (length(missing_pkgs)) {
+  cat("Missing packages (install before knitting):",
+      paste(missing_pkgs, collapse = ", "), "\n")
+}
+
+# Load only what is actually installed. character.only = TRUE is required
+# because we are passing package names as strings, not as bare symbols.
+# invisible() suppresses the list of attached-package vectors lapply returns.
+invisible(lapply(intersect(required_packages, installed),
+                 library, character.only = TRUE))
+
+# GPArotation is needed for oblique EFA rotation; the EFA chunk falls back to
+# an orthogonal rotation if it is absent.
+# WHY THIS MATTERS SUBSTANTIVELY: oblimin (oblique) lets the extracted factors
+# correlate, which is the theoretically right assumption here — H3 is precisely
+# the claim that ONE punitiveness dimension runs through the correlates, so
+# forcing the factors orthogonal (varimax) would assume the answer away. The
+# varimax fallback keeps the document knittable but should be flagged in any
+# write-up, because it changes the loadings.
+# requireNamespace() tests availability WITHOUT attaching the package: psych
+# calls GPArotation internally, so it never needs to be on the search path.
+HAS_GPA <- requireNamespace("GPArotation", quietly = TRUE)
+
+# scipen = 999 pushes R hard away from scientific notation, so a p-value prints
+# as 0.000000123 rather than 1.23e-07. format_p() handles the display rule
+# ("< .001") for text; this option governs raw print()/kable() output.
+options(scipen = 999)  # No scientific notation in printed output
+# 4 significant digits is a display setting only -- it does not round any stored
+# value, so no computed result changes.
+options(digits = 4)
+
+cat("\nPackages loaded. GPArotation available:", HAS_GPA, "\n")
+```
+
+```{r phase0_helpers}
+# ===========================================================================
+# PHASE 0.3 — HELPER FUNCTIONS
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: defines every function reused below, plus the mutable
+# `alpha_table` reliability log. Nothing here reads data or produces a result;
+# the chunk's only printed output is the roll-call at the end.
+#
+# These are the same helpers the Dark Side / Punishment 2.1 pipeline uses, so a
+# reader who knows that codebase can skip ahead, plus four contrast helpers
+# specific to this document: welch_contrast(), run_contrasts(),
+# steiger_overlap(), and balanced_split().
+#
+# EVERY function is defensive in the same way: it returns NULL or NA rather
+# than raising, so that one absent column cannot abort the knit 800 lines
+# later. The cost is that a silent NULL means "not estimable", and each call
+# site below checks for it before displaying.
+# ===========================================================================
+
+# === HELPER FUNCTIONS ===
+
+#' Format a p-value for display in prose written with cat()/sprintf().
+#'
+#' Returns a string that reads correctly after the word "p": "< .001" or
+#' "= 0.037". Anything below .001 is reported as "< .001" rather than as a
+#' string of zeros, which is the usual reporting convention and avoids implying
+#' more precision than a p-value carries. Scalar-only by design: a vector of
+#' p-values goes to sig_stars() or straight into a kable column instead.
+format_p <- function(p) {
+  if (length(p) != 1 || is.na(p)) return("NA")
+  if (p < .001) return("< .001")
+  sprintf("= %.3f", p)
+}
+
+#' Convert p-values to significance stars. Vectorized (case_when), so it can be
+#' applied to a whole column of a results table.
+#'
+#' The thresholds are the conventional .001 / .01 / .05 ladder. The .05 rung is
+#' the Section 6.8 alpha. NOTE that every star printed in this document marks an
+#' UNADJUSTED p-value: Section 6.6 places these analyses outside both
+#' multiplicity families, so a star here flags a lead worth a confirmatory test,
+#' not a controlled discovery.
+sig_stars <- function(p) {
+  dplyr::case_when(
+    is.na(p) ~ "",
+    p < .001 ~ "***",
+    p < .01  ~ "**",
+    p < .05  ~ "*",
+    TRUE     ~ ""
+  )
+}
+
+# Reverse a 1..7 item so that a higher score means more of the named construct.
+# The constant is 8 because it is (scale minimum + scale maximum) = 1 + 7; a
+# 1-5 item would need 6 instead. Every attitude item in this study is on the
+# seven-point agree-disagree scale of Section 5.1, so one constant covers all of
+# them. Applying rev7() twice restores the original value, which is exactly the
+# failure mode to watch for with Retribution_6 and Retribution_7 (see Phase 1.2).
+rev7 <- function(x) 8 - x
+
+# Reliability log, filled by compute_composite() through the `<<-` on each call.
+# Declared here and RESET at the top of Phase 1.2, so a re-run of that chunk
+# alone does not append a second copy of every row.
+alpha_table <- data.frame()
+
+#' Composite = row-mean of items, with Cronbach's alpha and McDonald's omega
+#' logged into `alpha_table`.
+#'
+#' Arguments:
+#'   data         data frame holding the items.
+#'   items        character vector of item names; missing ones are dropped.
+#'   name         label written into the reliability log.
+#'   reverse_ok   passed to psych::alpha() as check.keys. Left FALSE almost
+#'                everywhere here, because reverse coding is done explicitly
+#'                upstream (the *_R columns) and letting alpha silently flip a
+#'                key would hide a scoring error rather than surface it.
+#'   print_output print a one-line alpha/omega summary as a side effect.
+#' Returns: numeric vector of length nrow(data), the composite score.
+#'
+#' Reused by every composite built in Phase 1.2.
+compute_composite <- function(data, items, name, reverse_ok = FALSE,
+                              print_output = FALSE) {
+  # Tolerate a caller naming items that are not in this particular export.
+  items <- intersect(items, names(data))
+  if (!length(items)) return(rep(NA_real_, nrow(data)))
+
+  item_data    <- as.data.frame(data[, items, drop = FALSE])
+  # Section 5.1: "computed for anyone who answered at least half of the items."
+  # ceiling() makes the rule strict on odd k -- a 7-item scale needs 4 answers,
+  # not 3.5 rounded down. Everything below the threshold becomes NA rather than
+  # a mean of one or two items, which would be on a different scale in practice.
+  min_answered <- ceiling(length(items) / 2)
+  n_answered   <- rowSums(!is.na(item_data))
+  comp         <- rowMeans(item_data, na.rm = TRUE)
+  comp[n_answered < min_answered] <- NA_real_
+
+  # Section 5.1 asks for BOTH alpha and omega on every composite. Two-item
+  # composites still get an alpha (it is just the Spearman-Brown stepped-up
+  # correlation there); single-item "composites" get neither, hence k >= 2.
+  a <- o <- NA_real_
+  if (length(items) >= 2) {
+    # tryCatch keeps a Heywood case or a singular item matrix from aborting the
+    # knit: the reliability cell reports NA and the composite itself still
+    # computes, since the row-mean above does not depend on either estimate.
+    a <- tryCatch(psych::alpha(item_data, check.keys = reverse_ok,
+                               warnings = FALSE)$total$raw_alpha,
+                  error = function(e) NA_real_)
+    # omega.tot is the total omega (all common variance), which is the
+    # comparable figure to raw alpha. nfactors = 1 fits the single-factor model
+    # these composites assume; plot = FALSE stops psych from opening a device
+    # mid-knit.
+    o <- tryCatch(suppressWarnings(suppressMessages(
+                    psych::omega(item_data, nfactors = 1,
+                                 plot = FALSE)$omega.tot)),
+                  error = function(e) NA_real_)
+  }
+  # `<<-` writes to the alpha_table in the enclosing (global) environment. The
+  # item list is stored verbatim so the printed table carries its own
+  # provenance -- a reader can see which columns, reversed or not, went in.
+  alpha_table <<- rbind(
+    alpha_table,
+    data.frame(composite = name, k = length(items), alpha = a, omega = o,
+               items = paste(items, collapse = ", "),
+               stringsAsFactors = FALSE)
+  )
+  if (print_output) {
+    cat(sprintf("  %-30s k=%d  alpha=%s  omega=%s\n", name, length(items),
+                ifelse(is.na(a), "  -  ", sprintf("%.3f", a)),
+                ifelse(is.na(o), "  -  ", sprintf("%.3f", o))))
+  }
+  comp
+}
+
+#' Correlation with 95% CI, p, and pairwise n.
+#'
+#' Arguments: x, y are column NAMES; data is the frame holding them.
+#' Returns: a named numeric vector c(r, ci_lower, ci_upper, p, n).
+#'
+#' Section 6.8 requires an effect size and a confidence interval on every test,
+#' so the CI travels with the coefficient rather than being reconstructed later.
+#' Pearson throughout, per Section 6.1.
+#'
+#' `n` is the PAIRWISE complete-case count, and it is returned even in the
+#' failure branch: when a correlation is not estimable, the reader still needs
+#' to see whether that was because of two cases or two hundred.
+#'
+#' Reused by E2 (Phase 3), the sentence analyses (Phase 5), the moderators
+#' (Phase 6), and the measure-agreement tables (Phase 7).
+get_cor_ci <- function(x, y, data) {
+  xv <- data[[x]]; yv <- data[[y]]
+  ok <- stats::complete.cases(xv, yv)
+  # Guard on two failure modes cor.test() would either error on or answer
+  # nonsensically: too few pairs for a CI (n < 4 leaves no residual df once the
+  # Fisher-z interval is formed), and a constant vector (sd == 0), which makes
+  # the correlation undefined -- the sentencing ratio can be constant inside a
+  # small subgroup, and the semantic placeholder is constant when absent.
+  if (sum(ok) < 4 || stats::sd(xv[ok], na.rm = TRUE) == 0 ||
+      stats::sd(yv[ok], na.rm = TRUE) == 0) {
+    return(c(r = NA_real_, ci_lower = NA_real_, ci_upper = NA_real_,
+             p = NA_real_, n = sum(ok)))
+  }
+  tst <- stats::cor.test(xv[ok], yv[ok])
+  # unname() strips cor.test's "cor" label so the returned vector's own names
+  # survive; without it the element would come back named "r.cor".
+  c(r        = unname(tst$estimate),
+    ci_lower = tst$conf.int[1],
+    ci_upper = tst$conf.int[2],
+    p        = tst$p.value,
+    n        = sum(ok))
+}
+
+#' Format a correlation matrix as character cells with significance stars.
+#'
+#' Arguments: cor_matrix and p_matrix must share dimensions and dimnames.
+#' Returns: a character matrix, diagonal blanked to "-".
+#'
+#' Used once, for the H1 correlate intercorrelations in Phase 4. That call
+#' passes a matrix of ZEROS as p_matrix, which stars every off-diagonal cell:
+#' the table is there to show the sign pattern H3 summarizes (the share of
+#' positive intercorrelations), not to test 66 individual correlations, and
+#' Section 6.6 places no multiplicity family around it.
+format_cor_table <- function(cor_matrix, p_matrix, decimals = 2) {
+  r_formatted <- round(cor_matrix, decimals)
+  stars_vec   <- sig_stars(as.vector(p_matrix))
+  # as.vector() unrolls column-major and matrix() re-rolls the same way, so the
+  # r's and their stars stay aligned cell for cell.
+  values_vec  <- paste0(format(as.vector(r_formatted), nsmall = decimals),
+                        stars_vec)
+  result <- matrix(values_vec, nrow = nrow(cor_matrix),
+                   dimnames = dimnames(cor_matrix))
+  # The diagonal is 1.00 by construction and carries no information; blanking it
+  # keeps the eye on the off-diagonal pattern.
+  diag(result) <- "-"
+  result
+}
+
+#' Welch t-test + Cohen's d (high group minus low group) with a large-sample CI.
+#'
+#' Arguments:
+#'   data       frame holding both columns.
+#'   var        outcome column name (coerced to numeric).
+#'   group      two-level grouping column; its factor LEVEL ORDER defines which
+#'              side is "low" and which is "high".
+#'   direction  the E1/E2-style predicted direction for the HIGH group:
+#'              "greater" = high group scores higher, "less" = high group scores
+#'              lower, "two.sided" = no directional prediction.
+#'   label      human-readable name of the grouping, carried into the output so
+#'              stacked tables stay readable.
+#' Returns: a one-row data frame, or NULL when the contrast is not estimable.
+#'
+#' WHY WELCH RATHER THAN STUDENT: Section 6.5 fixes Welch t-tests for the group
+#' contrasts. The retributivist groups are unequal in size (the ranking
+#' definition splits roughly a third to two thirds) and there is no reason to
+#' assume the two groups have equal variance on RWA, SDO, or the sentence
+#' change. Student's t is badly behaved in exactly that combination -- unequal n
+#' paired with unequal variance -- while Welch costs almost nothing when the
+#' variances happen to match. stats::t.test() defaults to Welch, so no argument
+#' is needed; the fractional `df` in the output is the Welch-Satterthwaite
+#' correction and is the visible sign that it was used.
+welch_contrast <- function(data, var, group, direction = "two.sided",
+                           label = NA_character_) {
+  if (!all(c(var, group) %in% names(data))) return(NULL)
+  y <- suppressWarnings(as.numeric(data[[var]]))
+  g <- data[[group]]
+  ok <- !is.na(y) & !is.na(g)
+  # droplevels() matters for grp_tert, which is built with the middle third set
+  # to NA: without it the factor would still carry an empty level and nlevels()
+  # would not equal 2.
+  y <- y[ok]; g <- droplevels(factor(g[ok]))
+  # Three or fewer per cell gives a variance estimate not worth reporting; a
+  # constant outcome gives no test at all. Both return NULL, and run_contrasts()
+  # simply omits the row.
+  if (nlevels(g) != 2 || any(table(g) < 3)) return(NULL)
+  if (stats::sd(y) == 0) return(NULL)
+
+  lv  <- levels(g)
+  y1  <- y[g == lv[1]]; y2 <- y[g == lv[2]]
+  n1  <- length(y1);    n2 <- length(y2)
+  m1  <- mean(y1);      m2 <- mean(y2)
+  # y2 first, y1 second, so t and d both read HIGH MINUS LOW. Every grouping
+  # factor built in Phase 1.3 is constructed with the low level first precisely
+  # so this orientation holds; reversing a levels= argument there would silently
+  # flip the sign of every d in the document.
+  tt  <- stats::t.test(y2, y1)   # high minus low
+
+  # Cohen's d uses the POOLED SD, not Welch's separate-variance denominator.
+  # The pooled standardizer is what "Cohen's d" conventionally means and what
+  # keeps d comparable across the four retributivist definitions, which differ
+  # in how they split the sample. The test statistic stays Welch; only the
+  # effect size is pooled.
+  s_p  <- sqrt(((n1 - 1) * stats::var(y1) + (n2 - 1) * stats::var(y2)) /
+                 (n1 + n2 - 2))
+  dval <- if (is.finite(s_p) && s_p > 0) (m2 - m1) / s_p else NA_real_
+  # Hedges & Olkin's large-sample standard error for d: the first term is
+  # sampling error in the mean difference, the second the error in estimating
+  # the standardizer. It is the usual normal-approximation SE and is adequate
+  # at these cell sizes (hundreds), which is why the CI below uses 1.96 rather
+  # than a t quantile.
+  se_d <- if (is.na(dval)) NA_real_ else
+    sqrt((n1 + n2) / (n1 * n2) + dval^2 / (2 * (n1 + n2)))
+
+  # Section 6.8: "Predictions that name a direction are tested one-sided in that
+  # direction; the rest are two-sided." Both p-values are reported side by side
+  # so a reader can apply either convention.
+  #
+  # The halving rule: when the observed t falls on the predicted side, the
+  # one-sided p is half the two-sided p; when it falls on the wrong side, the
+  # one-sided p is 1 - p_two/2, which is above .5 and correctly records that a
+  # directional prediction cannot be supported by a result in the opposite
+  # direction. Anything other than "greater"/"less" falls through to p_two.
+  p_two <- tt$p.value
+  p_dir <- switch(
+    direction,
+    greater = if (unname(tt$statistic) > 0) p_two / 2 else 1 - p_two / 2,
+    less    = if (unname(tt$statistic) < 0) p_two / 2 else 1 - p_two / 2,
+    p_two
+  )
+
+  # One row per contrast. Both level LABELS are carried alongside the means so a
+  # stacked table cannot be misread about which side is which; `direction`
+  # records the prediction that produced p_directional, so a reader never has to
+  # guess whether a one-sided p was appropriate for that row.
+  # The CI on d is the normal-approximation d +/- 1.96 * SE (95%).
+  data.frame(
+    grouping  = ifelse(is.na(label), group, label),
+    variable  = var,
+    level_low = lv[1], level_high = lv[2],
+    n_low = n1, n_high = n2,
+    M_low = m1, M_high = m2,
+    t = unname(tt$statistic), df = unname(tt$parameter),
+    p_two_sided = p_two,
+    direction = direction,
+    p_directional = p_dir,
+    d = dval,
+    d_lo = dval - 1.96 * se_d,
+    d_hi = dval + 1.96 * se_d,
+    stringsAsFactors = FALSE
+  )
+}
+
+#' Run welch_contrast() over a set of variables for one grouping variable.
+#'
+#' Arguments:
+#'   vars        outcome column names.
+#'   group       one grouping column.
+#'   directions  optional NAMED list mapping outcome -> "greater"/"less".
+#'               Outcomes absent from the list default to "two.sided", which is
+#'               the Section 6.8 rule: only a prediction that names a direction
+#'               earns a one-sided test. Passing NULL (as the report-only
+#'               analyses in Phases 5 and 6 do) makes every row two-sided.
+#' Returns: a stacked data frame, or NULL if no contrast was estimable.
+#'
+#' This is the workhorse behind E1 (each of the four definitions), the sentence
+#' change, the residualized sentence, and the moderator descriptives.
+run_contrasts <- function(data, vars, group, directions = NULL,
+                          label = NA_character_) {
+  out <- lapply(vars, function(v) {
+    dir_v <- if (!is.null(directions) && v %in% names(directions))
+      directions[[v]] else "two.sided"
+    welch_contrast(data, v, group, direction = dir_v, label = label)
+  })
+  # Drop the NULLs welch_contrast() returns for non-estimable contrasts before
+  # rbind(), which would otherwise silently discard them anyway but leaves a
+  # zero-row frame that show_table() would render as an empty table.
+  out <- out[!vapply(out, is.null, logical(1))]
+  if (!length(out)) return(NULL)
+  do.call(rbind, out)
+}
+
+#' Steiger's test for two dependent, OVERLAPPING correlations that share
+#' variable `j`: r(j,k) vs r(j,h).
+#'
+#' Arguments: j is the SHARED variable; k and h are the two competitors;
+#'   alternative is "greater" when the prediction is r(j,k) > r(j,h).
+#' Returns: list(table = one-row data frame, cocor = the cocor object), or NULL.
+#'
+#' WHY STEIGER: E2 asks whether punitiveness correlates MORE STRONGLY with
+#' hostile solidarity than with Durkheimian solidarity. Both correlations are
+#' measured on the same participants and both contain punitiveness, so they are
+#' dependent and overlapping. Comparing them by eye, or by whether one clears
+#' .05 and the other does not, ignores r(k,h) -- the correlation between the two
+#' competitors -- which drives how much sampling error the two coefficients
+#' share. Steiger's (1980) modified z takes r(k,h) into account explicitly, and
+#' it is what Sections 6.3, 6.4, and 6.6 specify for H2, H10, and E2 alike.
+#'
+#' Reused for E2 itself and for both E2 specification checks in Phase 3.
+steiger_overlap <- function(data, j, k, h, alternative = "two.sided") {
+  if (!all(c(j, k, h) %in% names(data))) return(NULL)
+  # LISTWISE, not pairwise: Steiger's z assumes one n and one covariance
+  # structure across all three coefficients, so all three r's must come from the
+  # same set of rows. Computing them pairwise would put three different n's into
+  # a formula that takes one.
+  cc <- stats::complete.cases(data[[j]], data[[k]], data[[h]])
+  n  <- sum(cc)
+  if (n < 10) return(NULL)
+  r_jk <- stats::cor(data[[j]][cc], data[[k]][cc])
+  r_jh <- stats::cor(data[[j]][cc], data[[h]][cc])
+  # The correlation BETWEEN the two competitors. This is the term that makes the
+  # test a dependent-samples test rather than two independent comparisons.
+  r_kh <- stats::cor(data[[k]][cc], data[[h]][cc])
+
+  # test = "steiger1980" pins the estimator: cocor offers several overlapping
+  # tests (Pearson-Filon, Hotelling, Dunn-Clark, Meng), and naming one keeps the
+  # reported z reproducible instead of depending on a package default.
+  res <- tryCatch(
+    cocor::cocor.dep.groups.overlap(
+      r.jk = r_jk, r.jh = r_jh, r.kh = r_kh, n = n,
+      alternative = alternative, test = "steiger1980"),
+    error = function(e) NULL)
+
+  # cocor returns an S4 object, so the statistic and p come out through the @
+  # slot rather than $. If cocor failed, the table still prints the three r's
+  # and their difference with z and p as NA.
+  z <- p <- NA_real_
+  if (!is.null(res)) {
+    z <- unname(res@steiger1980$statistic)
+    p <- unname(res@steiger1980$p.value)
+  }
+  list(
+    table = data.frame(
+      shared = j, comparison_1 = k, comparison_2 = h,
+      r_1 = r_jk, r_2 = r_jh, r_between = r_kh,
+      diff = r_jk - r_jh, n = n,
+      steiger_z = z, p = p, alternative = alternative,
+      stringsAsFactors = FALSE),
+    cocor = res
+  )
+}
+
+#' Percent formatter for report text. Takes a PROPORTION (0-1) and returns a
+#' string such as "34.2%", so call sites pass mean(flag) rather than 100*mean().
+pct <- function(x, digits = 1) sprintf(paste0("%.", digits, "f%%"), 100 * x)
+
+#' Print a data frame as a knitr table with sensible rounding.
+#'
+#' NOTE ON PLACEMENT: knitr prints the value of every *top-level* expression in
+#' a chunk, so show_table() must be called at the top level, never buried inside
+#' an if/else block where its value would be discarded. Every chunk below
+#' follows that rule: results are computed under a guard, then displayed at the
+#' top level. NULL and empty inputs are handled here.
+show_table <- function(df, caption = NULL, digits = 3) {
+  if (is.null(df) || !nrow(df)) {
+    cat("(no rows to display)\n"); return(invisible(NULL))
+  }
+  # row.names = FALSE suppresses kable's 1..n gutter, which carries no meaning
+  # for these stacked result tables and only invites a reader to cite a row
+  # number that shifts whenever a contrast becomes non-estimable.
+  knitr::kable(df, digits = digits, row.names = FALSE, caption = caption)
+}
+
+#' Select columns from a possibly-NULL data frame without erroring.
+#'
+#' Arguments: df may be NULL or zero-row; cols is a wish list.
+#' Returns: df restricted to whichever of `cols` exist, or NULL.
+#'
+#' Used to display a readable subset of welch_contrast()'s wide output: the full
+#' object keeps level_low/level_high/direction for the saved CSV, while the
+#' printed table shows only what a reader needs on the page. intersect() rather
+#' than a plain `[` means a table that lost a column (for example `df` when a
+#' contrast was not estimable) still prints instead of raising.
+pick_cols <- function(df, cols) {
+  if (is.null(df) || !nrow(df)) return(NULL)
+  df[, intersect(cols, names(df)), drop = FALSE]
+}
+
+#' Median split that is aware of ties.
+#'
+#' Arguments: x, a numeric vector.
+#' Returns: list(split = 0/1 integer vector, rule = the comparison used,
+#'   cut = the median itself).
+#'
+#' The sentencing ratio has a large point mass at exactly 1.0 (participants who
+#' did not reduce the sentence at all), so a strict `x > median` split throws
+#' almost everyone into one cell. This chooses whichever of `>` or `>=` gives
+#' the more even split and reports which rule it used.
+#'
+#' Reporting `rule` is the point: the split is a data-dependent choice, and the
+#' printed rule tells a reader exactly which participants ended up on which
+#' side. On the ratio, ">= median" separates those who kept the whole sentence
+#' from those who cut it, which is the substantive contrast Section 5.11
+#' describes ("a higher ratio, meaning a smaller reduction"). Applied to the
+#' relative retribution subscale and to the semantic placeholder as well, so all
+#' three continuous definitions are dichotomized the same way.
+balanced_split <- function(x) {
+  m <- stats::median(x, na.rm = TRUE)
+  strict <- as.integer(x >  m)
+  loose  <- as.integer(x >= m)
+  # Evenness = the size of the SMALLER cell as a proportion; it peaks at 0.5 for
+  # a perfect split and falls to 0 when everyone lands on one side. Maximizing
+  # it is what keeps the Welch contrast estimable and reasonably powered.
+  evenness <- function(v) { p <- mean(v, na.rm = TRUE); min(p, 1 - p) }
+  # isTRUE() guards the NA case: if x is entirely missing both comparisons are
+  # NA, and the strict rule is returned rather than the condition erroring.
+  if (isTRUE(evenness(loose) > evenness(strict)))
+    list(split = loose,  rule = ">= median", cut = m)
+  else
+    list(split = strict, rule = "> median",  cut = m)
+}
+
+cat("Helper functions loaded:\n")
+cat("  format_p()          — p-value formatting\n")
+cat("  sig_stars()         — p -> stars\n")
+cat("  compute_composite() — composite + alpha/omega, logged to alpha_table\n")
+cat("  get_cor_ci()        — correlation with 95% CI\n")
+cat("  format_cor_table()  — formatted correlation matrix\n")
+cat("  welch_contrast()    — Welch t + Cohen's d with directional p\n")
+cat("  run_contrasts()     — welch_contrast() over a variable set\n")
+cat("  steiger_overlap()   — Steiger's test, dependent overlapping r's\n")
+cat("  balanced_split()    — tie-aware median split\n")
+cat("  show_table()        — kable wrapper tolerant of NULL/empty input\n")
+```
+
+# PHASE 1: DATA LOADING AND SUPPLEMENTARY VARIABLES
+
+## 1.1 Load the scored dataset
+
+The scored file from `01_main_analysis.Rmd` is the intended input. If it has not
+been produced yet, this chunk falls back to the raw Values export and reproduces
+the Section 6.2 exclusion funnel, so the document knits either way.
+
+```{r phase1_load}
+# ===========================================================================
+# PHASE 1.1 — LOAD THE ANALYSIS DATA
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: reads the scored file 01_main_analysis.Rmd writes; if
+# that file is absent, falls back to the raw Qualtrics VALUES export and
+# reproduces the Section 6.2 exclusion funnel so the document still knits.
+# Either way it finishes by forcing every scale column to numeric.
+#
+# OBJECTS CREATED: `d` (the analysis frame used by every later phase),
+#                  DATA_SOURCE (a provenance string printed in Phase 9),
+#                  exclusion_funnel (NULL unless the fallback ran).
+# PRODUCES: the row/column count and the funnel table in the knitted output.
+#
+# ON THE FUNNEL: 1,015 raw responses -> Finished == 1 -> Progress == 100 ->
+# AttnCheck1 -> AttnCheck2 leaves N = 948, with the three vignettes at
+# 315 / 317 / 316. Section 6.2 makes failing EITHER attention check sufficient,
+# "since both are easy for an attentive respondent."
+# ===========================================================================
+
+# --- Column groups that must be numeric regardless of the input file ---
+# Qualtrics writes every cell as text, and readr's type guessing sees a column
+# of "1".."7" and infers numeric only when nothing else appears in the first
+# `guess_max` rows. Listing the scale columns explicitly and coercing them below
+# removes that dependence on row order. Open-ended text columns are deliberately
+# ABSENT from this list so they stay character.
+num_cols_spec <- c(
+  paste0("Retribution_", 1:7), paste0("Deterrence_", 1:3),
+  paste0("Incapacitation_", 1:2), paste0("Rehabilitation_", 1:2),
+  paste0("Solidarity_", 1:3), paste0("Prioritization_", 1:4),
+  "punishmore_1", "punishmore_2", "parsimony_1", "parsimony_2",
+  "threestrikes_1", "threestrikes_2", "LWOP", "deathpenalty", "AttnCheck1",
+  paste0("revenge_", 1:4), "proportionality", "severity_1", "severity_2",
+  paste0("exclusion_", 1:3), paste0("essential_", 1:4),
+  paste0("Society_", 1:3), paste0("choice_", 1:2), "AttnCheck2",
+  paste0("dueprocess_", 1:3), paste0("uncertain_", 1:4),
+  paste0("rates_", 1:2), paste0("fear_", 1:3),
+  paste0("hate_", 1:3), paste0("anger_", 1:2),
+  paste0("degrad_", 1:3), paste0("suffer_", 1:2), paste0("prisonvi_", 1:2),
+  paste0("harsh_", 1:3), paste0("rwa_", 1:5), paste0("sdo_", 1:8),
+  paste0("vprone_", 1:4), paste0("Raceresent_", 1:4),
+  # The CRT items are SLIDERS, and Qualtrics appends a trailing _1 to every
+  # slider export, so the columns are CRT_1_1 / CRT_2_1 / CRT_3_1 rather than
+  # CRT_1 / CRT_2 / CRT_3. Same story for age_1 and the sentence sliders.
+  "CRT_1_1", "CRT_2_1", "CRT_3_1",
+  # The sentencing block is VIGNETTE-SPLIT: each participant sees one of three
+  # vignettes and answers the matching column, so six sentence columns exist and
+  # each is populated for roughly a third of the sample. Phase 1.2 coalesces
+  # them through the embedded Vignette field. Both the split columns and the
+  # coalesced names are listed, because either may be present depending on
+  # whether this document read 01's output or the raw export.
+  "Sentence1_V1_1", "Sentence2_V1_1", "Sentence1_V2_1", "Sentence2_V2_1",
+  "Sentence1_V3_1", "Sentence2_V3_1",
+  "Sentence1", "Sentence2",
+  "Shark_1", "Shark_2", "Shark_3", "age_1", "age", "gender", "race",
+  # "lib/conserv" carries a slash in the Qualtrics tag itself, so it always
+  # needs backtick or bracket access in R; Phase 6 copies it to `libcons`.
+  "education", "lib/conserv", "PoliticalID", "leanPros_1", "leanPros_2",
+  "Vignette", "Progress", "Finished", "Duration (in seconds)"
+)
+
+#' Read a Qualtrics VALUES export that carries three header rows.
+#'
+#' Row 1 = variable names, row 2 = the full question text, row 3 = the ImportId
+#' JSON. Reading naively would make row 2 the first data row and coerce every
+#' column to character. The two-pass approach takes the names from row 1 with
+#' n_max = 0, then re-reads with skip = 3 and those names supplied.
+#' guess_max = 10000 exceeds the 1,015 rows in the file, so readr's type guess
+#' sees the whole column rather than its first 1,000 rows.
+read_qualtrics_values <- function(path) {
+  # THREE header rows: (1) variable names, (2) question text, (3) ImportId JSON.
+  nm <- names(readr::read_csv(path, n_max = 0, show_col_types = FALSE))
+  readr::read_csv(path, skip = 3, col_names = nm,
+                  show_col_types = FALSE, guess_max = 10000)
+}
+
+# Provenance, printed at the end of this chunk and again in the Phase 9 summary,
+# so a knitted copy always states which input it was built from.
+DATA_SOURCE <- NA_character_
+exclusion_funnel <- NULL
+
+# PREFERRED PATH: 01 has already cleaned, excluded, reverse-coded, and scored.
+if (file.exists(SCORED_CSV)) {
+
+  d <- readr::read_csv(SCORED_CSV, show_col_types = FALSE, guess_max = 10000)
+  # as.data.frame() drops the tibble class. Base-R `[` subsetting is used
+  # throughout this document, and a tibble's `[` keeps returning a tibble where
+  # a vector is wanted; the plain frame keeps that behaviour predictable.
+  d <- as.data.frame(d)
+  DATA_SOURCE <- "scored CSV from 01_clean_and_score"
+  cat(sprintf("Loaded scored data: %d rows x %d columns\n  from %s\n",
+              nrow(d), ncol(d), SCORED_CSV))
+
+# FALLBACK PATH: no scored file, so rebuild from the raw export.
+} else if (file.exists(DATA_RAW)) {
+
+  raw <- as.data.frame(read_qualtrics_values(DATA_RAW))
+  DATA_SOURCE <- "raw Qualtrics VALUES export (01 output not found)"
+  cat(sprintf("01 output not found. Loaded RAW data: %d rows x %d columns\n  from %s\n",
+              nrow(raw), ncol(raw), DATA_RAW))
+
+  # suppressWarnings() absorbs the expected "NAs introduced by coercion" on the
+  # handful of cells Qualtrics leaves as an empty string.
+  nc <- intersect(num_cols_spec, names(raw))
+  raw[nc] <- lapply(raw[nc], function(x) suppressWarnings(as.numeric(x)))
+
+  # Pre-registered exclusions (Section 6.2). Failing EITHER check is enough.
+  # AttnCheck1 correct = 9 ("strongly agree"); AttnCheck2 correct = 4 ("15").
+  #
+  # BOTH constants are CHOICE POSITIONS, not the values a reader would guess:
+  #   AttnCheck1 is the instructed-response item ("please select the strongly
+  #   agree option") and its choices are sparsely coded 1, 3, 5, 6, 7, 8, 9 with
+  #   9 = "Strongly agree" -- so it is NOT on the 1-7 scale the neighbouring
+  #   punitiveness items use, and 7 would be the wrong test.
+  #   AttnCheck2 asks "What is 8+7?" with choices 12, 16, 17, 15, 14, 13, 18;
+  #   the correct answer 15 sits in POSITION 4, so the export carries 4, not 15.
+  # The !is.na() half of each filter matters because a missing value would
+  # otherwise propagate NA into the subscript and inject blank rows.
+  #
+  # Order is the reported order, and each step's surviving n is recorded so the
+  # funnel can be printed. Progress == 100 is applied alongside Finished == 1;
+  # in this export the two agree, so that step removes no one.
+  fn <- c(loaded = nrow(raw))
+  d  <- raw
+  d  <- d[!is.na(d$Finished)   & d$Finished   == 1,   ]; fn["finished"]    <- nrow(d)
+  d  <- d[!is.na(d$Progress)   & d$Progress   == 100,  ]; fn["progress100"] <- nrow(d)
+  d  <- d[!is.na(d$AttnCheck1) & d$AttnCheck1 == 9,    ]; fn["attn_check_1"]<- nrow(d)
+  d  <- d[!is.na(d$AttnCheck2) & d$AttnCheck2 == 4,    ]; fn["attn_check_2"]<- nrow(d)
+  exclusion_funnel <- data.frame(step = names(fn), n = as.integer(fn),
+                                 stringsAsFactors = FALSE)
+  cat("\nExclusion funnel (reproduced here because 01's output was absent):\n")
+  print(exclusion_funnel, row.names = FALSE)
+
+# No usable input at all: stop loudly rather than knit an empty document.
+} else {
+  stop("Neither the scored CSV nor the raw VALUES export could be found.")
+}
+
+# Coerce whatever numeric columns are present, whichever source we came from.
+# Repeated deliberately: 01's scored CSV round-trips through text on write, so a
+# column that is all-integer there can still come back as character.
+nc <- intersect(num_cols_spec, names(d))
+d[nc] <- lapply(d[nc], function(x) suppressWarnings(as.numeric(x)))
+
+cat(sprintf("\nData source: %s\nAnalysis N = %d\n", DATA_SOURCE, nrow(d)))
+```
+
+## 1.2 Rebuild the scored variables
+
+The composites, reverse-coded items, and retributivist measures are recomputed
+here from the item columns. This is deliberately idempotent: if `01` already put
+them in the file they are reproduced identically, and if this document is run
+against a raw export it still has everything it needs. Reliabilities are logged
+so the supplementary tables carry their own provenance.
+
+```{r phase1_derive}
+# ===========================================================================
+# PHASE 1.2 — REBUILD THE SCORED VARIABLES
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: coalesces the vignette-split columns, applies the
+# reverse coding, standardizes the first sentence within vignette, and builds
+# every composite this document needs, logging alpha and omega for each.
+#
+# WHY IT IS IDEMPOTENT: every derivation is guarded by a `!"name" %in% names(d)`
+# test or recomputes to the same value, so running against 01's scored file
+# reproduces what is already there and running against a raw export fills it in.
+# Nothing here overwrites a column 01 owns with a different definition.
+#
+# IMPLEMENTS: Sections 5.1 - 5.12 (scoring conventions and composites).
+# PRODUCES: the composite columns on `d`, and the printed reliability table.
+# ===========================================================================
+
+# Small predicate used as a guard before any multi-column derivation.
+has_col <- function(v) all(v %in% names(d))
+
+# --- Coalesce the vignette-split sentence columns (if not already done) ------
+#' Collapse a set of _V1/_V2/_V3 columns into one, using the embedded Vignette
+#' field to decide which source each participant's value comes from.
+#'
+#' Arguments: df, the frame; stem, the column stem ("Sentence1"); slider, TRUE
+#'   when the export carries the trailing _1 that Qualtrics adds to sliders.
+#' Returns: a vector of length nrow(df) with one value per participant.
+#'
+#' Each participant saw exactly ONE of the three vignettes (Section 3.2, random
+#' assignment; the realized balance is 315 / 317 / 316), so the three source
+#' columns are mutually exclusive and the coalesced column is complete. Reading
+#' any single _V column instead would silently analyse a third of the sample.
+pick_vig <- function(df, stem, slider = FALSE) {
+  out <- rep(NA, nrow(df))
+  for (v in 1:3) {
+    # Sliders export as Sentence1_V1_1; free text exports as
+    # Sentence_OpenEnd1_V1 with no suffix. Hence the `slider` switch.
+    src <- paste0(stem, "_V", v, if (slider) "_1" else "")
+    if (!src %in% names(df)) next
+    # Assign only into the rows assigned to vignette v, so the three passes
+    # write to disjoint slices and never overwrite each other.
+    sel <- !is.na(df$Vignette) & df$Vignette == v
+    out[sel] <- df[[src]][sel]
+  }
+  out
+}
+# Sentence1/Sentence2 are the 0-50 year sliders (50 = life, Section 5.11).
+# as.numeric() because pick_vig() starts from a logical NA vector, so the
+# result's type is only settled by what gets written into it.
+if (!"Sentence1" %in% names(d) && "Sentence1_V1_1" %in% names(d))
+  d$Sentence1 <- as.numeric(pick_vig(d, "Sentence1", slider = TRUE))
+if (!"Sentence2" %in% names(d) && "Sentence2_V1_1" %in% names(d))
+  d$Sentence2 <- as.numeric(pick_vig(d, "Sentence2", slider = TRUE))
+# The two open-ends stay CHARACTER: they are the backward-looking justification
+# and the forward-looking accomplishment item that E3-E7 score in
+# 02_nlp_integration.Rmd. They are coalesced here only so the merged frame is
+# complete; nothing in this document analyses their text.
+if (!"Sentence_OpenEnd1" %in% names(d) && "Sentence_OpenEnd1_V1" %in% names(d))
+  d$Sentence_OpenEnd1 <- pick_vig(d, "Sentence_OpenEnd1")
+if (!"Sentence_OpenEnd2" %in% names(d) && "Sentence_OpenEnd2_V1" %in% names(d))
+  d$Sentence_OpenEnd2 <- pick_vig(d, "Sentence_OpenEnd2")
+
+# Friendly names for the slider exports
+# Qualtrics appends _1 to every slider column, so the CRT items and age arrive
+# as CRT_1_1, CRT_2_1, CRT_3_1, age_1. The third open-end, the ranking
+# explanation, exports as `Priorit_Explain`; the pre-registration calls that
+# item Q333 (Section 5.15).
+if (!"CRT_1" %in% names(d) && "CRT_1_1" %in% names(d)) d$CRT_1 <- d$CRT_1_1
+if (!"CRT_2" %in% names(d) && "CRT_2_1" %in% names(d)) d$CRT_2 <- d$CRT_2_1
+if (!"CRT_3" %in% names(d) && "CRT_3_1" %in% names(d)) d$CRT_3 <- d$CRT_3_1
+if (!"age"   %in% names(d) && "age_1"   %in% names(d)) d$age   <- d$age_1
+
+# --- Reverse coding (higher = more of the named construct) -------------------
+# The (R) items named across Sections 5.2 - 5.12. Each gets a NEW column with an
+# _R suffix rather than being reversed in place, so the raw item survives and a
+# double reversal is impossible: rev7(rev7(x)) == x, and an in-place scheme run
+# twice would silently restore the original scores with no error.
+#
+# NOT IN THIS LIST, and deliberately so: Retribution_6 and Retribution_7. Those
+# two items carry Qualtrics RecodeValues that already map their raw choice ids
+# (19-25) onto 1-7 in the same direction as Retribution_1-5, so the Values
+# export delivers them correctly keyed. Adding them here would reverse an item
+# that needs no reversing and would pull down the retribution subscale's alpha.
+rev_items <- c("punishmore_1", "parsimony_1", "parsimony_2", "severity_2",
+               "dueprocess_2", "hate_2", "degrad_1", "prisonvi_1", "prisonvi_2",
+               "harsh_2", "fear_1", "essential_3", "Society_1", "Society_2",
+               "Society_3", "rwa_3", "sdo_3", "sdo_4", "sdo_7", "sdo_8",
+               "Raceresent_1", "Raceresent_4")
+for (it in intersect(rev_items, names(d))) d[[paste0(it, "_R")]] <- rev7(d[[it]])
+# severity_1 is reversed ONLY for the just-deserts proportionality component.
+# Section 5.4: proportionality is scored from the proportionality item together
+# with the two severity items reverse-keyed, "so that wanting punishment greater
+# or less than the crime lowers proportionality". Read on its own, severity_1
+# ("punishment should exceed the seriousness of the crime") is a punitiveness
+# item in the ordinary direction, and H4/H5 use it that way. Reversing the raw
+# column instead of writing severity_1_R would flip its meaning everywhere.
+if ("severity_1" %in% names(d)) d$severity_1_R <- rev7(d$severity_1)
+
+# --- Within-vignette z-score of the first sentence --------------------------
+# Section 5.11: "Because the three vignettes differ in severity, the first
+# sentence is standardized within vignette before it is pooled or added to the
+# punitiveness index." Standardizing within vignette removes the mean and spread
+# differences the vignette manipulation creates, so a pooled Sentence1_z ranks a
+# participant against the people who read the SAME case. Standardizing across
+# the pooled sample instead would let vignette severity masquerade as
+# individual punitiveness.
+if (has_col(c("Sentence1", "Vignette"))) {
+  d$Sentence1_z <- NA_real_
+  # One pass per vignette, each writing into its own disjoint row slice.
+  # na.omit() inside unique() keeps an unassigned row from creating a fourth
+  # phantom group.
+  for (v in sort(unique(stats::na.omit(d$Vignette)))) {
+    sel <- !is.na(d$Vignette) & d$Vignette == v
+    x   <- d$Sentence1[sel]
+    d$Sentence1_z[sel] <- (x - mean(x, na.rm = TRUE)) / stats::sd(x, na.rm = TRUE)
+  }
+}
+
+# --- Composites (Sections 5.2 - 5.12) ---------------------------------------
+# Reset the log before building, so re-running this chunk alone replaces the
+# reliability rows rather than appending a second copy of each.
+alpha_table <- data.frame()   # reset the log
+
+# --- The four goals of punishment (Section 5.3) ------------------------------
+# Retribution_1..7 spans the desert purpose items and the debt/unfair-advantage
+# items; Retribution_1-4 alone are the "deserved" purpose items H6 uses.
+d$retribution     <- compute_composite(d, paste0("Retribution_", 1:7), "retribution (7)")
+d$deterrence      <- compute_composite(d, paste0("Deterrence_", 1:3), "deterrence")
+d$incapacitation  <- compute_composite(d, paste0("Incapacitation_", 1:2), "incapacitation")
+d$rehabilitation  <- compute_composite(d, paste0("Rehabilitation_", 1:2), "rehabilitation")
+# E2's Durkheimian reading. Section 5.3 drops Solidarity_1 ("Removing criminals
+# from society helps society cleanse itself") because it reads as EXCLUSIONARY
+# rather than Durkheimian -- it describes purging the group, not binding the
+# law-abiding together through a shared statement of norms. Leaving it in would
+# load the Durkheimian composite with the very content the hostile composite
+# measures and blunt the comparison E2 exists to make.
+d$solidarity_durk <- compute_composite(d, c("Solidarity_2", "Solidarity_3"),
+                                       "solidarity (Durkheimian, S2+S3)")
+# All three items, built ONLY to serve the Phase 3 sensitivity check that puts
+# Solidarity_1 back. Never the primary E2 measure.
+d$solidarity_all  <- compute_composite(d, paste0("Solidarity_", 1:3),
+                                       "solidarity (all 3, sensitivity only)")
+
+# --- Punitiveness (Section 5.2) ---------------------------------------------
+# The eight self-report items: two on punishing more, two parsimony items
+# reversed, two three-strikes items, life without parole, and the death penalty.
+punit_items <- c("punishmore_1_R", "punishmore_2", "parsimony_1_R", "parsimony_2_R",
+                 "threestrikes_1", "threestrikes_2", "LWOP", "deathpenalty")
+d$punitiveness <- compute_composite(d, punit_items, "punitiveness (8-item self-report)")
+# The FULL index adds the standardized sentence. It is built for completeness and
+# is deliberately NOT used anywhere the sentence is on the other side of a test.
+#
+# HAZARD: punitiveness_full embeds Sentence1_z. Substituting it for
+# `punitiveness` anywhere in Phase 5 (the sentence change), Phase 6 (the ratio x
+# moderator models), or Phase 7 (measure agreement) would put the sentence on
+# both sides of the same model and manufacture the association. Sections 5.3 and
+# 5.11 both state the rule: wherever the sentencing ratio and punitiveness meet,
+# use the sentence-free eight-item scale. The two are averaged AFTER scaling the
+# self-report side, so the composite and the z-scored sentence carry equal
+# weight rather than the sentence dominating on its wider raw range.
+d$punitiveness_full <- rowMeans(cbind(as.numeric(scale(d$punitiveness)),
+                                      d$Sentence1_z), na.rm = TRUE)
+
+# --- Revenge, proportionality, just deserts (Section 5.4) -------------------
+d$revenge            <- compute_composite(d, paste0("revenge_", 1:4), "revenge")
+# Proportionality uses BOTH severity items reverse-keyed, so that wanting
+# punishment greater than the crime (severity_1) or less than the harm
+# (severity_2) each lowers the score. This is the only place severity_1_R is used.
+d$proportionality_jd <- compute_composite(d, c("proportionality", "severity_1_R", "severity_2_R"),
+                                          "proportionality (just-deserts)")
+d$deserved           <- compute_composite(d, paste0("Retribution_", 1:4), "deserved (R1-R4)")
+# Just deserts is the mean of its two halves rather than a pooled item mean, so
+# the desert side and the proportionality side count equally regardless of how
+# many items each contributes. H6 tests whether these two halves cohere at all;
+# a near-zero correlation between them and a low alpha are the PREDICTED
+# outcome, and the incoherence is itself the finding.
+d$just_deserts       <- rowMeans(cbind(d$deserved, d$proportionality_jd), na.rm = TRUE)
+
+# --- The Kantian limits (Section 5.5) ---------------------------------------
+# Scored as WILLINGNESS TO SET THE LIMIT ASIDE, so a higher value is the less
+# restrained, more punitive direction. dueprocess_2 protects the limit and is
+# therefore the reversed item of the three.
+d$dueprocess <- compute_composite(d, c("dueprocess_1", "dueprocess_2_R", "dueprocess_3"),
+                                  "due process (permissive)")
+d$uncertain  <- compute_composite(d, paste0("uncertain_", 1:4), "uncertain evidence")
+
+# --- Emotions toward offenders (Section 5.7) --------------------------------
+# Hatred belongs to the hostile-aggression cluster and also stands in, reversed,
+# for dispassion among the Kantian limits.
+d$hatred <- compute_composite(d, c("hate_1", "hate_2_R", "hate_3"), "hatred")
+d$anger  <- compute_composite(d, paste0("anger_", 1:2), "anger")
+
+# --- Harshness toward offenders (Section 5.8) -------------------------------
+# degrad_1, prisonvi_1, and prisonvi_2 are worded as protections, hence reversed.
+d$degradation <- compute_composite(d, c("degrad_1_R", "degrad_2", "degrad_3"), "degradation")
+d$suffering   <- compute_composite(d, paste0("suffer_", 1:2), "infliction of suffering")
+d$prisonviol  <- compute_composite(d, c("prisonvi_1_R", "prisonvi_2_R"), "prison-violence tolerance")
+d$harsh       <- compute_composite(d, c("harsh_1", "harsh_2_R", "harsh_3"), "harsh conditions")
+
+# --- Crime concerns (Section 5.6) -------------------------------------------
+d$crimerates <- compute_composite(d, paste0("rates_", 1:2), "perceived crime rates")
+d$fear       <- compute_composite(d, c("fear_1_R", "fear_2", "fear_3"), "fear of crime")
+
+# --- Exclusion, essentialism, choice, society (Section 5.9) -----------------
+# `exclusion` does double duty: E2's HOSTILE solidarity reading here, and the
+# social-exclusion correlate in the H1 set. Section 5.3 forbids entering it
+# twice in the same analysis, which is why Phase 4's correlate matrix and
+# Phase 3's E2 test are separate analyses, never one pooled model.
+d$exclusion      <- compute_composite(d, paste0("exclusion_", 1:3), "social exclusion (hostile solidarity)")
+d$essentialism   <- compute_composite(d, c("essential_1", "essential_2", "essential_3_R", "essential_4"), "essentialism")
+d$choice         <- compute_composite(d, paste0("choice_", 1:2), "crime as choice")
+d$society_reject <- compute_composite(d, c("Society_1_R", "Society_2_R", "Society_3_R"),
+                                      "society responsibility (rejected)")
+
+# --- Personality and cognitive reflection (Section 5.12) --------------------
+# These five are the E1 outcomes. Reversal keys follow the published scales:
+# rwa_3 for the five-item RWA, and sdo_3/4/7/8 for the eight-item SDO7 short
+# form, whose second four items are the pro-equality subscale.
+d$rwa        <- compute_composite(d, c("rwa_1", "rwa_2", "rwa_3_R", "rwa_4", "rwa_5"), "RWA")
+d$sdo        <- compute_composite(d, c("sdo_1", "sdo_2", "sdo_3_R", "sdo_4_R",
+                                       "sdo_5", "sdo_6", "sdo_7_R", "sdo_8_R"), "SDO7")
+d$vprone     <- compute_composite(d, paste0("vprone_", 1:4), "violence proneness")
+# Racial resentment: Raceresent_1 and _4 are the sympathy/discrimination items,
+# reversed so that higher means more resentment.
+d$raceresent <- compute_composite(d, c("Raceresent_1_R", "Raceresent_2",
+                                       "Raceresent_3", "Raceresent_4_R"), "racial resentment")
+
+# CRT scored 0-3; correct answers are 5 cents, 5 minutes, 47 days.
+# The three standard items and their INTUITIVE-but-wrong lures: the bat and ball
+# costs $1.10 and the ball is 5 cents (the lure is 10); 100 machines take the
+# same 5 minutes as 5 machines (the lure is 100); a patch that doubles daily and
+# covers the lake on day 48 covered half on day 47 (the lure is 24). Scoring is
+# the NUMBER CORRECT, so higher = more reflective, which is why E1 predicts
+# retributivists score LOWER here while scoring higher on the other four.
+# Sums of logicals coerce to integer, giving 0-3 directly. Note this is a strict
+# equality test on slider values, so a participant who typed "0.05" for five
+# cents rather than "5" registers as incorrect -- the item asks for cents and
+# the slider is labelled in cents.
+if (has_col(c("CRT_1", "CRT_2", "CRT_3")))
+  d$CRT <- (d$CRT_1 == 5) + (d$CRT_2 == 5) + (d$CRT_3 == 47)
+
+# Cluster aggregates (mean of z-scored constituents)
+# z-scoring FIRST is what makes these means meaningful: the constituents are on
+# the same 1-7 scale but with very different spreads, and an unstandardized mean
+# would silently weight the widest-spread component most. hostile_agg is the
+# hostile-aggression cluster H2 contrasts with crime_concerns; both appear here
+# as correlates and moderator outcomes, not as confirmatory tests.
+zc <- function(...) rowMeans(scale(cbind(...)), na.rm = TRUE)
+d$hostile_agg    <- zc(d$hatred, d$revenge, d$degradation, d$suffering, d$prisonviol)
+d$crime_concerns <- zc(d$crimerates, d$fear)
+
+cat(sprintf("Rebuilt %d composites. Reliability log has %d rows.\n",
+            nrow(alpha_table), nrow(alpha_table)))
+show_table(alpha_table[, c("composite", "k", "alpha", "omega")],
+           caption = "Reliability of the composites used in this document")
+```
+
+## 1.3 The retributivist measures (Section 5.3)
+
+```{r phase1_retributivist}
+# ===========================================================================
+# PHASE 1.3 — THE RETRIBUTIVIST MEASURES (Section 5.3)
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: builds the three survey-based definitions of
+# retributivism and the grouping factors every contrast below uses.
+#
+# WHY MORE THAN ONE: Section 5.3 expects any single measure, and any self-report
+# measure in particular, to be imperfect -- demand characteristics push
+# participants toward the forward-looking justifications, intuitive
+# retributivism means people punish on desert while describing utilitarian
+# aims, and introspective access to punitive motive is limited. So the plan
+# fixes three measures plus an exploratory fourth, and requires "every contrast
+# under each measure rather than only the one that gives the strongest result."
+# That is why Phase 2 runs E1 four times over.
+#
+# OBJECTS CREATED: retributivist, retribution_rel, retrib_medsplit,
+#   retrib_tertile, sentence_ratio, ratio_medsplit, and the grp_* factors.
+# ===========================================================================
+
+# (1) RANKING — the primary categorical definition. Prioritization_1 is the rank
+#     given to "Criminals deserve to be punished"; == 1 means ranked first.
+# Participants rank all four goals, so this is a forced choice among them rather
+# than an endorsement rating: it identifies people who put desert ABOVE
+# deterrence, incapacitation, and rehabilitation, not merely people who agree
+# with desert. as.integer() gives the 0/1 coding grp_rank expects.
+if ("Prioritization_1" %in% names(d))
+  d$retributivist <- as.integer(d$Prioritization_1 == 1)
+
+# (2) RELATIVE RETRIBUTION SUBSCALE — the primary continuous measure:
+#     retribution minus the mean of the other three goals.
+# Section 5.3 defines it as retribution with the other three partialled out,
+# "equivalently, retribution minus the mean of the other three". Subtracting the
+# mean of the rivals is what captures PRIORITIZING retribution rather than
+# simply endorsing every goal: an acquiescent participant who rates all four
+# goals a 7 scores 0 here, while the raw retribution subscale would put them at
+# the ceiling. This is the measure used wherever retributivism enters as a
+# continuous predictor.
+d$retribution_rel <- d$retribution -
+  rowMeans(cbind(d$deterrence, d$incapacitation, d$rehabilitation), na.rm = TRUE)
+
+# Section 5.3 asks for a median split "with the top and bottom thirds alongside
+# it", so both are built. The median split keeps the whole sample and the power
+# that comes with it; the tertile contrast trades sample size for separation
+# between the compared groups. Reporting both is the point -- a result that
+# appears only under one of them is a result that depends on the cut.
+rel_split <- balanced_split(d$retribution_rel)
+d$retrib_medsplit <- rel_split$split
+tert <- stats::quantile(d$retribution_rel, c(1/3, 2/3), na.rm = TRUE)
+# The -Inf and Inf sentinels make the outer bins open-ended so no value falls
+# outside all breaks and becomes NA. The middle third is retained as "mid" here
+# and dropped only when grp_tert is built below.
+d$retrib_tertile <- cut(d$retribution_rel, c(-Inf, tert, Inf),
+                        labels = c("low", "mid", "high"))
+
+# (3) SENTENCING RATIO — the behavioral measure: share of the first sentence
+#     retained in the second, for participants whose first sentence was above 0.
+# Section 5.11: once the added facts remove the forward-looking reasons (the
+# defendant is permanently disabled and no longer a danger, and procedural rules
+# remove any prospect of general deterrence), whatever punishment a participant
+# still imposes reflects desert. A HIGHER ratio means a SMALLER reduction and so
+# a more retributive motive.
+#
+# The Sentence1 > 0 guard is not cosmetic: a first sentence of zero would make
+# the ratio a division by zero, and a participant who imposed no punishment at
+# all has no proportion to retain. Those rows become NA and drop out pairwise.
+d$sentence_ratio <- ifelse(!is.na(d$Sentence1) & d$Sentence1 > 0,
+                           d$Sentence2 / d$Sentence1, NA_real_)
+# The ratio piles up at exactly 1.0 (no reduction at all), so a strict
+# "above the median" split is degenerate. balanced_split() falls back to
+# "at or above the median", which here separates the participants who kept the
+# whole sentence from those who cut it — the substantive contrast Section 5.11
+# describes ("a higher ratio, meaning a smaller reduction").
+ratio_split <- balanced_split(d$sentence_ratio)
+d$ratio_medsplit <- ratio_split$split
+
+# --- Grouping factors used by every contrast in this document ---------------
+# CRITICAL ORDERING RULE: in every factor below, the LOW level is listed first.
+# welch_contrast() computes t and Cohen's d as level 2 minus level 1, so this
+# ordering is what makes every reported d read "high retributivism minus low".
+# Swapping a levels= argument here would flip the sign of every effect in the
+# document without raising a single warning.
+d$grp_rank  <- factor(d$retributivist,    levels = c(0, 1),
+                      labels = c("non-retributivist", "retributivist"))
+d$grp_rel   <- factor(d$retrib_medsplit,  levels = c(0, 1),
+                      labels = c("rel. subscale low", "rel. subscale high"))
+# The middle third becomes NA here, so grp_tert has exactly two populated levels
+# and welch_contrast() compares only the extremes. droplevels() inside that
+# helper removes the emptied level before the nlevels() == 2 check.
+d$grp_tert  <- factor(ifelse(d$retrib_tertile == "low", "bottom third",
+                      ifelse(d$retrib_tertile == "high", "top third", NA)),
+                      levels = c("bottom third", "top third"))
+# The labels spell out the direction because the ratio inverts the usual
+# intuition: a HIGH ratio means the participant cut LESS, which is the more
+# retributive side.
+d$grp_ratio <- factor(d$ratio_medsplit,   levels = c(0, 1),
+                      labels = c("ratio low (larger reduction)",
+                                 "ratio high (smaller reduction)"))
+
+cat(sprintf("Retributivists by RANKING: %d of %d (%s)\n",
+            sum(d$retributivist, na.rm = TRUE), sum(!is.na(d$retributivist)),
+            pct(mean(d$retributivist, na.rm = TRUE))))
+cat(sprintf("Relative retribution subscale: M = %.2f, SD = %.2f, median = %.2f\n",
+            mean(d$retribution_rel, na.rm = TRUE),
+            stats::sd(d$retribution_rel, na.rm = TRUE), rel_split$cut))
+cat(sprintf("  split rule: %s -> %d high, %d low\n", rel_split$rule,
+            sum(d$retrib_medsplit == 1, na.rm = TRUE),
+            sum(d$retrib_medsplit == 0, na.rm = TRUE)))
+cat(sprintf("Sentencing ratio: median = %.2f, n with Sentence1 > 0 = %d\n",
+            ratio_split$cut, sum(!is.na(d$sentence_ratio))))
+cat(sprintf("  ratio exactly 1.00 (no reduction): %d participants\n",
+            sum(d$sentence_ratio == 1, na.rm = TRUE)))
+cat(sprintf("  split rule: %s -> %d high, %d low\n", ratio_split$rule,
+            sum(d$ratio_medsplit == 1, na.rm = TRUE),
+            sum(d$ratio_medsplit == 0, na.rm = TRUE)))
+cat("\nTertile split on the relative subscale:\n")
+print(table(d$retrib_tertile, useNA = "ifany"))
+```
+
+## 1.4 The semantic measure (exploratory, Section 5.3 / 6.7)
+
+The fourth retributivist definition is the **semantic measure**: the retributive
+facets scored from the open-ended responses by the language-model ensemble
+described in Section 6.7. Section 6.7 makes that ensemble's output usable only
+after a validation gate — an intraclass correlation of at least .60 across
+models, and a correlation of at least .30 with the matching survey scale — and
+`02_nlp_integration.Rmd` owns both the ensemble and the gate.
+
+Until a facet clears that gate, this document treats the semantic measure as a
+**placeholder**. If the dictionary (word-list) facet scores are on disk, they
+are loaded as a clearly labelled **provisional stand-in** so that the agreement
+analysis in Phase 7 has something to display. The word list is one of the two
+non-model safeguards Section 6.7 names, which makes it a defensible stand-in —
+its agreement with the ensemble is a more independent check than the models'
+agreement with one another — but it is not the semantic measure itself, and
+nothing in this document should be read as if it were. Substituting a validated
+ensemble score is a change to this one chunk.
+
+```{r phase1_semantic}
+# ===========================================================================
+# PHASE 1.4 — THE SEMANTIC MEASURE (exploratory, Sections 5.3 and 6.7)
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: attempts to attach a semantic retributivism score to
+# each participant, and records in SEMANTIC_STATUS exactly what was attached.
+#
+# OBJECTS CREATED: semantic_retributivism, sem_medsplit, grp_sem,
+#   SEMANTIC_STATUS (a string printed wherever this measure is used).
+#
+# DESIGN RULE: this chunk NEVER silently upgrades a stand-in into the real
+# measure. SEMANTIC_STATUS travels with every table built from it, so a reader
+# of Phase 2.4 or Phase 7 always sees which of the two they are looking at.
+# ===========================================================================
+
+# Default state: no measure. Every downstream chunk is written to handle it, so
+# the document knits whether or not the NLP outputs are on disk.
+SEMANTIC_STATUS <- "placeholder (no measure available)"
+d$semantic_retributivism <- NA_real_
+
+# ResponseId is the merge key; if 01's output somehow lacks it there is nothing
+# to join on, so the placeholder stands.
+if (file.exists(SEMANTIC_CSV) && "ResponseId" %in% names(d)) {
+  # tryCatch rather than a bare read: a partially written or malformed file from
+  # the NLP side should leave the placeholder in place, not abort the knit.
+  sem <- tryCatch(
+    readr::read_csv(SEMANTIC_CSV, show_col_types = FALSE, guess_max = 10000),
+    error = function(e) NULL)
+
+  # === COVERAGE GUARD ===
+  # The facet file has to describe the sample being analysed. A file scored on a
+  # different (for instance earlier and smaller) download would merge cleanly on
+  # ResponseId and produce a measure computed on whoever happened to overlap,
+  # reported beside statistics based on the full analytic sample. That is a
+  # silent sample swap, and nothing downstream would reveal it, so the coverage
+  # is checked here and the measure is refused rather than computed on a
+  # fraction. SEMANTIC_MIN_COVERAGE is the share of the analytic sample the file
+  # must cover; 0.9 allows for participants who simply wrote nothing.
+  SEMANTIC_MIN_COVERAGE <- 0.90
+  if (!is.null(sem) && "response_id" %in% names(sem)) {
+    sem_ids   <- unique(sem$response_id)
+    sem_cover <- length(intersect(sem_ids, d$ResponseId)) / nrow(d)
+    cat(sprintf("Facet file covers %d of the %d analysed participants (%.1f%%).\n",
+                length(intersect(sem_ids, d$ResponseId)), nrow(d), 100 * sem_cover))
+    if (sem_cover < SEMANTIC_MIN_COVERAGE) {
+      cat(sprintf(paste0("Coverage is below the %.0f%% floor, so the semantic ",
+                         "stand-in is NOT computed. Re-score the open-ends on ",
+                         "the current export in Colab NB01 and place the fresh ",
+                         "facet_dictionary_scores.csv in Analysis/NLP/outputs/.\n"),
+                  100 * SEMANTIC_MIN_COVERAGE))
+      sem <- NULL
+    }
+  }
+
+  # The four PRINCIPLED facets of Section 5.15: desert (the offender earned it),
+  # proportionality (a punishment that fits and no more), censure (punishment as
+  # a statement that the act was wrong), and moral balance (paying a debt).
+  # The two harder-edged facets, revenge and suffering, are deliberately NOT
+  # averaged in here -- E4 asks whether the two sets co-occur, so folding them
+  # into one score would destroy the distinction the study exists to test.
+  # The _per100 suffix means hits per 100 words, which is the word list's own
+  # length normalization.
+  needed <- c("response_id", "item_type",
+              "desert_per100", "proportionality_per100",
+              "censure_per100", "moral_balance_per100")
+
+  # all() of the required columns: a file with the right name but the wrong
+  # schema leaves the placeholder standing rather than producing a half-scored
+  # measure.
+  if (!is.null(sem) && all(needed %in% names(sem))) {
+    # BACKWARD-looking texts only: the sentence justification and the ranking
+    # explanation. The forward-looking item is excluded by design (Section 5.15).
+    # Those two items ask what the offender did; the accomplishment item asks
+    # what the sentence should achieve, which is where consequentialist language
+    # naturally lives. Pooling all three would mix the two kinds of reasoning
+    # that E6 is built to separate, and would understate retributive content for
+    # anyone who wrote at length about deterrence in the forward item.
+    sem_bw <- sem[sem$item_type %in% c("backward", "ranking"), , drop = FALSE]
+    sem_bw$principled <- rowMeans(
+      sem_bw[, c("desert_per100", "proportionality_per100",
+                 "censure_per100", "moral_balance_per100")], na.rm = TRUE)
+
+    # The NLP file is LONG (one row per participant per open-end), so aggregate
+    # to one score per participant before merging into the wide survey frame.
+    # Averaging the two backward texts gives each participant equal weight
+    # regardless of how many of the two they answered substantively.
+    agg <- stats::aggregate(principled ~ response_id, data = sem_bw,
+                            FUN = mean, na.rm = TRUE)
+    names(agg) <- c("ResponseId", "semantic_provisional")
+    # all.x = TRUE is a LEFT join: participants without a scored open-end keep
+    # every other variable and simply get NA here. sort = FALSE preserves row
+    # order, which matters because Sentence1_z and the grp_* factors were
+    # already computed against this frame's current ordering.
+    d <- merge(d, agg, by = "ResponseId", all.x = TRUE, sort = FALSE)
+    d$semantic_retributivism <- d$semantic_provisional
+
+    # The status string is deliberately blunt. It is printed above the Phase 2.4
+    # contrast table and inside the Phase 7 measure-status table.
+    SEMANTIC_STATUS <- paste0(
+      "PROVISIONAL word-list stand-in (dictionary facets, backward-looking ",
+      "texts); NOT the validated LLM-ensemble semantic measure")
+  }
+}
+
+# Dichotomize the same way as the other two continuous definitions, so the four
+# E1 contrasts differ in their measure and not in how the cut was made.
+n_sem <- sum(!is.na(d$semantic_retributivism))
+if (n_sem > 0) {
+  sem_split <- balanced_split(d$semantic_retributivism)
+  d$sem_medsplit <- sem_split$split
+  d$grp_sem <- factor(d$sem_medsplit, levels = c(0, 1),
+                      labels = c("semantic low", "semantic high"))
+} else {
+  # An all-NA factor WITH the two levels declared. This is what lets
+  # run_contrasts() reach welch_contrast(), fail its nlevels() check, and return
+  # NULL cleanly; a bare NA column would error on droplevels() instead.
+  d$sem_medsplit <- NA_integer_
+  d$grp_sem <- factor(rep(NA_character_, nrow(d)),
+                      levels = c("semantic low", "semantic high"))
+}
+
+cat(sprintf("Semantic measure status: %s\n", SEMANTIC_STATUS))
+cat(sprintf("Participants with a semantic score: %d of %d\n", n_sem, nrow(d)))
+if (n_sem > 0) print(summary(d$semantic_retributivism))
+```
+
+# PHASE 2: E1 — PERSONALITY AND COGNITIVE REFLECTION BETWEEN GROUPS
+
+**E1.** Retributivists score higher than non-retributivists on RWA, SDO,
+violence proneness, and racial resentment, and lower on cognitive reflection.
+
+Section 6.6 says E1 uses "the same methods" as the confirmatory group contrasts,
+which Section 6.5 fixes as Welch t-tests with Cohen's d, run under each
+retributivist definition (Section 5.3 requires "every contrast under each
+measure rather than only the one that gives the strongest result"), plus a
+continuous regression so the result does not depend on a split.
+
+```{r phase2_setup}
+# ===========================================================================
+# PHASE 2.0 — E1 SPECIFICATION
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: fixes the five E1 outcomes and, for each, the direction
+# the prediction names. Nothing is estimated here; declaring the directions in
+# one place is what keeps the one-sided tests below honest, because the
+# direction is set before any contrast is run rather than read off the result.
+#
+# IMPLEMENTS: E1 (Section 2.4), tested by the methods of Sections 6.5 and 6.6.
+# OBJECTS CREATED: e1_vars, e1_labels, e1_dir -- all consumed by 2.1 through 2.5.
+# ===========================================================================
+
+# intersect() rather than a bare vector, so a missing personality scale drops
+# the row instead of erroring five chunks later.
+e1_vars <- intersect(c("rwa", "sdo", "vprone", "raceresent", "CRT"), names(d))
+e1_labels <- c(rwa = "Right-Wing Authoritarianism", sdo = "Social Dominance (SDO7)",
+               vprone = "Violence proneness", raceresent = "Racial resentment",
+               CRT = "Cognitive Reflection (0-3)")
+
+# Predicted direction for the HIGH-retributivism group.
+# E1 names a direction for all five outcomes, so all five get a one-sided test
+# in the predicted direction under Section 6.8 ("Predictions that name a
+# direction are tested one-sided in that direction; the rest are two-sided").
+# CRT is the odd one out at "less": the CRT is scored as the NUMBER CORRECT, so
+# a higher score means MORE reflection, and E1 predicts retributivists are less
+# reflective. Flipping this entry to "greater" would test the opposite claim
+# while still printing a plausible-looking p-value.
+# The two-sided p is reported alongside in every table, so a reader who prefers
+# the conservative convention has it without recomputing anything.
+e1_dir <- list(rwa = "greater", sdo = "greater", vprone = "greater",
+               raceresent = "greater", CRT = "less")
+
+cat("E1 outcome variables and predicted direction for the high group:\n")
+for (v in e1_vars)
+  cat(sprintf("  %-12s %-32s %s\n", v, e1_labels[[v]], e1_dir[[v]]))
+```
+
+## 2.1 E1 under the ranking definition (primary categorical)
+
+```{r phase2_e1_ranking}
+# ===========================================================================
+# PHASE 2.1 — E1 UNDER THE RANKING DEFINITION
+# ---------------------------------------------------------------------------
+# The PRIMARY categorical grouping (Section 5.3): participants who ranked
+# "criminals deserve to be punished" first versus everyone else. Welch t-tests
+# with Cohen's d, one-sided in the direction E1 names.
+#
+# PRODUCES: `e1_rank`, reused by the Phase 2.5 combined CSV and the Phase 8.3
+# response-quality sensitivity comparison; and the printed contrast table.
+#
+# `df` is displayed here (and only here) because this is the primary contrast:
+# its fractional value is the visible signature of the Welch correction.
+# NO FDR ADJUSTMENT is applied across the five rows. Section 6.6 places E1
+# outside both preregistered families, and the five personality outcomes were
+# never declared as a family of their own; pooling them into a BH sweep would
+# invent a family the plan does not contain.
+# ===========================================================================
+e1_rank <- run_contrasts(d, e1_vars, "grp_rank", e1_dir,
+                         label = "ranking (retribution 1st)")
+show_table(pick_cols(e1_rank, c("variable", "n_low", "n_high", "M_low", "M_high",
+                       "t", "df", "p_two_sided", "p_directional",
+                       "d", "d_lo", "d_hi")),
+           caption = "E1 — ranking definition: Welch t-tests and Cohen's d")
+```
+
+## 2.2 E1 under the relative retribution subscale
+
+Section 5.3 asks for a median split on the relative subscale, "with the top and
+bottom thirds alongside it."
+
+```{r phase2_e1_relative}
+# ===========================================================================
+# PHASE 2.2 — E1 UNDER THE RELATIVE RETRIBUTION SUBSCALE
+# ---------------------------------------------------------------------------
+# The same five outcomes and the same one-sided directions, now split on the
+# PRIMARY CONTINUOUS measure. Two cuts, exactly as Section 5.3 asks:
+#   - median split, which keeps all 948 participants and the power that buys;
+#   - top versus bottom third, which discards the middle third to widen the gap
+#     between the compared groups at the cost of a third of the sample.
+# Neither is privileged. Reading them together is the point: an effect that
+# appears under one cut and not the other is an effect that depends on the cut,
+# and the continuous regression in 2.5 is the arbiter that needs no cut at all.
+#
+# PRODUCES: `e1_rel`, `e1_tert`, both stacked into the Phase 2.5 CSV and figure.
+# ===========================================================================
+e1_rel  <- run_contrasts(d, e1_vars, "grp_rel",  e1_dir,
+                         label = "relative subscale (median split)")
+e1_tert <- run_contrasts(d, e1_vars, "grp_tert", e1_dir,
+                         label = "relative subscale (top vs bottom third)")
+
+show_table(pick_cols(e1_rel, c("variable", "n_low", "n_high", "M_low", "M_high",
+                      "t", "p_two_sided", "p_directional", "d", "d_lo", "d_hi")),
+           caption = "E1 — relative retribution subscale, median split")
+show_table(pick_cols(e1_tert, c("variable", "n_low", "n_high", "M_low", "M_high",
+                       "t", "p_two_sided", "p_directional", "d", "d_lo", "d_hi")),
+           caption = "E1 — relative retribution subscale, top vs bottom third")
+```
+
+## 2.3 E1 under the sentencing ratio
+
+The sentencing ratio is a legitimate grouping variable for E1: none of the E1
+outcomes is the sentence, so the circularity restriction in Section 5.3 does not
+bite here.
+
+```{r phase2_e1_ratio}
+# ===========================================================================
+# PHASE 2.3 — E1 UNDER THE SENTENCING RATIO
+# ---------------------------------------------------------------------------
+# The BEHAVIORAL definition, and the one Section 5.3 suspects "may prove the
+# sharpest of the measures" because it registers a retributive motive from what
+# a participant DOES rather than from what they report.
+#
+# WHY IT IS ALLOWED HERE AND FORBIDDEN IN PHASE 5: Section 5.3 lists the
+# personality measures (E1) among the outcomes the ratio may group, and rules it
+# out only for the sentence-based hypothesis H14, "because it is built from the
+# same sentence H14 tests." RWA, SDO, violence proneness, racial resentment, and
+# the CRT are all measured well before the sentencing vignette, so no part of
+# the grouping variable appears on the outcome side. Phase 5.2 faces the
+# opposite situation and drops the ratio as a grouping variable accordingly.
+#
+# The high group is the SMALLER reduction, so the E1 directions carry over
+# unchanged: high ratio = more retributive.
+# PRODUCES: `e1_ratio`.
+# ===========================================================================
+e1_ratio <- run_contrasts(d, e1_vars, "grp_ratio", e1_dir,
+                          label = "sentencing ratio (median split)")
+show_table(pick_cols(e1_ratio, c("variable", "n_low", "n_high", "M_low", "M_high",
+                        "t", "p_two_sided", "p_directional", "d", "d_lo", "d_hi")),
+           caption = "E1 — sentencing ratio, median split (high ratio = smaller drop)")
+```
+
+## 2.4 E1 under the semantic measure
+
+```{r phase2_e1_semantic}
+# ===========================================================================
+# PHASE 2.4 — E1 UNDER THE SEMANTIC MEASURE
+# ---------------------------------------------------------------------------
+# The fourth and most exploratory definition. Whether anything prints at all
+# depends on Phase 1.4: with no scores attached, grp_sem is an all-NA factor,
+# welch_contrast() fails its nlevels() check, run_contrasts() returns NULL, and
+# the chunk reports the placeholder status instead of a table.
+#
+# The `if` is on run_contrasts()'s return value rather than on SEMANTIC_STATUS,
+# so the branch follows what was actually estimable rather than what was
+# intended. Where a table DOES print, SEMANTIC_STATUS is printed directly above
+# it, because a word-list stand-in and a validated ensemble score would produce
+# tables that look identical and mean quite different things.
+#
+# Note the restriction that does NOT apply here: Section 5.3 bars the semantic
+# measure from grouping participants for the language hypotheses E3-E7, since
+# those are built from the same responses. E1's outcomes are survey scales, so
+# the restriction does not reach this contrast.
+# PRODUCES: `e1_sem` (often NULL).
+# ===========================================================================
+e1_sem <- run_contrasts(d, e1_vars, "grp_sem", e1_dir,
+                        label = "semantic measure (median split)")
+if (is.null(e1_sem)) {
+  cat("No semantic measure available — this contrast is a placeholder.\n")
+  cat("Status:", SEMANTIC_STATUS, "\n")
+} else {
+  cat("NOTE:", SEMANTIC_STATUS, "\n\n")
+  show_table(pick_cols(e1_sem, c("variable", "n_low", "n_high", "M_low", "M_high",
+                        "t", "p_two_sided", "p_directional", "d", "d_lo", "d_hi")),
+             caption = "E1 — semantic measure, median split (provisional)")
+}
+```
+
+## 2.5 E1 with retributivism entered continuously
+
+```{r phase2_e1_continuous}
+# ===========================================================================
+# PHASE 2.5 — E1 WITH RETRIBUTIVISM ENTERED CONTINUOUSLY
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: refits every E1 outcome on each continuous retributivism
+# index with no split at all, then stacks all four grouped contrasts and writes
+# both tables to output/tables/.
+#
+# WHY: Section 6.5 requires that "every group contrast" also be run "with
+# retributivism entered continuously, as a regression on the retribution
+# subscale, so the result does not depend on the split." Any median split throws
+# away information and makes the estimate hostage to where the cut fell; these
+# regressions are the version with no cut to argue about. Where a d in 2.1-2.4
+# and a beta here disagree, the split is doing the work.
+#
+# PRODUCES: e1_cont, e1_all; output/tables/E1_personality_contrasts.csv and
+#           output/tables/E1_personality_continuous.csv.
+# ===========================================================================
+
+# Standardized simple regressions: outcome ~ continuous retributivism index.
+# The ranking is absent from this list by construction -- it is binary, so its
+# "continuous" version is the Phase 2.1 contrast itself.
+cont_predictors <- intersect(c("retribution_rel", "sentence_ratio",
+                               "semantic_retributivism"), names(d))
+
+# Nested lapply over outcomes x predictors, rbind-ed into one long table.
+e1_cont <- do.call(rbind, lapply(e1_vars, function(v) {
+  do.call(rbind, lapply(cont_predictors, function(p) {
+    # LISTWISE per pair. Subsetting to `ok` BEFORE scale() matters: scale()
+    # computes its mean and SD from whatever it is handed, so standardizing the
+    # full column and then dropping rows would leave the analysed subset with a
+    # mean that is not zero, and beta would no longer be the correlation.
+    ok <- stats::complete.cases(d[[v]], d[[p]])
+    # Guards: too few pairs for a stable slope, or a constant on either side
+    # (the semantic placeholder is constant when unavailable).
+    if (sum(ok) < 10 || stats::sd(d[[p]][ok]) == 0 || stats::sd(d[[v]][ok]) == 0)
+      return(NULL)
+    # Both sides standardized, so the slope IS the standardized beta, which for
+    # a single predictor equals the Pearson r. That makes these directly
+    # comparable across outcomes measured on different scales (CRT is 0-3, the
+    # personality composites are 1-7).
+    fit <- stats::lm(scale(d[[v]][ok]) ~ scale(d[[p]][ok]))
+    s   <- summary(fit)$coefficients
+    ci  <- stats::confint(fit)
+    # Row 2 of the coefficient matrix throughout: row 1 is the intercept, which
+    # is zero by construction once both sides are standardized.
+    # Only the two-sided p is reported here. The directional halving rule lives
+    # in welch_contrast() and is not reapplied to the regressions, so a reader
+    # comparing a beta with its matching d is comparing the conservative p in
+    # both cases; halve it by hand if E1's direction is the one being tested.
+    data.frame(outcome = v, predictor = p, n = sum(ok),
+               beta = s[2, 1], se = s[2, 2], t = s[2, 3],
+               p_two_sided = s[2, 4],
+               ci_lo = ci[2, 1], ci_hi = ci[2, 2],
+               stringsAsFactors = FALSE)
+  }))
+}))
+
+show_table(e1_cont,
+           caption = "E1 — standardized regressions on the continuous retributivism measures")
+
+# Stack all four grouped contrasts into one object for the CSV and the figure.
+# Filter(Negate(is.null), ...) drops any definition that produced nothing --
+# typically e1_sem -- because rbind() on a list containing NULL silently yields
+# a shorter result and would misalign nothing here, but the explicit filter also
+# keeps `e1_all` NULL rather than zero-row when every contrast failed.
+e1_all <- do.call(rbind, Filter(Negate(is.null),
+                                list(e1_rank, e1_rel, e1_tert, e1_ratio, e1_sem)))
+if (!is.null(e1_all)) {
+  readr::write_csv(e1_all, file.path(OUT_TABLES, "E1_personality_contrasts.csv"))
+  cat("\nWrote output/tables/E1_personality_contrasts.csv\n")
+}
+if (!is.null(e1_cont)) {
+  readr::write_csv(e1_cont, file.path(OUT_TABLES, "E1_personality_continuous.csv"))
+  cat("Wrote output/tables/E1_personality_continuous.csv\n")
+}
+```
+
+```{r phase2_e1_figure, fig.height=6}
+# ===========================================================================
+# PHASE 2.6 — E1 FOREST PLOT
+# ---------------------------------------------------------------------------
+# One panel showing Cohen's d with its 95% CI for every E1 outcome under every
+# retributivist definition. The figure exists to make the convergence question
+# visible at a glance: five outcomes x four definitions is twenty numbers, and
+# the substantive question is whether the definitions agree on sign and rough
+# magnitude, not whether any single cell clears .05.
+#
+# PRODUCES: output/figures/E1_personality_effects.png.
+# ===========================================================================
+if (!is.null(e1_all) && nrow(e1_all)) {
+  plot_df <- e1_all
+  # rev() because ggplot draws the first factor level at the BOTTOM of a
+  # discrete y axis; reversing puts the outcomes in e1_vars order top to bottom,
+  # matching the tables above.
+  plot_df$variable <- factor(plot_df$variable, levels = rev(e1_vars))
+  p_e1 <- ggplot2::ggplot(plot_df,
+                          ggplot2::aes(x = d, y = variable, colour = grouping)) +
+    # Reference line at d = 0, the no-difference point. An interval crossing it
+    # is the visual equivalent of a two-sided test failing at alpha = .05.
+    ggplot2::geom_vline(xintercept = 0, linetype = "dashed", colour = "grey40") +
+    # Horizontal CI bars, dodged so the four definitions for one outcome sit as
+    # a legible stack rather than overprinting one another.
+    ggplot2::geom_errorbarh(ggplot2::aes(xmin = d_lo, xmax = d_hi),
+                            height = 0.18,
+                            position = ggplot2::position_dodge(width = 0.6)) +
+    # Same dodge width as the bars, so each point stays centred on its interval.
+    ggplot2::geom_point(size = 2.4,
+                        position = ggplot2::position_dodge(width = 0.6)) +
+    ggplot2::labs(
+      title = "E1: personality and cognitive reflection, high vs. low retributivism",
+      subtitle = "Cohen's d (high minus low) with 95% CI, under each retributivist definition",
+      x = "Cohen's d", y = NULL, colour = "Definition") +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(legend.position = "bottom")
+  print(p_e1)
+  ggplot2::ggsave(file.path(OUT_FIGURES, "E1_personality_effects.png"),
+                  p_e1, width = 10, height = 6, dpi = 150)
+  cat("Saved: output/figures/E1_personality_effects.png\n")
+}
+```
+
+# PHASE 3: E2 — HOSTILE VS. DURKHEIMIAN SOLIDARITY (STEIGER'S TEST)
+
+**E2.** Hostile solidarity (social exclusion of offenders) relates to
+punitiveness more strongly than Durkheimian solidarity (punishment as expressing
+shared norms and binding the law-abiding together).
+
+Two things fix the specification. First, Section 5.3 drops `Solidarity_1`
+("Removing criminals from society helps society cleanse itself") from the
+Durkheimian reading because it reads as exclusionary; the Durkheimian composite
+is `Solidarity_2` + `Solidarity_3` only. Second, the punitiveness measure is the
+**8-item self-report scale**, not the full index: nothing here needs the
+sentence, and the self-report scale keeps the comparison clean.
+
+The two correlations share `punitiveness`, so they are dependent and
+**overlapping** — Steiger's (1980) test, one-sided in the predicted direction.
+
+```{r phase3_e2_components}
+# ===========================================================================
+# PHASE 3.1 — E2 COMPONENT DESCRIPTIVES
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: prints the composition of the E2 measures and their n,
+# mean, and SD, so the correlations in 3.2 can be read against the spread that
+# produced them. A composite with almost no variance can only produce a small r
+# whatever the underlying relationship, and the reader needs to see that first.
+#
+# `solidarity_all` appears here even though it is not part of E2 proper: it is
+# the sensitivity composite Phase 3.3 uses, and showing its descriptives beside
+# solidarity_durk makes visible how much adding Solidarity_1 moves the scale.
+# ===========================================================================
+cat("E2 components:\n")
+cat("  hostile solidarity   = exclusion (exclusion_1..3)\n")
+cat("  Durkheimian solidarity = solidarity_durk (Solidarity_2, Solidarity_3)\n")
+cat("  Solidarity_1 is DROPPED per Section 5.3 (exclusionary, not Durkheimian)\n\n")
+
+e2_desc <- data.frame(
+  measure = c("punitiveness (8-item)", "exclusion (hostile)",
+              "solidarity_durk (Durkheimian)", "solidarity_all (sensitivity)"),
+  n  = sapply(c("punitiveness", "exclusion", "solidarity_durk", "solidarity_all"),
+              function(v) sum(!is.na(d[[v]]))),
+  M  = sapply(c("punitiveness", "exclusion", "solidarity_durk", "solidarity_all"),
+              function(v) mean(d[[v]], na.rm = TRUE)),
+  SD = sapply(c("punitiveness", "exclusion", "solidarity_durk", "solidarity_all"),
+              function(v) stats::sd(d[[v]], na.rm = TRUE)),
+  stringsAsFactors = FALSE)
+show_table(e2_desc, caption = "E2 — component descriptives")
+```
+
+```{r phase3_e2_test}
+# ===========================================================================
+# PHASE 3.2 — E2: STEIGER'S TEST
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: reports the three correlations that enter Steiger's test
+# individually, then the test itself.
+#
+# IMPLEMENTS: E2 (Section 2.4), by the method Section 6.6 specifies.
+#
+# WHY ALL THREE r's ARE SHOWN FIRST: the test's verdict depends on r(hostile,
+# Durkheimian) as much as on the two focal coefficients. Two competitors that
+# are themselves highly correlated share most of their sampling error, so even a
+# large gap between them can fail to reach significance; two that are nearly
+# independent can separate on a smaller gap. Printing r_between makes that
+# visible instead of leaving the reader to wonder why a difference of a given
+# size did or did not clear alpha.
+#
+# WHY ONE-SIDED: E2 names a direction ("more strongly than"), so Section 6.8
+# puts it one-sided in that direction. alternative = "greater" tests
+# r(punitiveness, hostile) > r(punitiveness, Durkheimian); a result in the
+# opposite direction returns a p above .5 rather than a small one, which is the
+# correct behaviour for a directional prediction that failed.
+#
+# PRODUCES: `e2` (list) and `e2_tab`, both reused by the Phase 3.3 spec table.
+# ===========================================================================
+
+# The three coefficients with their 95% CIs, per Section 6.8's requirement that
+# every test report an effect size and an interval.
+e2_cors <- rbind(
+  c(pair = NA, get_cor_ci("punitiveness", "exclusion", d)),
+  c(pair = NA, get_cor_ci("punitiveness", "solidarity_durk", d)),
+  c(pair = NA, get_cor_ci("exclusion",    "solidarity_durk", d))
+)
+# get_cor_ci() returns a numeric vector, so a character label cannot be rbind-ed
+# alongside it without coercing everything to character. The placeholder column
+# is therefore created as NA, dropped by [, -1], and the labels attached after
+# the frame exists.
+e2_cors <- as.data.frame(e2_cors[, -1, drop = FALSE])
+e2_cors$pair <- c("punitiveness x hostile solidarity",
+                  "punitiveness x Durkheimian solidarity",
+                  "hostile x Durkheimian solidarity")
+e2_cors <- e2_cors[, c("pair", "r", "ci_lower", "ci_upper", "p", "n")]
+show_table(e2_cors, caption = "E2 — the three correlations entering Steiger's test")
+
+# `punitiveness` is the SHARED variable j, which is what makes these two
+# correlations overlapping rather than merely dependent.
+#
+# HAZARD: this must be the 8-item self-report punitiveness scale, not
+# punitiveness_full. Nothing in E2 needs the sentence, and swapping in the full
+# index would drag Sentence1_z into both coefficients and change what the test
+# is comparing.
+e2 <- steiger_overlap(d, "punitiveness", "exclusion", "solidarity_durk",
+                      alternative = "greater")
+e2_tab <- if (is.null(e2)) NULL else e2$table
+
+show_table(e2_tab, caption = "E2 — Steiger's test (one-sided: hostile > Durkheimian)")
+
+if (is.null(e2_tab)) {
+  cat("Steiger's test could not be computed (insufficient complete cases).\n")
+} else {
+  cat(sprintf(
+    "r(punitiveness, hostile) = %.3f vs r(punitiveness, Durkheimian) = %.3f\n",
+    e2_tab$r_1, e2_tab$r_2))
+  cat(sprintf("difference = %.3f, Steiger z = %.3f, one-sided p %s\n",
+              e2_tab$diff, e2_tab$steiger_z, format_p(e2_tab$p)))
+  # alpha = .05 is the Section 6.8 threshold. The verdict is worded "in this
+  # sample" because E2 is exploratory: Section 6.6 keeps it out of the
+  # confirmatory machinery, so a small p here marks a claim worth testing
+  # confirmatorily in a future study rather than an established effect.
+  cat(sprintf("Conclusion at alpha = .05: E2 %s\n",
+              ifelse(!is.na(e2_tab$p) && e2_tab$p < .05,
+                     "SUPPORTED in this sample", "not supported in this sample")))
+}
+```
+
+```{r phase3_e2_sensitivity}
+# ===========================================================================
+# PHASE 3.3 — E2 SPECIFICATION CHECKS
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: reruns E2 under two alternative specifications and
+# stacks all three side by side, so the preregistered result can be read next to
+# the choices that produced it.
+#
+# PRODUCES: `e2_sens_tab`; output/tables/E2_solidarity_steiger.csv.
+# ===========================================================================
+
+# Sensitivity 1: put Solidarity_1 back into the Durkheimian composite.
+# This is the specification a reader who disagrees with the Section 5.3 item
+# judgement would run. Since Solidarity_1 ("Removing criminals from society
+# helps society cleanse itself") reads as exclusionary, including it should move
+# the Durkheimian composite TOWARD the hostile one, shrinking the very
+# difference E2 predicts. If E2 holds in the preregistered specification and
+# weakens here, that pattern is itself evidence the item is exclusionary; if the
+# two specifications agree, the item choice was not load-bearing. Either way the
+# reader gets to judge, which is why both are printed rather than one.
+e2_sens <- steiger_overlap(d, "punitiveness", "exclusion", "solidarity_all",
+                           alternative = "greater")
+
+# Sensitivity 2: E2 inside the retributivist group only (Section 5.3 asks for
+# every contrast under each measure; H11 reruns the whole-sample tests there).
+# The ranking definition is used because it is the primary categorical grouping.
+# Restricting to it costs statistical power, so a weaker result here is expected
+# on n alone and should not be read as a failure to replicate.
+d_retrib <- d[!is.na(d$retributivist) & d$retributivist == 1, , drop = FALSE]
+e2_retrib <- steiger_overlap(d_retrib, "punitiveness", "exclusion",
+                             "solidarity_durk", alternative = "greater")
+
+# cbind() prefixes each table with a `spec` column naming its specification, so
+# the stacked table can never be read without knowing which row is which. The
+# preregistered row is listed first and labelled as such.
+e2_sens_tab <- do.call(rbind, Filter(Negate(is.null), list(
+  if (!is.null(e2))        cbind(spec = "preregistered (S2+S3, whole sample)", e2$table),
+  if (!is.null(e2_sens))   cbind(spec = "sensitivity: Solidarity_1 included",  e2_sens$table),
+  if (!is.null(e2_retrib)) cbind(spec = "retributivists only (ranking)",       e2_retrib$table)
+)))
+show_table(e2_sens_tab, caption = "E2 — specification checks")
+if (!is.null(e2_sens_tab))
+  readr::write_csv(e2_sens_tab, file.path(OUT_TABLES, "E2_solidarity_steiger.csv"))
+cat("\nWrote output/tables/E2_solidarity_steiger.csv\n")
+```
+
+# PHASE 4: FACTOR STRUCTURE OF THE CORRELATES (EFA + SCREE)
+
+Section 6.6 asks for "the factor structure of the correlates" as an exploratory
+extension of H3, which summarizes the intercorrelations by "the share that are
+positive and by the first eigenvalue and scree of an exploratory factor
+analysis." The correlate set is the one named in H1.
+
+```{r phase4_correlate_matrix}
+# ===========================================================================
+# PHASE 4.1 — THE CORRELATE INTERCORRELATION MATRIX
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: assembles the twelve H1 correlates, reports the share of
+# positive intercorrelations, the mean and range, and the eigenvalues.
+#
+# IMPLEMENTS: the exploratory extension of H3 that Section 6.6 asks for. H3
+# itself (Section 6.3) summarizes the correlate intercorrelations "by the share
+# that are positive and by the first eigenvalue and scree of an exploratory
+# factor analysis, to see whether one punitiveness dimension runs through them."
+# This is that question asked one level deeper -- not just how big the first
+# eigenvalue is, but what the factors look like once extracted.
+#
+# NO HYPOTHESIS TEST LIVES HERE. This is a descriptive decomposition with no
+# null, which is one of the concrete reasons a single BH sweep across this
+# document would be meaningless: there is nothing in this phase for a
+# false-discovery rate to be a rate OF.
+#
+# OBJECTS CREATED: correlates, efa_data, cm, ev -- all used by 4.2 and 4.3.
+# PRODUCES: output/tables/EFA_correlate_intercorrelations.csv.
+# ===========================================================================
+
+# The H1 correlate set, in the order Sections 5.5 - 5.9 introduce them: the
+# Kantian limits, the emotions, exclusion, the harshness measures, revenge, and
+# the crime concerns. Every one is scored so that HIGHER = more punitive, which
+# is what makes "share positive" a meaningful summary rather than an artifact of
+# keying: a mixed-key set would show negative cells that mean agreement.
+correlates <- intersect(
+  c("dueprocess", "uncertain", "hatred", "anger", "exclusion", "degradation",
+    "suffering", "prisonviol", "harsh", "revenge", "crimerates", "fear"),
+  names(d))
+
+# LISTWISE for the factor analysis: psych::fa() needs one covariance matrix from
+# one set of rows, and a pairwise matrix can come out non-positive-definite,
+# producing Heywood cases and impossible communalities.
+efa_data <- d[, correlates, drop = FALSE]
+efa_data <- efa_data[stats::complete.cases(efa_data), , drop = FALSE]
+cat(sprintf("EFA on %d correlates, complete cases N = %d\n",
+            length(correlates), nrow(efa_data)))
+
+# PAIRWISE for the descriptive matrix, which is the opposite choice and a
+# deliberate one: the printed r's and the share-positive count should use every
+# available pair rather than being restricted to the listwise subset, so each
+# cell is the best estimate of that particular correlation.
+cm <- stats::cor(d[, correlates], use = "pairwise.complete.obs")
+# upper.tri() takes each pair once: 12 correlates give 12*11/2 = 66 unique
+# off-diagonal cells, and using the full matrix would double-count every one.
+offdiag <- cm[upper.tri(cm)]
+cat(sprintf("\nShare of positive intercorrelations: %s (%d of %d)\n",
+            pct(mean(offdiag > 0)), sum(offdiag > 0), length(offdiag)))
+cat(sprintf("Mean intercorrelation: r = %.3f (range %.3f to %.3f)\n",
+            mean(offdiag), min(offdiag), max(offdiag)))
+
+# Eigenvalues of the CORRELATION matrix, so they sum to the number of variables
+# (12) and each one reads as "how many variables' worth of variance". A large
+# first eigenvalue relative to the rest is what "one punitiveness dimension runs
+# through them" would look like.
+ev <- eigen(cm)$values
+cat(sprintf("First eigenvalue: %.2f of %d (%s of the variance)\n",
+            ev[1], length(ev), pct(ev[1] / sum(ev))))
+# The Kaiser criterion: a component with an eigenvalue above 1 accounts for more
+# variance than a single standardized variable does. It is reported because it
+# is conventional and because it anchors the dashed line on the scree plot, but
+# it is known to over-retain, which is why the number of factors actually
+# extracted in 4.3 comes from parallel analysis instead.
+cat(sprintf("Eigenvalues > 1: %d\n", sum(ev > 1)))
+
+# The zero matrix passed as p_matrix stars every off-diagonal cell. That is
+# intentional: this table displays the SIGN PATTERN that H3 summarizes, and its
+# 66 cells are not 66 tests. Passing real p-values would invite exactly the
+# cell-by-cell reading Section 6.6 rules out for this document.
+show_table(format_cor_table(cm, matrix(0, nrow(cm), ncol(cm),
+                                       dimnames = dimnames(cm)), 2),
+           caption = "Intercorrelations among the H1 correlates")
+readr::write_csv(
+  data.frame(variable = rownames(cm), round(cm, 3), check.names = FALSE),
+  file.path(OUT_TABLES, "EFA_correlate_intercorrelations.csv"))
+```
+
+```{r phase4_scree, fig.height=5}
+# ===========================================================================
+# PHASE 4.2 — SCREE PLOT
+# ---------------------------------------------------------------------------
+# The scree Section 6.3 names as part of the H3 summary. Read it for the ELBOW:
+# a single steep drop from the first eigenvalue into a flat tail is the shape a
+# one-dimensional punitiveness construct produces, while two comparable
+# eigenvalues before the flattening indicate the correlates split.
+#
+# PRODUCES: output/figures/EFA_scree_correlates.png.
+# ===========================================================================
+scree_df <- data.frame(factor = seq_along(ev), eigenvalue = ev)
+p_scree <- ggplot2::ggplot(scree_df, ggplot2::aes(x = factor, y = eigenvalue)) +
+  # The Kaiser line at 1.0: a component below it explains less than one
+  # standardized variable's worth of variance.
+  ggplot2::geom_hline(yintercept = 1, linetype = "dashed", colour = "grey40") +
+  ggplot2::geom_line(colour = "steelblue") +
+  ggplot2::geom_point(size = 2.4, colour = "steelblue") +
+  # One break per component: the x axis is a count, so ggplot's default
+  # continuous breaks would print meaningless half-components.
+  ggplot2::scale_x_continuous(breaks = scree_df$factor) +
+  ggplot2::labs(
+    title = "Scree plot of the punitiveness correlates",
+    subtitle = sprintf("First eigenvalue = %.2f (%s of variance); dashed line at 1.0",
+                       ev[1], pct(ev[1] / sum(ev))),
+    x = "Component", y = "Eigenvalue") +
+  ggplot2::theme_minimal(base_size = 12)
+print(p_scree)
+ggplot2::ggsave(file.path(OUT_FIGURES, "EFA_scree_correlates.png"),
+                p_scree, width = 9, height = 5, dpi = 150)
+cat("Saved: output/figures/EFA_scree_correlates.png\n")
+```
+
+```{r phase4_efa}
+# ===========================================================================
+# PHASE 4.3 — EXPLORATORY FACTOR ANALYSIS
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: chooses a number of factors by parallel analysis,
+# extracts at that solution, and prints the loadings twice -- once in full, once
+# with small loadings suppressed.
+#
+# PRODUCES: `efa_fit`, `load_df`, `disp`;
+#           output/tables/EFA_correlate_loadings.csv.
+# ===========================================================================
+
+# Parallel analysis for the number of factors, then an EFA at that solution.
+# WHY PARALLEL ANALYSIS: it compares each observed eigenvalue against the
+# eigenvalues of random data with the same n and the same number of variables,
+# and retains a factor only when it beats what chance alone produces at this
+# sample size. That is a stricter and better-calibrated rule than the Kaiser
+# criterion reported in 4.1, which over-retains as the variable count grows.
+# fa = "fa" runs the comparison on the common-factor solution rather than on
+# principal components, matching the psych::fa() extraction used below.
+# n.iter = 50 random datasets is enough for a stable count at N in the hundreds.
+# The max(1, min(., 4)) clamp is a guardrail, not a finding: it keeps a
+# degenerate result from requesting zero factors (which errors) or more factors
+# than twelve correlates can support with interpretable loadings. A solution
+# that hits the ceiling of 4 should be read as "at least four", and the
+# eigenvalues in 4.1 are the check on that.
+n_fac <- tryCatch({
+  pa <- psych::fa.parallel(efa_data, fa = "fa", n.iter = 50,
+                           plot = FALSE, show.legend = FALSE)
+  max(1, min(pa$nfact, 4))
+}, error = function(e) { cat("Parallel analysis failed:", conditionMessage(e), "\n"); 2 })
+
+cat(sprintf("Factors retained: %d\n\n", n_fac))
+
+# ROTATION. Oblimin is OBLIQUE: it lets the extracted factors correlate, which
+# is the theoretically right assumption here, since H3 is precisely the claim
+# that one punitiveness dimension runs through the correlates. Forcing the
+# factors orthogonal with varimax would assume that answer away -- it would
+# guarantee uncorrelated factors and then invite the reader to conclude the
+# correlates are independent. The varimax branch exists only so the document
+# knits without GPArotation; when HAS_GPA is FALSE the loadings change and the
+# Phi matrix below disappears, so the rotation actually used is printed in the
+# table caption rather than assumed.
+rot <- if (HAS_GPA) "oblimin" else "varimax"
+# fm = "ml" is maximum likelihood, which yields interpretable fit statistics and
+# is the natural companion to a factor model. It can fail to converge on a
+# near-singular matrix, so the fallback drops to psych::fa()'s default minres
+# (ordinary least squares), which is far more forgiving; the message names which
+# one ran so nobody compares an ML solution against an OLS one unknowingly.
+efa_fit <- tryCatch(
+  psych::fa(efa_data, nfactors = n_fac, rotate = rot, fm = "ml"),
+  error = function(e) {
+    cat("ML extraction failed, falling back to minres:", conditionMessage(e), "\n")
+    tryCatch(psych::fa(efa_data, nfactors = n_fac, rotate = rot),
+             error = function(e2) NULL)
+  })
+
+load_df <- NULL
+disp    <- NULL
+if (!is.null(efa_fit)) {
+  # unclass() strips psych's "loadings" class, whose print method hides small
+  # values by default -- exactly the suppression this chunk wants to control
+  # explicitly rather than inherit.
+  load_mat <- unclass(efa_fit$loadings)
+  # h2 is the COMMUNALITY: the share of each correlate's variance the retained
+  # factors account for. A correlate with a low h2 is one the factor solution
+  # essentially fails to explain, which matters as much as a high loading does.
+  load_df  <- data.frame(variable = rownames(load_mat),
+                         round(load_mat, 3),
+                         h2 = round(efa_fit$communality, 3),
+                         # check.names = FALSE keeps psych's factor column names
+                         # (ML1, ML2, ...) intact.
+                         check.names = FALSE, stringsAsFactors = FALSE)
+  # Suppressed view: loadings below |.30| blanked, for readability.
+  # .30 is the conventional threshold for a loading worth interpreting: it is
+  # roughly where a variable shares 9% of its variance with a factor. The
+  # ABSOLUTE value is what matters, so a strong negative loading survives.
+  # BOTH views are printed rather than only the suppressed one, because
+  # suppression hides cross-loadings, and a correlate loading .28 on two factors
+  # is a substantively different finding from one loading .28 on neither.
+  # The same .30 threshold marks a near-zero loading in the H6 factor model
+  # (Section 6.4), where poor fit OR a loading below it counts as failure to
+  # cohere; that test lives in 01_main_analysis.Rmd, not here.
+  disp <- load_df
+  # Everything except the label and the communality column is a factor column.
+  fac_cols <- setdiff(names(disp), c("variable", "h2"))
+  # sprintf() converts the survivors to character, so each factor column becomes
+  # character as a whole and the blanks sit in it without coercion warnings.
+  for (cc in fac_cols)
+    disp[[cc]] <- ifelse(abs(disp[[cc]]) < .30, "", sprintf("%.2f", disp[[cc]]))
+}
+
+show_table(load_df,
+           caption = sprintf("EFA loadings (%d factors, %s rotation, ML)", n_fac, rot))
+show_table(disp, caption = "EFA loadings with |lambda| < .30 suppressed")
+
+if (is.null(efa_fit)) {
+  cat("EFA could not be estimated on this sample.\n")
+} else {
+  # Row 2 of Vaccounted is "Proportion Var", the share of total variance each
+  # factor explains. (Row 1 is the raw SS loadings, row 3 the cumulative share.)
+  cat(sprintf("Proportion of variance explained: %s\n",
+              paste(sprintf("%.1f%%", 100 * efa_fit$Vaccounted[2, ]),
+                    collapse = ", ")))
+  # Phi is the factor intercorrelation matrix and EXISTS ONLY under an oblique
+  # rotation -- varimax constrains it to the identity, so psych returns NULL and
+  # the guard skips it. This is the most directly H3-relevant number in the
+  # phase: strongly correlated factors say the correlates are facets of one
+  # punitiveness dimension, while near-zero Phi says they are genuinely separate
+  # even though an oblique rotation was free to let them correlate.
+  if (n_fac > 1 && !is.null(efa_fit$Phi)) {
+    cat("\nFactor intercorrelations (Phi):\n")
+    print(round(efa_fit$Phi, 3))
+  }
+  readr::write_csv(load_df, file.path(OUT_TABLES, "EFA_correlate_loadings.csv"))
+  cat("\nWrote output/tables/EFA_correlate_loadings.csv\n")
+}
+```
+
+# PHASE 5: CHANGE FROM THE FIRST TO THE SECOND SENTENCE
+
+The second sentence is set after the forward-looking reasons for punishment are
+removed (the defendant is permanently disabled and no longer a danger, and
+procedural rules remove any prospect of general deterrence). Whatever punishment
+survives that removal reflects desert (Section 5.11).
+
+Two indices are examined: the raw change (`Sentence2 - Sentence1`), and the
+pre-registered **sentencing ratio** (`Sentence2 / Sentence1` for participants
+whose first sentence was above zero). Section 5.11 prefers the ratio because the
+raw drop is bounded by the first sentence and piles up at zero, and it asks for
+the **regression-adjusted** version — the second sentence residualized on the
+first — as a robustness check. Section 5.11 also asks that results be confirmed
+**within each vignette**.
+
+Throughout this phase, punitiveness is the 8-item self-report scale: the sentence
+is on the other side of every test here, so the full index would double-count it.
+
+## 5.1 Descriptives of the change
+
+```{r phase5_change_desc}
+# ===========================================================================
+# PHASE 5.1 — DESCRIPTIVES OF THE SENTENCE CHANGE
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: describes both change indices, tests the drop with a
+# paired t-test, reports the two boundary behaviours (no reduction at all, and
+# reduction to zero), and breaks the whole picture down by vignette.
+#
+# IMPLEMENTS: the first-to-second sentence analysis Section 6.6 asks for,
+# specified in Section 5.11.
+# OBJECTS CREATED: `sentence_delta`, used by 5.2 and saved in Phase 9.
+# ===========================================================================
+
+# The raw change. NEGATIVE means the participant reduced the sentence, which is
+# the expected direction once the forward-looking reasons are removed.
+# Section 5.11 prefers the ratio to this index "because the raw drop is bounded
+# by the first sentence and is expected to pile up at zero" -- someone who set
+# 5 years cannot drop by more than 5, so the raw change confounds the size of
+# the reduction with the size of the original sentence. Both are reported; the
+# ratio is the one carried into the analyses below.
+d$sentence_delta <- d$Sentence2 - d$Sentence1
+
+# The median is shown alongside the mean throughout, because both indices are
+# expected to be skewed with mass at a boundary and the mean alone would
+# misdescribe the typical participant.
+sent_desc <- data.frame(
+  measure = c("Sentence1 (years)", "Sentence2 (years)",
+              "change (S2 - S1)", "ratio (S2 / S1)"),
+  n = c(sum(!is.na(d$Sentence1)), sum(!is.na(d$Sentence2)),
+        sum(!is.na(d$sentence_delta)), sum(!is.na(d$sentence_ratio))),
+  M = c(mean(d$Sentence1, na.rm = TRUE), mean(d$Sentence2, na.rm = TRUE),
+        mean(d$sentence_delta, na.rm = TRUE), mean(d$sentence_ratio, na.rm = TRUE)),
+  SD = c(stats::sd(d$Sentence1, na.rm = TRUE), stats::sd(d$Sentence2, na.rm = TRUE),
+         stats::sd(d$sentence_delta, na.rm = TRUE), stats::sd(d$sentence_ratio, na.rm = TRUE)),
+  Median = c(stats::median(d$Sentence1, na.rm = TRUE),
+             stats::median(d$Sentence2, na.rm = TRUE),
+             stats::median(d$sentence_delta, na.rm = TRUE),
+             stats::median(d$sentence_ratio, na.rm = TRUE)),
+  stringsAsFactors = FALSE)
+show_table(sent_desc, caption = "First and second sentence, and the change between them")
+
+# PAIRED, not two-sample: both sentences come from the same participant about
+# the same case, so the pairing removes between-participant differences in
+# baseline punitiveness and tests only the within-person change. An unpaired
+# test here would be answering a different and much less interesting question.
+# Two-sided: this is a descriptive check that the manipulation moved sentences
+# at all, not one of the directional predictions Section 6.8 tests one-sided.
+tt_sent <- stats::t.test(d$Sentence2, d$Sentence1, paired = TRUE)
+cat(sprintf("\nPaired test of the drop: t(%.0f) = %.2f, p %s, mean change = %.2f years\n",
+            tt_sent$parameter, tt_sent$statistic, format_p(tt_sent$p.value),
+            unname(tt_sent$estimate)))
+# The two boundary behaviours, reported because they are the substantive
+# extremes rather than nuisance cases. A ratio of 1 or above means the
+# participant kept (or raised) the whole sentence after being told the defendant
+# is permanently disabled and no longer deterrable -- the purest expression of a
+# desert motive the design offers. A ratio of 0 means punishment collapsed once
+# the forward-looking reasons were withdrawn, the purely consequentialist
+# response. The size of these two groups is the headline of this phase, and it
+# also explains why the median split on the ratio needs balanced_split().
+cat(sprintf("Did NOT reduce at all (ratio >= 1): %s\n",
+            pct(mean(d$sentence_ratio >= 1, na.rm = TRUE))))
+cat(sprintf("Reduced to zero (ratio = 0): %s\n",
+            pct(mean(d$sentence_ratio == 0, na.rm = TRUE))))
+
+# Section 5.11 asks that results be confirmed WITHIN each vignette, because the
+# three cases differ in severity. This table sets up that check descriptively;
+# 5.4 runs the correlations within vignette.
+by_vig <- do.call(rbind, lapply(sort(unique(stats::na.omit(d$Vignette))), function(v) {
+  s <- d[!is.na(d$Vignette) & d$Vignette == v, ]
+  data.frame(Vignette = v, n = nrow(s),
+             M_S1 = mean(s$Sentence1, na.rm = TRUE),
+             M_S2 = mean(s$Sentence2, na.rm = TRUE),
+             M_change = mean(s$sentence_delta, na.rm = TRUE),
+             Median_ratio = stats::median(s$sentence_ratio, na.rm = TRUE),
+             stringsAsFactors = FALSE)
+}))
+show_table(by_vig, caption = "Sentence change by vignette")
+```
+
+```{r phase5_change_figure, fig.height=5}
+# ===========================================================================
+# PHASE 5.2 — DISTRIBUTION OF THE SENTENCING RATIO BY VIGNETTE
+# ---------------------------------------------------------------------------
+# A histogram rather than a summary statistic, because the SHAPE is the finding.
+# Section 5.11 predicts a pile-up, and a mean or median cannot show whether the
+# ratio is unimodal or splits into a group that cut deeply and a group that did
+# not cut at all. Faceting by vignette also makes the Section 5.11 consistency
+# check visible: the ratio is a proportion and therefore comparable across
+# vignettes, so the three panels should have similar shapes even though the
+# underlying sentences differ in severity.
+#
+# PRODUCES: output/figures/sentence_ratio_by_vignette.png.
+# ===========================================================================
+plot_df <- d[!is.na(d$sentence_ratio), c("Vignette", "sentence_ratio"), drop = FALSE]
+if (nrow(plot_df)) {
+  # sort(unique(...)) so the labels attach to the factor levels in the same
+  # numeric order factor() creates them; a mismatch here would silently relabel
+  # one vignette as another.
+  plot_df$Vignette <- factor(plot_df$Vignette,
+                             labels = paste("Vignette", sort(unique(plot_df$Vignette))))
+  p_ratio <- ggplot2::ggplot(plot_df, ggplot2::aes(x = sentence_ratio)) +
+    # 25 bins is fine enough to resolve the spike at exactly 1.0 without
+    # shattering the body of the distribution into noise.
+    ggplot2::geom_histogram(bins = 25, fill = "steelblue", colour = "white") +
+    # Free-scaled facets are NOT used: the three panels share axes so their
+    # shapes can be compared directly, which is the whole point of the check.
+    ggplot2::facet_wrap(~ Vignette) +
+    ggplot2::labs(
+      title = "Share of the first sentence retained in the second",
+      subtitle = "Higher = smaller reduction once the forward-looking reasons are removed",
+      x = "Sentence2 / Sentence1", y = "Participants") +
+    ggplot2::theme_minimal(base_size = 12)
+  print(p_ratio)
+  ggplot2::ggsave(file.path(OUT_FIGURES, "sentence_ratio_by_vignette.png"),
+                  p_ratio, width = 10, height = 5, dpi = 150)
+  cat("Saved: output/figures/sentence_ratio_by_vignette.png\n")
+}
+```
+
+## 5.2 The change as a function of retributivism
+
+```{r phase5_change_by_retributivism}
+# ===========================================================================
+# PHASE 5.3 — THE CHANGE AS A FUNCTION OF RETRIBUTIVISM
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: treats both change indices as OUTCOMES and asks whether
+# more retributive participants reduce less. Grouped contrasts first, then the
+# continuous regression, then the ratio's correlation with punitiveness.
+#
+# PRODUCES: `chg_tab`, `chg_cont`; chg_tab is written to
+#           output/tables/sentence_change_contrasts.csv in 5.4.
+#
+# `directions = NULL` on all three contrasts, so every test is TWO-SIDED.
+# Section 6.6 lists the sentence change among the report-only analyses and names
+# no direction for it, and Section 6.8 reserves one-sided tests for predictions
+# that name a direction. E1 and E2 earn one-sided tests; this does not.
+# ===========================================================================
+change_vars <- c("sentence_delta", "sentence_ratio")
+
+# The sentencing ratio is NOT used to group participants here: it is built from
+# the same sentences these outcomes describe (Section 5.3, the H14 restriction).
+# grp_ratio would put sentence_ratio on both sides at once and guarantee a large
+# effect that means nothing. The same logic bars grp_sem from Phase 5 in
+# principle; it is absent here simply because these outcomes are the sentence.
+# Three groupings remain: the ranking and the two cuts of the relative subscale.
+chg_rank <- run_contrasts(d, change_vars, "grp_rank", NULL,
+                          label = "ranking (retribution 1st)")
+chg_rel  <- run_contrasts(d, change_vars, "grp_rel", NULL,
+                          label = "relative subscale (median split)")
+chg_tert <- run_contrasts(d, change_vars, "grp_tert", NULL,
+                          label = "relative subscale (top vs bottom third)")
+
+chg_tab <- do.call(rbind, Filter(Negate(is.null), list(chg_rank, chg_rel, chg_tert)))
+# `grouping` leads the displayed columns because three definitions are stacked
+# here; without it the six rows would be unreadable.
+show_table(pick_cols(chg_tab, c("grouping", "variable", "n_low", "n_high", "M_low", "M_high",
+                       "t", "p_two_sided", "d", "d_lo", "d_hi")),
+           caption = "Sentence change and ratio by retributivist group")
+
+# Continuous: the change indices on the relative retribution subscale.
+# The no-split version required by Section 6.5, using the primary continuous
+# measure. Only retribution_rel is used as a predictor -- sentence_ratio would
+# be predicting itself, and the semantic measure is a stand-in.
+chg_cont <- do.call(rbind, lapply(change_vars, function(v) {
+  # Subset before scale(), so the standardization is computed on exactly the
+  # rows the model fits and beta reads as the correlation.
+  ok <- stats::complete.cases(d[[v]], d$retribution_rel)
+  if (sum(ok) < 10) return(NULL)
+  fit <- stats::lm(scale(d[[v]][ok]) ~ scale(d$retribution_rel[ok]))
+  s <- summary(fit)$coefficients; ci <- stats::confint(fit)
+  data.frame(outcome = v, predictor = "retribution_rel", n = sum(ok),
+             beta = s[2, 1], t = s[2, 3], p = s[2, 4],
+             ci_lo = ci[2, 1], ci_hi = ci[2, 2], stringsAsFactors = FALSE)
+}))
+show_table(chg_cont,
+           caption = "Sentence change on the continuous relative retribution subscale")
+
+# And the ratio's relation to the sentence-free punitiveness scale.
+# HAZARD: `punitiveness`, never `punitiveness_full`. Sections 5.3 and 5.11 both
+# state the rule -- "wherever the sentencing ratio appears together with
+# punitiveness, whether as a grouping variable, a predictor, an interaction
+# term, or a correlate, we use the self-report punitiveness scale, which does
+# not contain the sentence". punitiveness_full embeds Sentence1_z, and
+# sentence_ratio is Sentence2/Sentence1, so the full index would put the first
+# sentence on both sides and inflate this correlation by construction.
+r_ratio_punit <- get_cor_ci("sentence_ratio", "punitiveness", d)
+cat(sprintf("\nsentencing ratio x punitiveness (8-item, sentence-free): r = %.3f [%.3f, %.3f], p %s, n = %d\n",
+            r_ratio_punit["r"], r_ratio_punit["ci_lower"], r_ratio_punit["ci_upper"],
+            format_p(r_ratio_punit["p"]), r_ratio_punit["n"]))
+```
+
+## 5.3 Regression-adjusted robustness: the second sentence residualized on the first
+
+```{r phase5_residualized}
+# ===========================================================================
+# PHASE 5.4 — REGRESSION-ADJUSTED ROBUSTNESS
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: residualizes the second sentence on the first, then
+# repeats the group contrasts and correlations on the residual.
+#
+# IMPLEMENTS: the robustness check Sections 5.3 and 5.11 both name -- "we also
+# report the regression-adjusted version (the second sentence residualized on
+# the first) as a robustness check."
+#
+# WHY IT IS THE RIGHT ROBUSTNESS CHECK FOR THE RATIO: the ratio's denominator is
+# the first sentence, so any measurement error in Sentence1 enters the index
+# twice, and its distribution is bounded and lumpy. The residual from
+# Sentence2 ~ Sentence1 asks the same substantive question -- how much
+# punishment survives once the forward-looking reasons are gone, holding the
+# first sentence constant -- with a linear adjustment instead of a division.
+# Agreement between the ratio and the residual means the finding does not depend
+# on that functional form.
+#
+# PRODUCES: sentence2_resid, sentence2_resid_vig, res_grp, res_cor;
+#           output/tables/sentence_residualized_correlations.csv and
+#           output/tables/sentence_change_contrasts.csv.
+# ===========================================================================
+
+# Model A: Sentence2 ~ Sentence1.  Model B adds vignette fixed effects, since
+# the three vignettes differ in severity (Section 5.11).
+# Both are reported: Model A answers "given how severely this person sentenced
+# at first, how much did they keep", while Model B additionally removes the
+# vignette mean, so its residual compares a participant only against others who
+# read the SAME case. That is the linear counterpart of the within-vignette
+# z-scoring applied to the first sentence.
+resid_ok <- stats::complete.cases(d$Sentence1, d$Sentence2)
+fitA <- fitB <- NULL
+res_grp <- res_cor <- NULL
+
+# 20 complete pairs is a floor, not a power calculation: below it a two-predictor
+# residual is not worth forming, and the chunk reports that instead of printing
+# an unstable model.
+if (sum(resid_ok) >= 20) {
+  # na.action = na.exclude, NOT the default na.omit. This is what makes the
+  # residual vector line up with `d` row for row: na.omit would return a shorter
+  # vector with the incomplete rows dropped, and assigning it to a column of `d`
+  # would either error or, worse, recycle and attach every residual to the wrong
+  # participant. na.exclude pads the gaps with NA and preserves the length.
+  fitA <- stats::lm(Sentence2 ~ Sentence1, data = d, na.action = stats::na.exclude)
+  d$sentence2_resid <- as.numeric(stats::residuals(fitA))
+
+  # factor(Vignette) rather than the bare numeric column: the vignette codes
+  # 1/2/3 are labels, not a quantity, and leaving them numeric would fit a
+  # single linear slope across three unrelated cases.
+  fitB <- stats::lm(Sentence2 ~ Sentence1 + factor(Vignette), data = d,
+                    na.action = stats::na.exclude)
+  d$sentence2_resid_vig <- as.numeric(stats::residuals(fitB))
+
+  resid_vars <- c("sentence2_resid", "sentence2_resid_vig")
+
+  # The same three groupings as 5.3, and for the same reason the ratio is absent
+  # from them: it is built from the sentences these residuals are built from.
+  # Two-sided throughout (directions = NULL), matching 5.3.
+  res_grp <- do.call(rbind, Filter(Negate(is.null), list(
+    run_contrasts(d, resid_vars, "grp_rank", NULL, label = "ranking (retribution 1st)"),
+    run_contrasts(d, resid_vars, "grp_rel",  NULL, label = "relative subscale (median split)"),
+    run_contrasts(d, resid_vars, "grp_tert", NULL, label = "relative subscale (top vs bottom third)")
+  )))
+
+  # Correlates chosen to span the theoretical range: the retributivism measure
+  # itself, punitiveness, revenge, just deserts, and the hostile-aggression
+  # cluster. If the residual really indexes a desert motive, it should track
+  # just_deserts and retribution_rel at least as closely as it tracks revenge.
+  res_cor <- do.call(rbind, lapply(resid_vars, function(v) {
+    # `punitiveness` here is again the sentence-free 8-item scale. The residual
+    # is a linear function of Sentence1 and Sentence2, so punitiveness_full
+    # would share Sentence1_z with it directly.
+    do.call(rbind, lapply(c("retribution_rel", "punitiveness", "revenge",
+                            "just_deserts", "hostile_agg"), function(p) {
+      cc <- get_cor_ci(v, p, d)
+      data.frame(residual = v, correlate = p, r = cc["r"],
+                 ci_lo = cc["ci_lower"], ci_hi = cc["ci_upper"],
+                 p = cc["p"], n = cc["n"], stringsAsFactors = FALSE)
+    }))
+  }))
+  # lapply over a named vector leaves get_cor_ci()'s element names ("r", "p")
+  # as row names on the stacked frame; clearing them keeps the printed table
+  # from carrying a meaningless gutter.
+  rownames(res_cor) <- NULL
+}
+
+# show_table() is called at the TOP LEVEL, with the NULL check inlined as an
+# argument rather than wrapping the call in an if/else. knitr only prints the
+# value of a top-level expression, so a show_table() buried inside a branch
+# would compute its kable and silently discard it.
+show_table(if (is.null(fitA)) NULL else broom::tidy(fitA),
+           caption = "Model A: Sentence2 ~ Sentence1")
+show_table(if (is.null(fitB)) NULL else broom::tidy(fitB),
+           caption = "Model B: Sentence2 ~ Sentence1 + vignette")
+show_table(pick_cols(res_grp, c("grouping", "variable", "n_low", "n_high",
+                                "M_low", "M_high", "t", "p_two_sided",
+                                "d", "d_lo", "d_hi")),
+           caption = "Residualized second sentence by retributivist group")
+show_table(res_cor,
+           caption = "Residualized second sentence: correlations (punitiveness is the sentence-free 8-item scale)")
+
+if (is.null(fitA)) {
+  cat("Too few complete Sentence1/Sentence2 pairs for the residualized model.\n")
+} else {
+  # R-squared here is a diagnostic, not a result: it says how much of the second
+  # sentence the first one explains, and therefore how much variance is LEFT in
+  # the residual for the contrasts above to work with. A very high R-squared
+  # would mean the residual is nearly all noise; the gap between Model A and
+  # Model B is the share vignette severity contributes.
+  cat(sprintf("Model A: R-squared = %.3f, n = %d\n",
+              summary(fitA)$r.squared, stats::nobs(fitA)))
+  cat(sprintf("Model B: R-squared = %.3f, n = %d\n",
+              summary(fitB)$r.squared, stats::nobs(fitB)))
+  readr::write_csv(res_cor, file.path(OUT_TABLES, "sentence_residualized_correlations.csv"))
+  cat("Wrote output/tables/sentence_residualized_correlations.csv\n")
+}
+
+if (!is.null(chg_tab))
+  readr::write_csv(chg_tab, file.path(OUT_TABLES, "sentence_change_contrasts.csv"))
+cat("Wrote output/tables/sentence_change_contrasts.csv\n")
+```
+
+## 5.4 Within-vignette consistency
+
+```{r phase5_within_vignette}
+# ===========================================================================
+# PHASE 5.5 — WITHIN-VIGNETTE CONSISTENCY
+# ---------------------------------------------------------------------------
+# Section 5.11: "Because the ratio is a proportion it is comparable across
+# vignettes, and we confirm that results hold within each vignette." This is
+# that confirmation.
+#
+# WHAT TO READ FOR: consistency of SIGN and rough magnitude across the three
+# panels, not significance in each. Each vignette holds roughly 315 people, so a
+# correlation that clears alpha in the pooled sample can easily fail to in a
+# third of it; three same-signed coefficients of similar size is the result this
+# check is looking for, and one reversed sign is the warning.
+#
+# Both correlates appear: the primary continuous retributivism measure, and
+# punitiveness in its sentence-free 8-item form for the reason given in 5.3.
+# ===========================================================================
+within_vig <- do.call(rbind, lapply(sort(unique(stats::na.omit(d$Vignette))), function(v) {
+  # One vignette's rows at a time, so both correlations are estimated entirely
+  # within that case and vignette severity cannot contribute to either.
+  s <- d[!is.na(d$Vignette) & d$Vignette == v, , drop = FALSE]
+  cc1 <- get_cor_ci("sentence_ratio", "retribution_rel", s)
+  cc2 <- get_cor_ci("sentence_ratio", "punitiveness",    s)
+  data.frame(Vignette = v, n = nrow(s),
+             r_ratio_relretrib = cc1["r"], p_relretrib = cc1["p"],
+             r_ratio_punitiveness = cc2["r"], p_punitiveness = cc2["p"],
+             stringsAsFactors = FALSE)
+}))
+rownames(within_vig) <- NULL
+show_table(within_vig,
+           caption = "Sentencing ratio within each vignette (Section 5.11 consistency check)")
+```
+
+# PHASE 6: POLITICAL ORIENTATION AND PROSECUTION–DEFENSE LEANING AS MODERATORS
+
+Section 5.13 records a single liberal–conservative item (`lib/conserv`, 1 =
+strongly liberal to 7 = strongly conservative) and two prosecution–defense items
+(`leanPros_1`, `leanPros_2`; 1 = prosecutor, 2 = defense attorney, 3 = about the
+same). Section 6.6 asks for both as **moderators**.
+
+The leaning items are recoded to a signed score so that higher means siding with
+the prosecution: prosecutor = +1, about the same = 0, defense = -1, averaged
+across the two items.
+
+```{r phase6_moderator_vars}
+# ===========================================================================
+# PHASE 6.1 — BUILD THE MODERATOR VARIABLES
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: derives the two moderators Section 6.6 asks for and
+# prints their descriptives plus the raw response distributions.
+#
+# IMPLEMENTS: Section 5.13 (the measures) as read by Section 6.6 (use them as
+# moderators). OBJECTS CREATED: `libcons`, `pros_lean`.
+# ===========================================================================
+
+# The single liberal-conservative item, 1 = strongly liberal to 7 = strongly
+# conservative (Section 5.13). Only the two endpoints carry anchor text in the
+# instrument; the five interior points are unlabelled, which is why the Values
+# export is the only usable one -- the Labels export writes bare numbers there.
+# The Qualtrics tag contains a slash, so it needs [[ ]] access; copying it to
+# `libcons` lets every model below use ordinary formula syntax.
+if ("lib/conserv" %in% names(d)) d$libcons <- as.numeric(d[["lib/conserv"]])
+# Create the column as all-NA if the item is absent, so the models downstream
+# fail their complete-cases guard cleanly instead of erroring on a missing name.
+if (!"libcons" %in% names(d)) d$libcons <- NA_real_
+
+# The two prosecution-defense items export as 1 = prosecutor, 2 = defense
+# attorney, 3 = about the same (Qualtrics recodes the raw choice ids 3/4/6 onto
+# 1/2/3). That coding is NOMINAL, not ordinal: averaging it raw would place
+# "about the same" at the top of the scale rather than between the two sides.
+# Recoding to a signed score fixes that -- prosecutor = +1, about the same = 0,
+# defense = -1 -- so that higher means siding with the prosecution and the
+# midpoint sits where the neutral answer belongs.
+recode_lean <- function(x) dplyr::case_when(x == 1 ~ 1, x == 3 ~ 0, x == 2 ~ -1,
+                                            TRUE ~ NA_real_)
+if (all(c("leanPros_1", "leanPros_2") %in% names(d))) {
+  # leanPros_1 asks who the participant identifies with at a real trial;
+  # leanPros_2 asks which role they would rather serve. Averaging the two gives
+  # a five-point score (-1, -0.5, 0, 0.5, 1) that credits a participant who
+  # leans one way on one item and is neutral on the other.
+  d$pros_lean <- rowMeans(cbind(recode_lean(d$leanPros_1),
+                                recode_lean(d$leanPros_2)), na.rm = TRUE)
+  # rowMeans(na.rm = TRUE) over two NAs returns NaN, not NA. Left alone, NaN
+  # would pass an is.na() test but print as NaN in tables and propagate oddly
+  # through mean-centring, so it is normalized to NA here.
+  d$pros_lean[is.nan(d$pros_lean)] <- NA_real_
+} else {
+  d$pros_lean <- NA_real_
+}
+
+mod_desc <- data.frame(
+  moderator = c("libcons (1 = liberal, 7 = conservative)",
+                "pros_lean (-1 = defense, +1 = prosecution)"),
+  n  = c(sum(!is.na(d$libcons)),  sum(!is.na(d$pros_lean))),
+  M  = c(mean(d$libcons, na.rm = TRUE),  mean(d$pros_lean, na.rm = TRUE)),
+  SD = c(stats::sd(d$libcons, na.rm = TRUE), stats::sd(d$pros_lean, na.rm = TRUE)),
+  stringsAsFactors = FALSE)
+show_table(mod_desc, caption = "Moderator descriptives")
+
+if (all(c("leanPros_1", "leanPros_2") %in% names(d))) {
+  cat("\nleanPros_1 (trial identification): 1 = prosecutor, 2 = defense, 3 = same\n")
+  print(table(d$leanPros_1, useNA = "ifany"))
+  cat("\nleanPros_2 (which role would you serve): 1 = prosecutor, 2 = defense, 3 = same\n")
+  print(table(d$leanPros_2, useNA = "ifany"))
+}
+```
+
+```{r phase6_moderator_correlations}
+# ===========================================================================
+# PHASE 6.2 — MODERATORS: ZERO-ORDER CORRELATIONS
+# ---------------------------------------------------------------------------
+# The main effects, reported before any interaction. An interaction term is
+# hard to interpret without knowing how the moderator relates to the outcome on
+# its own, and a moderator with no zero-order relation to anything is a
+# different situation from one that correlates strongly with everything.
+#
+# Twelve correlations here, two moderators x six variables, all UNADJUSTED.
+# Section 6.6 does not declare them a family, and they are reported as
+# descriptive context rather than as tests. Every one carries its CI and n.
+# ===========================================================================
+mod_cors <- do.call(rbind, lapply(c("libcons", "pros_lean"), function(m) {
+  # Sentence1_z rather than raw Sentence1: the vignettes differ in severity, so
+  # the within-vignette standardized score is the only version comparable across
+  # the pooled sample (Section 5.11).
+  # `punitiveness` is the sentence-free 8-item scale, which keeps this table
+  # readable next to sentence_ratio and Sentence1_z in the same column: no two
+  # rows here share a component.
+  do.call(rbind, lapply(intersect(c("punitiveness", "retribution_rel",
+                                    "sentence_ratio", "hostile_agg",
+                                    "Sentence1_z", "revenge"), names(d)),
+                        function(v) {
+    cc <- get_cor_ci(m, v, d)
+    data.frame(moderator = m, variable = v, r = cc["r"],
+               ci_lo = cc["ci_lower"], ci_hi = cc["ci_upper"],
+               p = cc["p"], n = cc["n"], stringsAsFactors = FALSE)
+  }))
+}))
+rownames(mod_cors) <- NULL
+mod_cors$stars <- sig_stars(mod_cors$p)
+show_table(mod_cors, caption = "Moderators: zero-order correlations")
+```
+
+```{r phase6_moderation_models}
+# ===========================================================================
+# PHASE 6.3 — MODERATION MODELS
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: fits eight outcome ~ predictor * moderator models and
+# extracts only the interaction term from each.
+#
+# IMPLEMENTS: Section 6.6's request for political orientation and the
+# prosecution-defense leaning "as moderators", using the Section 5.13 measures.
+#
+# EIGHT INTERACTIONS, NO CORRECTION ACROSS THEM. This is the largest single set
+# of tests in the document and the most tempting place to apply BH, so the
+# reasoning is worth stating: Section 6.6 places these analyses outside both
+# preregistered families, and the eight models were never declared as a family
+# of their own. Correcting them here would mean inventing a family after seeing
+# the data, and the adjusted p it produced would be a researcher degree of
+# freedom rather than a control. They are read as descriptive, alongside the
+# interaction coefficient and its standard error.
+#
+# PRODUCES: `mod_results`; output/tables/moderator_interactions.csv.
+# ===========================================================================
+
+# Mean-centred predictors so the interaction term is interpretable.
+# Centring does NOT change the interaction coefficient or its p-value; what it
+# changes is the MAIN effects, which in a product model are conditional on the
+# other predictor being zero. Uncentred, the "effect of retributivism" would be
+# its effect at libcons = 0, a value off the 1-7 scale entirely. Centred, each
+# main effect is the effect at the sample mean of the other, which is a value
+# that exists. Centring also cuts the collinearity between a predictor and its
+# own product term, keeping the standard errors readable.
+ctr <- function(x) x - mean(x, na.rm = TRUE)
+d$retrib_rel_c  <- ctr(d$retribution_rel)
+d$ratio_c       <- ctr(d$sentence_ratio)
+d$libcons_c     <- ctr(d$libcons)
+d$pros_lean_c   <- ctr(d$pros_lean)
+
+# The specification grid, declared explicitly rather than generated by crossing
+# every predictor with every outcome. Writing it out is what makes the
+# punitiveness/ratio restriction below visible and auditable: an automatic
+# expand.grid() would happily produce the forbidden pairings.
+mod_specs <- list(
+  list(y = "punitiveness", x = "retrib_rel_c", m = "libcons_c"),
+  list(y = "punitiveness", x = "retrib_rel_c", m = "pros_lean_c"),
+  list(y = "hostile_agg",  x = "retrib_rel_c", m = "libcons_c"),
+  list(y = "hostile_agg",  x = "retrib_rel_c", m = "pros_lean_c"),
+  list(y = "Sentence1_z",  x = "retrib_rel_c", m = "libcons_c"),
+  list(y = "Sentence1_z",  x = "retrib_rel_c", m = "pros_lean_c"),
+  # The sentencing ratio is paired ONLY with the sentence-free punitiveness
+  # scale, per Sections 5.3 and 5.11.
+  # HAZARD: there is deliberately no ratio_c x Sentence1_z model in this grid.
+  # The ratio is Sentence2/Sentence1 and Sentence1_z is the standardized first
+  # sentence, so such a model would regress the sentence on itself. Swapping
+  # `punitiveness` for punitiveness_full in the two rows below would smuggle in
+  # the same problem, since the full index embeds Sentence1_z.
+  list(y = "punitiveness", x = "ratio_c", m = "libcons_c"),
+  list(y = "punitiveness", x = "ratio_c", m = "pros_lean_c")
+)
+
+mod_results <- do.call(rbind, lapply(mod_specs, function(s) {
+  if (!all(c(s$y, s$x, s$m) %in% names(d))) return(NULL)
+  # LISTWISE on the three model variables. Fitting on a common subset means the
+  # main effects and the interaction all describe the same participants, and it
+  # is what makes `n` in the output table meaningful.
+  sub <- d[stats::complete.cases(d[[s$y]], d[[s$x]], d[[s$m]]), , drop = FALSE]
+  # 30 complete cases is a floor for a four-parameter model, not a power
+  # threshold: below it the interaction's standard error is not worth printing.
+  # The models that actually run here have hundreds of cases.
+  if (nrow(sub) < 30) return(NULL)
+  # `y ~ x * m` expands to y ~ x + m + x:m, so both main effects are in the
+  # model. That matters: an interaction fitted without its constituent main
+  # effects is not a moderation test at all.
+  f   <- stats::as.formula(sprintf("%s ~ %s * %s", s$y, s$x, s$m))
+  fit <- stats::lm(f, data = sub)
+  tid <- broom::tidy(fit)
+  # The product term is the only one whose name contains a colon; that is what
+  # identifies it without depending on row position.
+  int <- tid[grepl(":", tid$term), , drop = FALSE]
+  if (!nrow(int)) return(NULL)
+  # Only the interaction is carried out. The main effects are already covered by
+  # the zero-order correlations in 6.2 and the contrasts in 6.4, and the
+  # moderation question is entirely about this one coefficient. R2 for the whole
+  # model is kept as context for how much the three terms explain together.
+  # Two-sided p: Section 6.6 asks for these as moderators without predicting a
+  # direction for any of them, so Section 6.8 leaves them two-sided.
+  data.frame(outcome = s$y, predictor = s$x, moderator = s$m, n = nrow(sub),
+             R2 = summary(fit)$r.squared,
+             b_interaction = int$estimate[1], se = int$std.error[1],
+             t = int$statistic[1], p = int$p.value[1],
+             stringsAsFactors = FALSE)
+}))
+
+if (!is.null(mod_results)) mod_results$stars <- sig_stars(mod_results$p)
+
+show_table(mod_results,
+           caption = "Moderation: interaction terms (retributivism x moderator)")
+
+if (is.null(mod_results)) {
+  cat("No moderation model had enough complete cases.\n")
+} else {
+  readr::write_csv(mod_results, file.path(OUT_TABLES, "moderator_interactions.csv"))
+  cat("Wrote output/tables/moderator_interactions.csv\n")
+}
+```
+
+```{r phase6_moderator_groups}
+# ===========================================================================
+# PHASE 6.4 — MODERATORS BY RETRIBUTIVIST GROUP
+# ---------------------------------------------------------------------------
+# How the moderators themselves differ by retributivist group (descriptive; the
+# confirmatory version of the prosecution-defense contrast is H18, which lives
+# in 01_main_analysis.Rmd).
+#
+# This table answers the prior question the moderation models raise: whether the
+# moderators are themselves confounded with retributivism. If retributivists are
+# markedly more conservative, then a null interaction in 6.3 is not evidence
+# that ideology is irrelevant -- it may simply have little independent variance
+# left once retributivism is in the model. Two-sided throughout, and reported as
+# description rather than as a test, since H18 owns the confirmatory version.
+#
+# grp_ratio IS included here, unlike in Phase 5: libcons and pros_lean are
+# demographic items collected after the vignette but built from no part of the
+# sentence, so the Section 5.3 circularity restriction does not reach them.
+# ===========================================================================
+mod_grp <- do.call(rbind, Filter(Negate(is.null), list(
+  run_contrasts(d, c("libcons", "pros_lean"), "grp_rank", NULL,
+                label = "ranking (retribution 1st)"),
+  run_contrasts(d, c("libcons", "pros_lean"), "grp_rel", NULL,
+                label = "relative subscale (median split)"),
+  run_contrasts(d, c("libcons", "pros_lean"), "grp_ratio", NULL,
+                label = "sentencing ratio (median split)")
+)))
+show_table(pick_cols(mod_grp, c("grouping", "variable", "M_low", "M_high", "t",
+                       "p_two_sided", "d", "d_lo", "d_hi")),
+           caption = "Moderators by retributivist group (descriptive)")
+```
+
+# PHASE 7: AGREEMENT AMONG THE FOUR RETRIBUTIVIST DEFINITIONS
+
+Section 5.3 identifies retributivists with four measures and requires that "we
+report their pairwise agreement and the overlap among the groups they define":
+
+  1. **Ranking** — ranks "criminals deserve to be punished" first (primary categorical).
+  2. **Relative retribution subscale** — retribution minus the mean of the other
+     three goals (primary continuous).
+  3. **Sentencing ratio** — `Sentence2 / Sentence1` for first sentences above zero.
+  4. **Semantic measure** — retributive facets from the open-ended responses
+     (exploratory; see Section 1.4 above for its current status).
+
+```{r phase7_measure_status}
+# ===========================================================================
+# PHASE 7.1 — STATUS OF THE FOUR DEFINITIONS
+# ---------------------------------------------------------------------------
+# An inventory printed before any agreement statistic, so every coefficient
+# below can be read against the n that produced it and against the standing of
+# the measure. The `status` column carries SEMANTIC_STATUS verbatim, which is
+# how a word-list stand-in is prevented from being read as the validated
+# ensemble score it is not.
+# ===========================================================================
+measure_status <- data.frame(
+  measure = c("1. ranking (categorical)", "2. relative subscale (continuous)",
+              "3. sentencing ratio (behavioral)", "4. semantic (exploratory)"),
+  variable = c("retributivist", "retribution_rel", "sentence_ratio",
+               "semantic_retributivism"),
+  n_available = c(sum(!is.na(d$retributivist)), sum(!is.na(d$retribution_rel)),
+                  sum(!is.na(d$sentence_ratio)), sum(!is.na(d$semantic_retributivism))),
+  status = c("available", "available", "available", SEMANTIC_STATUS),
+  stringsAsFactors = FALSE)
+show_table(measure_status, caption = "Status of the four retributivist definitions")
+```
+
+## 7.1 Pairwise agreement (continuous)
+
+```{r phase7_pairwise_continuous}
+# ===========================================================================
+# PHASE 7.2 — PAIRWISE AGREEMENT (CONTINUOUS)
+# ---------------------------------------------------------------------------
+# IMPLEMENTS: Section 5.3's requirement that, since the four definitions are
+# treated as convergent, "we report their pairwise agreement and the overlap
+# among the groups they define."
+#
+# WHY THIS MATTERS RATHER THAN BEING BOOKKEEPING: Section 5.3 expects every
+# single measure to be imperfect -- demand characteristics push self-reports
+# toward the utilitarian goals, people punish on desert while reporting
+# utilitarian aims, and introspective access to punitive motive is limited. If
+# the four definitions agreed strongly, one would do; if they agree only
+# modestly, then the E1 tables that run every contrast four times are not
+# redundancy but the actual evidence, and a result that appears under one
+# definition alone should be read as being about that measure.
+#
+# `retributivist` is 0/1, so any correlation involving it is a POINT-BISERIAL
+# coefficient. Pearson's formula computes it correctly, and the table caption
+# says so; the constraint to notice is that its maximum attainable magnitude is
+# limited by how unbalanced the 0/1 split is, so a modest r against a continuous
+# measure understates agreement rather than overstating it.
+# ===========================================================================
+meas_cont <- intersect(c("retributivist", "retribution_rel", "sentence_ratio",
+                         "semantic_retributivism"), names(d))
+# combn(..., 2) gives each unordered pair once: four measures produce six pairs,
+# and simplify = FALSE keeps them as a list of character vectors to lapply over.
+pairs_cont <- utils::combn(meas_cont, 2, simplify = FALSE)
+
+agree_cont <- do.call(rbind, lapply(pairs_cont, function(pp) {
+  cc <- get_cor_ci(pp[1], pp[2], d)
+  data.frame(measure_1 = pp[1], measure_2 = pp[2],
+             r = cc["r"], ci_lo = cc["ci_lower"], ci_hi = cc["ci_upper"],
+             p = cc["p"], n = cc["n"], stringsAsFactors = FALSE)
+}))
+rownames(agree_cont) <- NULL
+agree_cont$stars <- sig_stars(agree_cont$p)
+show_table(agree_cont,
+           caption = "Pairwise agreement among the retributivist measures (r; the ranking enters as 0/1, so its coefficients are point-biserial)")
+```
+
+## 7.2 Overlap among the groups they define
+
+```{r phase7_overlap}
+# ===========================================================================
+# PHASE 7.3 — OVERLAP AMONG THE GROUPS THE DEFINITIONS CREATE
+# ---------------------------------------------------------------------------
+# The second half of the Section 5.3 requirement: not how the four measures
+# correlate, but how much the GROUPS they define actually overlap. Four agreement
+# statistics are reported per pair because they answer four different questions
+# and can disagree sharply:
+#
+#   pct_agreement  the share of participants both definitions classify the same
+#                  way. Inflated whenever both groups are small, since agreeing
+#                  that most people are NOT retributivists is easy.
+#   jaccard        both-high / either-high. Ignores the agreed-low cell, so it
+#                  measures overlap among the people the study is about.
+#   kappa          agreement corrected for what chance would produce given the
+#                  observed marginals. The honest headline number.
+#   phi            the correlation between the two 0/1 vectors, comparable to
+#                  the continuous r's in 7.2.
+#
+# A pair with high percent agreement and low kappa is the diagnostic pattern:
+# it means the two definitions agree mostly by both calling people non-
+# retributivist, not by picking out the same retributivists.
+# ===========================================================================
+grp_defs <- list(
+  ranking  = d$retributivist,
+  relative = d$retrib_medsplit,
+  ratio    = d$ratio_medsplit,
+  semantic = d$sem_medsplit
+)
+# Drop any definition with no data at all -- typically the semantic placeholder.
+# Doing it here rather than inside the loop keeps combn() from generating pairs
+# that could never be computed, and keeps the convergence count in 7.4 honest
+# about how many definitions were actually available.
+grp_defs <- grp_defs[vapply(grp_defs, function(x) sum(!is.na(x)) > 0, logical(1))]
+
+pairs_bin <- if (length(grp_defs) >= 2)
+  utils::combn(names(grp_defs), 2, simplify = FALSE) else list()
+
+overlap_tab <- do.call(rbind, lapply(pairs_bin, function(pp) {
+  a <- grp_defs[[pp[1]]]; b <- grp_defs[[pp[2]]]
+  ok <- !is.na(a) & !is.na(b)
+  if (sum(ok) < 10) return(NULL)
+  a <- a[ok]; b <- b[ok]
+  # factor(., 0:1) forces both levels to exist so the table is always 2x2 even
+  # when a cell is empty; a collapsed table would break the statistics below.
+  tab <- table(factor(a, 0:1), factor(b, 0:1))
+
+  # cohen.kappa() takes the two classifications as columns and treats them as
+  # two raters judging the same participants -- which is exactly the frame
+  # Section 5.3 sets up, with the four measures as competing "raters" of who
+  # counts as a retributivist. $kappa is the unweighted coefficient, which is
+  # the right one for an unordered binary judgement.
+  kap <- tryCatch(psych::cohen.kappa(cbind(a, b))$kappa,
+                  error = function(e) NA_real_)
+  # For two binary variables the Pearson correlation IS the phi coefficient, so
+  # cor() is not an approximation here.
+  phi <- tryCatch(stats::cor(a, b), error = function(e) NA_real_)
+  both <- sum(a == 1 & b == 1)
+  either <- sum(a == 1 | b == 1)
+
+  data.frame(
+    definition_1 = pp[1], definition_2 = pp[2], n = sum(ok),
+    # The marginals are printed alongside the agreement statistics because kappa
+    # and Jaccard cannot be interpreted without them: two definitions that
+    # nominate very different numbers of retributivists are capped in how much
+    # they can ever agree.
+    n_high_1 = sum(a == 1), n_high_2 = sum(b == 1),
+    n_both_high = both,
+    pct_agreement = mean(a == b),
+    # Guard against 0/0 when neither definition nominates anyone.
+    jaccard = ifelse(either > 0, both / either, NA_real_),
+    kappa = kap, phi = phi,
+    stringsAsFactors = FALSE)
+}))
+
+if (!is.null(overlap_tab)) rownames(overlap_tab) <- NULL
+
+show_table(overlap_tab,
+           caption = "Group overlap: percent agreement, Jaccard, Cohen's kappa, phi")
+
+if (is.null(overlap_tab))
+  cat("Not enough overlapping data to compute group agreement.\n")
+
+# The raw 2x2 tables behind every statistic above. Printed in full so a reader
+# can recompute any of the four coefficients by hand, and so the cell that
+# drives a surprising kappa is visible rather than inferred.
+cat("\nCross-tabulations:\n")
+for (pp in pairs_bin) {
+  a <- grp_defs[[pp[1]]]; b <- grp_defs[[pp[2]]]
+  ok <- !is.na(a) & !is.na(b)
+  if (sum(ok) < 10) next
+  cat(sprintf("\n%s (rows) x %s (cols), 0 = low / 1 = high:\n", pp[1], pp[2]))
+  print(table(factor(a[ok], 0:1), factor(b[ok], 0:1)))
+}
+```
+
+```{r phase7_convergence_note}
+# ===========================================================================
+# PHASE 7.4 — CONVERGENCE COUNT AND AGREEMENT EXPORT
+# ---------------------------------------------------------------------------
+# The pairwise tables in 7.3 cannot say how many participants ALL the
+# definitions agree about. This one can: it counts, for each participant, how
+# many definitions place them in the high group, and tabulates that count.
+#
+# READ THE TAILS. Participants scoring high on every available definition are
+# the unambiguous retributivists, and the size of that group is what a reader
+# should have in mind whenever the four E1 tables in Phase 2 disagree. A count
+# distribution concentrated at 1 or 2 says the definitions are picking out
+# largely different people, which is Section 5.3's stated expectation and the
+# reason it demands every contrast under each measure.
+#
+# PRODUCES: output/tables/retributivist_measure_agreement.csv and
+#           output/tables/retributivist_group_overlap.csv.
+# ===========================================================================
+
+# How many participants land in the high group on 1, 2, 3, or all 4 definitions.
+gm <- as.data.frame(grp_defs)
+conv <- NULL
+if (ncol(gm) >= 2) {
+  # Every column is 0/1, so the row sum IS the number of definitions calling
+  # this participant high. na.rm = TRUE means a missing definition counts as a
+  # non-vote rather than voiding the row, which is why n_meas is recorded too.
+  gm$n_high <- rowSums(gm, na.rm = TRUE)
+  # How many definitions were actually available for this participant. Without
+  # it, someone scored by two definitions and high on both is indistinguishable
+  # from someone scored by four and high on two.
+  gm$n_meas <- rowSums(!is.na(gm[, names(grp_defs), drop = FALSE]))
+  conv <- as.data.frame(table(gm$n_high))
+  names(conv) <- c("n_definitions_high", "n_participants")
+  conv$pct <- conv$n_participants / sum(conv$n_participants)
+}
+show_table(conv,
+           caption = sprintf("Convergence: how many of the %d available definitions place a participant in the high group",
+                             length(grp_defs)))
+
+# One long export combining both kinds of agreement. `kind` distinguishes them,
+# because a Pearson r and a Cohen's kappa share a column here and must never be
+# averaged or compared as though they were the same quantity. The kappa rows
+# carry p = NA deliberately: cohen.kappa()'s significance test is not extracted,
+# since these coefficients are reported as descriptive convergence rather than
+# as tests of a null of no agreement.
+agree_out <- do.call(rbind, Filter(Negate(is.null), list(
+  if (!is.null(agree_cont))
+    data.frame(kind = "continuous r", agree_cont[, c("measure_1", "measure_2",
+                                                     "r", "p", "n")],
+               stringsAsFactors = FALSE),
+  if (!is.null(overlap_tab))
+    data.frame(kind = "group overlap kappa",
+               measure_1 = overlap_tab$definition_1,
+               measure_2 = overlap_tab$definition_2,
+               r = overlap_tab$kappa, p = NA_real_, n = overlap_tab$n,
+               stringsAsFactors = FALSE)
+)))
+if (!is.null(agree_out)) {
+  readr::write_csv(agree_out, file.path(OUT_TABLES, "retributivist_measure_agreement.csv"))
+  cat("\nWrote output/tables/retributivist_measure_agreement.csv\n")
+}
+if (!is.null(overlap_tab))
+  readr::write_csv(overlap_tab, file.path(OUT_TABLES, "retributivist_group_overlap.csv"))
+cat("Wrote output/tables/retributivist_group_overlap.csv\n")
+```
+
+# PHASE 8: RESPONSE-QUALITY REPORT (COMPLETION TIME AND LONG STRINGS)
+
+Section 6.2: "We also examine completion time and long strings of identical
+answers and report them, but **neither on its own removes a participant from the
+confirmatory analyses**." This phase is therefore a **diagnostic report only**.
+No participant is excluded on the basis of anything below, and the confirmatory
+document (01) does not read these flags.
+
+## 8.1 Completion time
+
+```{r phase8_duration}
+# ===========================================================================
+# PHASE 8.1 — COMPLETION TIME
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: describes completion time and computes three speeding /
+# lingering flags.
+#
+# IMPLEMENTS: Section 6.2, which asks that completion time be examined and
+# reported but is explicit that "neither on its own removes a participant from
+# the confirmatory analyses." Nothing computed here feeds an exclusion. The
+# exclusions were applied in Phase 1.1 and are the Section 6.2 grounds that act on
+# the export:
+# unfinished, and the two attention checks.
+#
+# OBJECTS CREATED: duration_s, flag_fast_half, flag_fast_third, flag_slow.
+# ===========================================================================
+
+# Three spellings, because the column name depends on how the file was read:
+# readr preserves "Duration (in seconds)" verbatim, base R's read.csv mangles it
+# to "Duration..in.seconds.", and a file already processed by 01 may carry the
+# tidy name. intersect() takes whichever exists.
+dur_col <- intersect(c("Duration (in seconds)", "Duration..in.seconds.",
+                       "duration_s"), names(d))
+
+dur_desc <- NULL
+med_dur  <- NA_real_
+
+if (!length(dur_col)) {
+  d$duration_s <- NA_real_
+} else {
+  d$duration_s <- suppressWarnings(as.numeric(d[[dur_col[1]]]))
+  dur     <- d$duration_s
+  # The MEDIAN, not the mean, anchors every threshold below. Completion time is
+  # heavily right-skewed -- a handful of participants leave the tab open for
+  # hours -- and a mean-based cutoff would be dragged upward by them, flagging
+  # ordinary respondents as too fast.
+  med_dur <- stats::median(dur, na.rm = TRUE)
+
+  dur_desc <- data.frame(
+    statistic = c("n", "minimum", "1st quartile", "median", "mean",
+                  "3rd quartile", "maximum"),
+    seconds = c(sum(!is.na(dur)), min(dur, na.rm = TRUE),
+                stats::quantile(dur, .25, na.rm = TRUE), med_dur,
+                mean(dur, na.rm = TRUE),
+                stats::quantile(dur, .75, na.rm = TRUE), max(dur, na.rm = TRUE)),
+    stringsAsFactors = FALSE)
+  dur_desc$minutes <- dur_desc$seconds / 60
+  # Row 1 of the table is the COUNT of participants, not a duration, so its
+  # "minutes" cell would be a meaningless n/60. Blanked rather than printed.
+  dur_desc$minutes[1] <- NA
+
+  # Two conventional speeding heuristics, reported side by side.
+  # Both are the standard fractions of the median used in survey screening:
+  # under half the median is the lenient version, under a third the strict one.
+  # Reporting both makes the reader's sensitivity to the choice visible instead
+  # of hiding it behind one number, which matters precisely because no
+  # participant is removed on either basis.
+  d$flag_fast_half  <- as.integer(dur < 0.50 * med_dur)
+  d$flag_fast_third <- as.integer(dur < (1/3) * med_dur)
+  # The mirror image: more than three times the median. This is NOT a
+  # carelessness indicator in the way speeding is -- it usually marks an
+  # interrupted session -- and it is reported for completeness rather than as
+  # evidence of low-quality responding.
+  d$flag_slow       <- as.integer(dur > 3 * med_dur)
+}
+
+show_table(dur_desc, caption = "Completion time")
+
+if (!length(dur_col)) {
+  cat("No completion-time column in the input; this section is a placeholder.\n")
+} else {
+  cat(sprintf("Median completion time: %.0f s (%.1f min)\n", med_dur, med_dur / 60))
+  cat(sprintf("Faster than 1/2 the median (< %.0f s): %d participants (%s)\n",
+              0.5 * med_dur, sum(d$flag_fast_half, na.rm = TRUE),
+              pct(mean(d$flag_fast_half, na.rm = TRUE))))
+  cat(sprintf("Faster than 1/3 the median (< %.0f s): %d participants (%s)\n",
+              (1/3) * med_dur, sum(d$flag_fast_third, na.rm = TRUE),
+              pct(mean(d$flag_fast_third, na.rm = TRUE))))
+  cat(sprintf("Slower than 3x the median (> %.0f s): %d participants (%s)\n",
+              3 * med_dur, sum(d$flag_slow, na.rm = TRUE),
+              pct(mean(d$flag_slow, na.rm = TRUE))))
+}
+```
+
+```{r phase8_duration_figure, fig.height=5}
+# ===========================================================================
+# PHASE 8.2 — COMPLETION-TIME DISTRIBUTION
+# ---------------------------------------------------------------------------
+# The histogram behind the thresholds in 8.1. Its job is to show whether the
+# fast tail is a distinct cluster of speeders or simply the lower end of one
+# continuous distribution -- the flags cannot distinguish those two, and the
+# subtitle repeats that no one is excluded on this basis.
+#
+# PRODUCES: output/figures/response_quality_duration.png.
+# ===========================================================================
+if (sum(!is.na(d$duration_s))) {
+  p_dur <- ggplot2::ggplot(d[!is.na(d$duration_s), ],
+                           # Plotted in MINUTES for legibility; every threshold
+                           # in 8.1 is computed in seconds.
+                           ggplot2::aes(x = duration_s / 60)) +
+    ggplot2::geom_histogram(bins = 40, fill = "steelblue", colour = "white") +
+    # The median line, the anchor all three flags are defined against.
+    ggplot2::geom_vline(xintercept = stats::median(d$duration_s, na.rm = TRUE) / 60,
+                        linetype = "dashed", colour = "firebrick") +
+    ggplot2::labs(title = "Completion time",
+                  subtitle = "Dashed line at the median. Reported only — no one is excluded on this basis.",
+                  x = "Minutes", y = "Participants") +
+    ggplot2::theme_minimal(base_size = 12)
+  print(p_dur)
+  ggplot2::ggsave(file.path(OUT_FIGURES, "response_quality_duration.png"),
+                  p_dur, width = 9, height = 5, dpi = 150)
+  cat("Saved: output/figures/response_quality_duration.png\n")
+}
+```
+
+## 8.2 Long strings of identical answers
+
+```{r phase8_longstring}
+# ===========================================================================
+# PHASE 8.3 — LONG STRINGS OF IDENTICAL ANSWERS
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: computes each participant's longest run of identical
+# consecutive answers across the attitude battery, and the share of their
+# answers at their own modal value.
+#
+# IMPLEMENTS: the second half of the Section 6.2 diagnostic. Again REPORT ONLY.
+#
+# WHAT A LONG STRING IS AND IS NOT: it is the classic straight-lining indicator,
+# but this battery contains reverse-keyed items scattered throughout, so a
+# genuinely consistent respondent should NOT produce a long run -- agreeing with
+# both a punitiveness item and its reversed neighbour requires different
+# numbers. That is what makes the measure informative here. It is still not
+# proof of inattention: a participant who scores 7 on every hostility item in a
+# block may simply hold that view strongly.
+#
+# OBJECTS CREATED: longstring, modal_response, flag_longstring.
+# ===========================================================================
+
+# The attitude battery, in questionnaire order, so that a "long string" means a
+# run of identical answers as the participant actually saw them. Only the 1-7
+# agree/disagree style items are used; sliders and categorical items are not.
+# ORDER IS LOAD-BEARING. rle() below finds runs of ADJACENT identical values, so
+# this vector must match the presentation order of Sections 5.2 through 5.12; a
+# resorted list would report runs the participant never actually produced.
+# Excluded by design: the sentence sliders and CRT sliders (a continuous 0-50
+# response is not a scale point), the categorical demographics, and both
+# attention checks (whose sparse coding would break the run logic and which have
+# already done their work in the exclusion funnel).
+ls_items <- intersect(c(
+  paste0("Retribution_", 1:7), paste0("Deterrence_", 1:3),
+  paste0("Incapacitation_", 1:2), paste0("Rehabilitation_", 1:2),
+  paste0("Solidarity_", 1:3),
+  "punishmore_1", "punishmore_2", "parsimony_1", "parsimony_2",
+  "threestrikes_1", "threestrikes_2", "LWOP", "deathpenalty",
+  paste0("revenge_", 1:4), "proportionality", "severity_1", "severity_2",
+  paste0("exclusion_", 1:3), paste0("essential_", 1:4),
+  paste0("Society_", 1:3), paste0("choice_", 1:2),
+  paste0("dueprocess_", 1:3), paste0("uncertain_", 1:4),
+  paste0("rates_", 1:2), paste0("fear_", 1:3),
+  paste0("hate_", 1:3), paste0("anger_", 1:2),
+  paste0("degrad_", 1:3), paste0("suffer_", 1:2), paste0("prisonvi_", 1:2),
+  paste0("harsh_", 1:3), paste0("rwa_", 1:5), paste0("sdo_", 1:8),
+  paste0("vprone_", 1:4), paste0("Raceresent_", 1:4)), names(d))
+
+cat(sprintf("Long-string computed over %d attitude items.\n", length(ls_items)))
+
+#' Longest run of identical consecutive values in one participant's row.
+#' Arguments: x, one row of the item matrix. Returns: integer run length, or NA.
+#' rle() encodes the vector as runs and reports each run's length; the maximum
+#' of those lengths is the long-string index. Note that rle() treats each NA as
+#' breaking a run, so a skipped item shortens rather than extends the count --
+#' the conservative direction for a flag nobody is excluded on.
+max_run <- function(x) {
+  x <- as.numeric(x)
+  if (all(is.na(x))) return(NA_integer_)
+  r <- rle(x)
+  as.integer(max(r$lengths, na.rm = TRUE))
+}
+#' Share of a participant's answers sitting at their own most-frequent value.
+#' Arguments: x, one row. Returns: proportion in 0-1, or NA for an empty row.
+#' This is the POSITION-FREE companion to max_run(): it catches a participant
+#' who answered 4 to three quarters of the battery but never in a long
+#' consecutive block, which rle() would miss entirely.
+modal_share <- function(x) {
+  x <- x[!is.na(x)]
+  if (!length(x)) return(NA_real_)
+  max(table(x)) / length(x)
+}
+
+ls_desc <- NULL
+
+# Fewer than 10 items makes a run length uninformative -- with a short battery
+# almost any answer pattern produces a "long" relative run.
+if (length(ls_items) >= 10) {
+  # as.matrix() so apply() walks rows of a uniform numeric matrix. Applying over
+  # a data frame would coerce each row through a list and be far slower.
+  mat <- as.matrix(d[, ls_items, drop = FALSE])
+  d$longstring     <- apply(mat, 1, max_run)
+  d$modal_response <- apply(mat, 1, modal_share)
+
+  ls_desc <- data.frame(
+    statistic = c("n", "minimum", "median", "mean", "90th percentile",
+                  "95th percentile", "maximum"),
+    longest_run = c(sum(!is.na(d$longstring)),
+                    min(d$longstring, na.rm = TRUE),
+                    stats::median(d$longstring, na.rm = TRUE),
+                    mean(d$longstring, na.rm = TRUE),
+                    stats::quantile(d$longstring, .90, na.rm = TRUE),
+                    stats::quantile(d$longstring, .95, na.rm = TRUE),
+                    max(d$longstring, na.rm = TRUE)),
+    stringsAsFactors = FALSE)
+
+  # 10 consecutive identical answers is the conventional straight-lining
+  # threshold, and it is a demanding one in THIS battery: reaching it means
+  # giving the same number to ten adjacent items that include reverse-keyed
+  # ones. The 15-run count printed below shows how sensitive the tally is to
+  # moving the line, which is the honest way to report a threshold that
+  # determines nothing.
+  d$flag_longstring <- as.integer(d$longstring >= 10)
+}
+
+show_table(ls_desc, caption = "Longest run of identical consecutive answers")
+
+if (length(ls_items) >= 10) {
+  cat(sprintf("Runs of 10 or more identical answers: %d participants (%s)\n",
+              sum(d$flag_longstring, na.rm = TRUE),
+              pct(mean(d$flag_longstring, na.rm = TRUE))))
+  cat(sprintf("Runs of 15 or more: %d participants (%s)\n",
+              sum(d$longstring >= 15, na.rm = TRUE),
+              pct(mean(d$longstring >= 15, na.rm = TRUE))))
+  cat(sprintf("Median share of responses at the participant's modal value: %s\n",
+              pct(stats::median(d$modal_response, na.rm = TRUE))))
+  cat("\nDistribution of the longest run:\n")
+  print(table(d$longstring, useNA = "ifany"))
+} else {
+  d$longstring <- NA_integer_
+  d$flag_longstring <- NA_integer_
+  cat("Too few attitude items present to compute long strings.\n")
+}
+```
+
+```{r phase8_quality_summary}
+# ===========================================================================
+# PHASE 8.4 — RESPONSE-QUALITY FLAG SUMMARY
+# ---------------------------------------------------------------------------
+# Collects the four flags into one table and builds `flag_any`, the union used
+# by the sensitivity comparison in 8.5.
+#
+# The flags OVERLAP by construction: flag_fast_third is a strict subset of
+# flag_fast_half, so the four counts must not be added together. flag_any is
+# computed as a union rather than a sum for exactly that reason.
+#
+# PRODUCES: output/tables/response_quality_flags.csv.
+# ===========================================================================
+flag_cols <- intersect(c("flag_fast_half", "flag_fast_third", "flag_slow",
+                         "flag_longstring"), names(d))
+qual <- NULL
+
+if (length(flag_cols)) {
+  qual <- data.frame(
+    flag = flag_cols,
+    n_flagged = sapply(flag_cols, function(f) sum(d[[f]], na.rm = TRUE)),
+    # mean() of a 0/1 column is the proportion flagged; na.rm keeps a
+    # participant with a missing duration from voiding the whole figure.
+    pct_flagged = sapply(flag_cols, function(f) mean(d[[f]], na.rm = TRUE)),
+    stringsAsFactors = FALSE)
+  # sapply() over a named vector puts the flag names on the rows as well as in
+  # the `flag` column; clearing them avoids printing the same labels twice.
+  rownames(qual) <- NULL
+  # "> 0" makes this a UNION: flagged on at least one indicator. A row sum would
+  # double-count the nested speeding flags and produce a meaningless total.
+  d$flag_any <- as.integer(rowSums(d[, flag_cols, drop = FALSE], na.rm = TRUE) > 0)
+}
+
+show_table(qual, caption = "Response-quality flags (report only)")
+
+if (length(flag_cols)) {
+  cat(sprintf("Flagged on at least one indicator: %d of %d (%s)\n",
+              sum(d$flag_any, na.rm = TRUE), nrow(d),
+              pct(mean(d$flag_any, na.rm = TRUE))))
+  cat("These participants REMAIN in every analysis (pre-registration 6.2).\n")
+  readr::write_csv(qual, file.path(OUT_TABLES, "response_quality_flags.csv"))
+  cat("Wrote output/tables/response_quality_flags.csv\n")
+} else {
+  cat("No response-quality indicator could be computed from this input.\n")
+}
+```
+
+```{r phase8_quality_sensitivity}
+# ===========================================================================
+# PHASE 8.5 — REPORT-ONLY SENSITIVITY
+# ---------------------------------------------------------------------------
+# Report-only sensitivity: does E1 look different with flagged participants set
+# aside? This is shown to document the flags' consequences, not to justify
+# dropping anyone. Section 6.2 is explicit that neither completion time nor a
+# long string removes a participant from the analyses, and the reported result
+# everywhere else in this document is the full-sample one.
+#
+# WHAT THIS BUYS: the column that matters is d_change. If setting the flagged
+# participants aside barely moves the effect sizes, then the choice not to
+# exclude them costs nothing and the preregistered rule is vindicated on the
+# data as well as in principle. If it moved them a lot, that would be worth
+# saying out loud -- which is why the comparison is printed rather than
+# summarized.
+#
+# E1 under the RANKING definition is used because it is the primary categorical
+# grouping; running all four here would multiply the tables without adding to
+# the point, which is about the flags rather than about E1.
+# ===========================================================================
+cmp <- NULL
+n_clean <- NA_integer_
+
+if ("flag_any" %in% names(d) && sum(d$flag_any, na.rm = TRUE) > 0) {
+  # is.na(flag_any) is KEPT, not dropped: a participant with no duration
+  # recorded was never flagged, and excluding them would confound "flagged" with
+  # "missing metadata".
+  d_clean <- d[is.na(d$flag_any) | d$flag_any == 0, , drop = FALSE]
+  n_clean <- nrow(d_clean)
+
+  # Same outcomes, same directions, same helper as Phase 2.1 -- only the sample
+  # differs, which is what makes the two columns comparable.
+  e1_sens <- run_contrasts(d_clean, e1_vars, "grp_rank", e1_dir,
+                           label = "ranking, flagged set aside")
+  if (!is.null(e1_sens) && !is.null(e1_rank)) {
+    # merge() by outcome name rather than cbind() by position: if a contrast
+    # became non-estimable in the smaller sample, its row simply drops out
+    # instead of silently pairing the wrong two effect sizes.
+    cmp <- merge(
+      pick_cols(e1_rank, c("variable", "d", "p_directional")),
+      pick_cols(e1_sens, c("variable", "d", "p_directional")),
+      by = "variable", suffixes = c("_full", "_sensitivity"))
+    # Signed, so the direction of the shift is visible: positive means setting
+    # the flagged participants aside made the effect larger.
+    cmp$d_change <- cmp$d_sensitivity - cmp$d_full
+  }
+}
+
+if (!is.na(n_clean))
+  cat(sprintf("Sensitivity sample (flagged set aside): N = %d of %d\n",
+              n_clean, nrow(d)))
+
+show_table(cmp,
+           caption = "E1 under the ranking definition: full sample vs. flagged set aside")
+
+if (is.na(n_clean))
+  cat("No participant was flagged, so no sensitivity comparison is needed.\n")
+```
+
+# PHASE 9: SAVE ALL OUTPUT FILES
+
+```{r phase9_save}
+# ===========================================================================
+# PHASE 9.1 — SAVE THE DERIVED VARIABLES
+# ---------------------------------------------------------------------------
+# WHAT THIS CHUNK DOES: writes the participant-level variables this document
+# created, the reliability log, and (if the fallback ran) the exclusion funnel;
+# then lists what is on disk.
+#
+# WRITES: data/cleaned/retribution_supplementary_vars.csv,
+#         output/tables/supplementary_reliability.csv,
+#         output/tables/exclusion_funnel_supp.csv (fallback path only).
+# ===========================================================================
+
+# The supplementary variables derived in this document, keyed by ResponseId so
+# they can be merged back without duplicating the scored file that 01 owns.
+# ONLY the columns this document adds are exported -- the composites rebuilt in
+# Phase 1.2 are deliberately absent, because 01 owns those and writing a second
+# copy here would create two files that could drift apart. intersect() means a
+# variable that was never computed (the semantic measure, say) is simply omitted
+# rather than exported as a column of NA.
+keep <- intersect(c("ResponseId", "Vignette", "retributivist", "retribution_rel",
+                    "retrib_medsplit", "retrib_tertile", "sentence_ratio",
+                    "ratio_medsplit", "semantic_retributivism", "sem_medsplit",
+                    "sentence_delta", "sentence2_resid", "sentence2_resid_vig",
+                    "libcons", "pros_lean", "duration_s", "longstring",
+                    "modal_response", "flag_fast_half", "flag_fast_third",
+                    "flag_slow", "flag_longstring", "flag_any"), names(d))
+
+supp <- d[, keep, drop = FALSE]
+readr::write_csv(supp, file.path(OUT_DATA, "retribution_supplementary_vars.csv"))
+cat(sprintf("Wrote data/cleaned/retribution_supplementary_vars.csv (%d x %d)\n",
+            nrow(supp), ncol(supp)))
+
+# The full reliability log, including the `items` column, so every alpha and
+# omega in the appendix can be traced to the exact item list that produced it.
+readr::write_csv(alpha_table, file.path(OUT_TABLES, "supplementary_reliability.csv"))
+cat("Wrote output/tables/supplementary_reliability.csv\n")
+
+# Written only when the Phase 1.1 fallback ran, i.e. when this document had to
+# apply the exclusions itself. On the normal path 01 owns and reports the funnel
+# and there is nothing to duplicate.
+if (!is.null(exclusion_funnel)) {
+  readr::write_csv(exclusion_funnel, file.path(OUT_TABLES, "exclusion_funnel_supp.csv"))
+  cat("Wrote output/tables/exclusion_funnel_supp.csv (funnel reproduced locally)\n")
+}
+
+cat("\nFiles in output/tables/:\n")
+print(list.files(OUT_TABLES))
+cat("\nFiles in output/figures/:\n")
+print(list.files(OUT_FIGURES))
+```
+
+```{r phase9_summary}
+# ===========================================================================
+# PHASE 9.2 — CLOSING SUMMARY
+# ---------------------------------------------------------------------------
+# A single block a reader can check the knitted document against: which input
+# was used, the analysis N, the size of the primary retributivist group, the
+# standing of the semantic measure, and the Section 6.6 checklist of everything
+# this document was required to deliver.
+#
+# It closes by restating the multiplicity position, because that is the one
+# thing a reader must carry away from every p-value above: no false-discovery
+# correction is applied anywhere in this file. Section 6.6 declares two families
+# and this document belongs to neither -- the H1 correlation set is corrected in
+# 01_main_analysis.Rmd, and E3-E7 are corrected within themselves in
+# 02_nlp_integration.Rmd. Everything here is a lead, not a finding.
+# ===========================================================================
+cat("========================================================================\n")
+cat("SUPPLEMENTARY / EXPLORATORY ANALYSES — SUMMARY\n")
+cat("========================================================================\n\n")
+cat(sprintf("Data source : %s\n", DATA_SOURCE))
+cat(sprintf("Analysis N  : %d\n", nrow(d)))
+cat(sprintf("Retributivists (ranking): %d (%s)\n",
+            sum(d$retributivist, na.rm = TRUE), pct(mean(d$retributivist, na.rm = TRUE))))
+cat(sprintf("Semantic measure: %s\n\n", SEMANTIC_STATUS))
+
+cat("Delivered in this document (pre-registration 6.6):\n")
+cat("  E1  personality + CRT between groups, under all four definitions\n")
+cat("  E2  hostile vs Durkheimian solidarity, Steiger's test\n")
+cat("      (Solidarity_1 dropped per 5.3; sensitivity with it included)\n")
+cat("  --  factor structure of the correlates (EFA + scree)\n")
+cat("  --  first-to-second sentence change, incl. residualized robustness\n")
+cat("  --  political orientation and prosecution-defense leaning as moderators\n")
+cat("  --  agreement and overlap among the four retributivist definitions (5.3)\n")
+cat("  --  completion time and long strings, report only (6.2)\n\n")
+
+cat("Not corrected as a confirmatory family (6.6). No FDR adjustment applied.\n")
+cat("These are exploratory analyses on the full sample; not a confirmatory family.\n")
+```
+
+```{r phase9_session}
+# ===========================================================================
+# PHASE 9.3 — SESSION INFORMATION
+# ---------------------------------------------------------------------------
+# The R version and every attached package version. This is the reproducibility
+# record for the appendix: psych's factor-analysis defaults and cocor's Steiger
+# implementation are both version-sensitive, so a future reader who cannot
+# reproduce a loading or a z has this to compare against first.
+# ===========================================================================
+sessionInfo()
+```

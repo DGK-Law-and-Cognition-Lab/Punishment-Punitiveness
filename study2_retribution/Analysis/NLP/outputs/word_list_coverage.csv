@@ -1,0 +1,37 @@
+facet,facet_class,standing,scope,run_mode,n_responses,n_nonzero,pct_nonzero,ci_lo_pct,ci_hi_pct,clears_floor,near_floor_flag,pct_nonzero_negzeroed,verdict,purpose
+desert,principled,gate-eligible,all_items,full,2837,570,20.09,18.66,21.61,yes,no,20.09,usable as an independent check for this facet,anchored to the `deserved` scale; half of the E4 pair
+proportionality,principled,descriptive-only,all_items,full,2837,34,1.2,0.86,1.67,no,no,1.2,DISQUALIFIED as an independent check: below the 5% floor,demoted on ~1% prevalence; its gate numbers are reported anyway
+censure,principled,descriptive-only,all_items,full,2837,26,0.92,0.63,1.34,no,no,0.92,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+moral_balance,principled,descriptive-only,all_items,full,2837,14,0.49,0.29,0.83,no,no,0.49,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+revenge,vengeful,gate-eligible,all_items,full,2837,16,0.56,0.35,0.91,no,no,0.56,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `revenge` scale; the other half of E4
+suffering,vengeful,gate-eligible,all_items,full,2837,52,1.83,1.4,2.4,no,no,1.83,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `suffering` scale
+deterrence,consequentialist,descriptive-only,all_items,full,2837,434,15.3,14.02,16.67,yes,no,15.3,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+incapacitation,consequentialist,descriptive-only,all_items,full,2837,393,13.85,12.63,15.17,yes,no,13.85,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+rehabilitation,consequentialist,descriptive-only,all_items,full,2837,634,22.35,20.85,23.92,yes,no,22.35,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+desert,principled,gate-eligible,ranking,full,945,301,31.85,28.96,34.89,yes,no,31.85,usable as an independent check for this facet,anchored to the `deserved` scale; half of the E4 pair
+proportionality,principled,descriptive-only,ranking,full,945,9,0.95,0.5,1.8,no,no,0.95,DISQUALIFIED as an independent check: below the 5% floor,demoted on ~1% prevalence; its gate numbers are reported anyway
+censure,principled,descriptive-only,ranking,full,945,6,0.63,0.29,1.38,no,no,0.63,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+moral_balance,principled,descriptive-only,ranking,full,945,4,0.42,0.16,1.08,no,no,0.42,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+revenge,vengeful,gate-eligible,ranking,full,945,8,0.85,0.43,1.66,no,no,0.85,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `revenge` scale; the other half of E4
+suffering,vengeful,gate-eligible,ranking,full,945,4,0.42,0.16,1.08,no,no,0.42,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `suffering` scale
+deterrence,consequentialist,descriptive-only,ranking,full,945,351,37.14,34.12,40.27,yes,no,37.14,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+incapacitation,consequentialist,descriptive-only,ranking,full,945,212,22.43,19.89,25.2,yes,no,22.43,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+rehabilitation,consequentialist,descriptive-only,ranking,full,945,501,53.02,49.83,56.18,yes,no,53.02,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+desert,principled,gate-eligible,backward,full,947,177,18.69,16.34,21.3,yes,no,18.69,usable as an independent check for this facet,anchored to the `deserved` scale; half of the E4 pair
+proportionality,principled,descriptive-only,backward,full,947,9,0.95,0.5,1.8,no,no,0.95,DISQUALIFIED as an independent check: below the 5% floor,demoted on ~1% prevalence; its gate numbers are reported anyway
+censure,principled,descriptive-only,backward,full,947,3,0.32,0.11,0.93,no,no,0.32,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+moral_balance,principled,descriptive-only,backward,full,947,4,0.42,0.16,1.08,no,no,0.42,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+revenge,vengeful,gate-eligible,backward,full,947,2,0.21,0.06,0.77,no,no,0.21,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `revenge` scale; the other half of E4
+suffering,vengeful,gate-eligible,backward,full,947,21,2.22,1.45,3.37,no,no,2.22,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `suffering` scale
+deterrence,consequentialist,descriptive-only,backward,full,947,22,2.32,1.54,3.49,no,no,2.32,DISQUALIFIED as an independent check: below the 5% floor,"consequentialist convergent sanity check, never a gate target"
+incapacitation,consequentialist,descriptive-only,backward,full,947,123,12.99,11.0,15.28,yes,no,12.99,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+rehabilitation,consequentialist,descriptive-only,backward,full,947,34,3.59,2.58,4.98,no,no,3.59,DISQUALIFIED as an independent check: below the 5% floor,"consequentialist convergent sanity check, never a gate target"
+desert,principled,gate-eligible,forward,full,945,92,9.74,8.01,11.79,yes,no,9.74,usable as an independent check for this facet,anchored to the `deserved` scale; half of the E4 pair
+proportionality,principled,descriptive-only,forward,full,945,16,1.69,1.04,2.73,no,no,1.69,DISQUALIFIED as an independent check: below the 5% floor,demoted on ~1% prevalence; its gate numbers are reported anyway
+censure,principled,descriptive-only,forward,full,945,17,1.8,1.13,2.86,no,no,1.8,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+moral_balance,principled,descriptive-only,forward,full,945,6,0.63,0.29,1.38,no,no,0.63,DISQUALIFIED as an independent check: below the 5% floor,no admissible survey anchor exists in this instrument
+revenge,vengeful,gate-eligible,forward,full,945,6,0.63,0.29,1.38,no,no,0.63,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `revenge` scale; the other half of E4
+suffering,vengeful,gate-eligible,forward,full,945,27,2.86,1.97,4.13,no,no,2.86,DISQUALIFIED as an independent check: below the 5% floor,anchored to the `suffering` scale
+deterrence,consequentialist,descriptive-only,forward,full,945,61,6.46,5.06,8.2,yes,no,6.46,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+incapacitation,consequentialist,descriptive-only,forward,full,945,58,6.14,4.78,7.85,yes,yes,6.14,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"
+rehabilitation,consequentialist,descriptive-only,forward,full,945,99,10.48,8.68,12.59,yes,no,10.48,usable as an independent check for this facet,"consequentialist convergent sanity check, never a gate target"

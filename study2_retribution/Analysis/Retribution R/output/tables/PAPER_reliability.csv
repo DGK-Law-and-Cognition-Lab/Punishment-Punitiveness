@@ -1,0 +1,13 @@
+score,k,items,alpha,omega,M,SD
+Desert theory (paper): Retribution_1 to _5,5,"Retribution_1, Retribution_2, Retribution_3, Retribution_4, Retribution_5",0.9131112413280146,0.9184304463920233,5.60253164556962,1.1932553877221868
+"Retribution subscale, all seven (registered, prereg 5.3)",7,"Retribution_1, Retribution_2, Retribution_3, Retribution_4, Retribution_5, Retribution_6, Retribution_7",0.9035919629601904,0.9143133791274783,5.38034960819771,1.1759610382839654
+"Desert (registered, items 1-4), prereg 5.4",4,"Retribution_1, Retribution_2, Retribution_3, Retribution_4",0.8861803502659333,0.8919102711935089,5.540084388185654,1.222145530287033
+"Positive retribution: Retribution_2 and _5 (require, duty)",2,"Retribution_2, Retribution_5",0.8565752239405544,NA,5.867088607594937,1.186759568331937
+"Negative retribution: Retribution_1, _3, _4 (right, restored, deserve)",3,"Retribution_1, Retribution_3, Retribution_4",0.8503436970850893,0.8572518379248406,5.4261603375527425,1.2786425567092692
+"Rationales: Retribution_6 and _7 (debt, unfair advantage)",2,"Retribution_6, Retribution_7",0.6135765625611105,NA,4.824894514767932,1.4319968886760537
+"Revenge (paper, as registered): revenge_1 to _4",4,"revenge_1, revenge_2, revenge_3, revenge_4",0.7380454165956318,0.7631765544576158,4.144251054852321,1.3905269215614124
+"Revenge, Study 1's three items (rescoring): revenge_1 to _3",3,"revenge_1, revenge_2, revenge_3",0.6576828632461639,0.7076885690402068,4.155063291139241,1.430376084799404
+Hostile aggression cluster with three-item revenge (rescoring),5,"hatred, revenge, degradation, suffering, prison violence (each standardized)",0.8419894538862847,0.8459979745456969,NA,NA
+"Hostile aggression cluster (paper, as registered)",5,"hatred, revenge, degradation, suffering, prison violence (each standardized)",0.8563480499631254,0.8601922487307389,NA,NA
+"Punitiveness (six components) (paper): five components and the sentence, each standardized",6,"punish more, parsimony rejected, three strikes, life without parole, death penalty, Sentence1_z",0.8254856163539667,NA,1.3620141114336047e-16,0.7307700618146665
+"Punitiveness (five attitude components) (paper, sentence side): each standardized",5,"punish more, parsimony rejected, three strikes, life without parole, death penalty",0.8202791485279906,NA,1.4551182574860305e-16,0.7627404707868929

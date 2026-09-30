@@ -1,0 +1,233 @@
+"figure","label","value","lower","upper","n"
+"pt_01_endorsement","Mean (1 to 7): Revenge",4.14425105485232,4.05562146486043,4.23288064484421,948
+"pt_01_endorsement","Mean (1 to 7): Desert theory",5.60253164556962,5.52647577485647,5.67858751628277,948
+"pt_01_endorsement","Mean (1 to 7): Just deserts",5.65938818565401,5.59623470809705,5.72254166321096,948
+"pt_01_endorsement","Mean (1 to 7): Severity-deserts",4.96160337552743,4.89508420401823,5.02812254703662,948
+"pt_02_punitiveness","r with punitiveness, whole sample: Revenge",0.676257321292217,0.640149656220578,0.709383882594061,948
+"pt_02_punitiveness","r with punitiveness, whole sample: Desert theory",0.674460496700525,0.638195683393708,0.707738859580773,948
+"pt_02_punitiveness","r with punitiveness, whole sample: Just deserts",0.431973608644299,0.37871863996243,0.482377506920888,948
+"pt_02_punitiveness","r with punitiveness, whole sample: Severity-deserts",0.734120457076956,0.703324180764403,0.762166307438443,948
+"pt_03_parts","r with punitiveness, whole sample: Desert theory",0.674460496700525,0.638195683393708,0.707738859580773,948
+"pt_03_parts","r with punitiveness, whole sample: Proportionality principle",0.0376061903225119,-0.0261277520356189,0.101035647794374,948
+"pt_03_parts","r with punitiveness, whole sample: Severity index",0.587823415530719,0.544532541789734,0.627990658224079,948
+"pt_04_retributivists","r with punitiveness, retributivists: Revenge",0.570317276223859,0.497382910086348,0.635246260644592,371
+"pt_04_retributivists","r with punitiveness, retributivists: Desert theory",0.544755759381338,0.468949880577603,0.612594403847971,371
+"pt_04_retributivists","r with punitiveness, retributivists: Just deserts",0.156644635377553,0.0557171109645867,0.254403322477102,371
+"pt_04_retributivists","r with punitiveness, retributivists: Severity-deserts",0.557515671694477,0.483123594384753,0.62391580563091,371
+"pt_05_agency","Agency as blameworthiness: Essentialism about offenders (d, 371 vs 453)",0.592076353048885,0.45173088665503,0.732064954261147,824
+"pt_05_agency","Agency as blameworthiness: Crime is a choice (d, 371 vs 453)",0.466571657540999,0.328014938514439,0.604849109297811,824
+"pt_05_agency","Agency as blameworthiness: Rejecting society’s responsibility (d, 371 vs 453)",0.496988008860697,0.356890044023454,0.636771550316614,824
+"pt_05_agency","Agency as benevolence: Hatred of offenders (d, 371 vs 453)",0.47641863380617,0.33721607740023,0.615330407821314,824
+"pt_05_agency","Agency as benevolence: Degradation of prisoners (d, 371 vs 453)",0.364806325633265,0.225180738248292,0.504187689579225,824
+"pt_05_agency","Agency as benevolence: Infliction of suffering (d, 371 vs 453)",0.418637600982558,0.279536544301982,0.557476730247565,824
+"pt_05_agency","Agency as benevolence: Harsh prison conditions (d, 371 vs 453)",0.519418443507545,0.378885690817731,0.659618879329675,824
+"pt_06_four_groupings","Ranking: Hostile aggression cluster (d, 371 vs 577)",0.641094865192046,0.506855413451114,0.774952176784528,948
+"pt_06_four_groupings","Ranking: Hatred of offenders (d, 371 vs 577)",0.56567383725984,0.432703907759848,0.69830880623424,948
+"pt_06_four_groupings","Ranking: Revenge (d, 371 vs 577)",0.555229127434384,0.422600615783213,0.687531641331926,948
+"pt_06_four_groupings","Ranking: Degradation of prisoners (d, 371 vs 577)",0.433522435544972,0.298736910417728,0.56800538074158,948
+"pt_06_four_groupings","Ranking: Infliction of suffering (d, 371 vs 577)",0.515589132769276,0.382178861287754,0.648678858301007,948
+"pt_06_four_groupings","Ranking: Tolerance of prison violence (d, 371 vs 577)",0.431252910280581,0.297443656716034,0.564775288336969,948
+"pt_06_four_groupings","Ranking: Anger (d, 371 vs 577)",0.3862803843748,0.254620056606466,0.517703924183818,948
+"pt_06_four_groupings","Ranking: Social exclusion (d, 371 vs 577)",0.528853434159911,0.396527930824734,0.660867807870436,948
+"pt_06_four_groupings","Ranking: Harsh prison conditions (d, 371 vs 577)",0.593024362083877,0.457441603174027,0.728219572965018,948
+"pt_06_four_groupings","Ranking: Perceived crime rates (d, 371 vs 577)",0.431459878784391,0.300537079105574,0.562131713239206,948
+"pt_06_four_groupings","Ranking: Fear of crime (d, 371 vs 577)",0.123738357806322,-0.00672131269502135,0.254120405669573,948
+"pt_06_four_groupings","Ranking: First sentence (d, 371 vs 577)",0.509764448863787,0.379289765364192,0.63995743818285,948
+"pt_06_four_groupings","Ranking: Painful death for the shark (d, 371 vs 577)",0.196676979116492,0.0634497663885478,0.329763434173455,948
+"pt_06_four_groupings","Ranking: Essentialism about offenders (d, 371 vs 577)",0.6879035551582,0.55391333048332,0.82150002239146,948
+"pt_06_four_groupings","Ranking: Crime is a choice (d, 371 vs 577)",0.573726049216771,0.442033730779028,0.705096942009155,948
+"pt_06_four_groupings","Ranking: Leaning toward the prosecution (d, 371 vs 577)",0.470489487169149,0.33906376994609,0.601640633673038,948
+"pt_06_four_groupings","Ranking: Rejecting society’s responsibility (d, 371 vs 577)",0.60659691303089,0.471020972023122,0.741780377389187,948
+"pt_06_four_groupings","Ranking: Due-process permissiveness (d, 371 vs 577)",0.428609356386975,0.296377367605282,0.560576825514532,948
+"pt_06_four_groupings","Ranking: Convicting on uncertain evidence (d, 371 vs 577)",0.321388015804417,0.190434410277778,0.452145891406686,948
+"pt_06_four_groupings","Ranking: Punitiveness (d, 371 vs 577)",0.797517569387306,0.663938194682614,0.9306767112717,948
+"pt_06_four_groupings","Median split: Hostile aggression cluster (d, 470 vs 478)",0.308667411446298,0.180425996748774,0.436744198403616,948
+"pt_06_four_groupings","Median split: Hatred of offenders (d, 470 vs 478)",0.257179805938771,0.129213610585676,0.385009635350353,948
+"pt_06_four_groupings","Median split: Revenge (d, 470 vs 478)",0.264380637237585,0.136372512624449,0.392248162971832,948
+"pt_06_four_groupings","Median split: Degradation of prisoners (d, 470 vs 478)",0.247617397972071,0.119679810932098,0.375423043615774,948
+"pt_06_four_groupings","Median split: Infliction of suffering (d, 470 vs 478)",0.230844989201336,0.103005043822105,0.35856290985988,948
+"pt_06_four_groupings","Median split: Tolerance of prison violence (d, 470 vs 478)",0.224822014469475,0.0969686387045979,0.352555020717644,948
+"pt_06_four_groupings","Median split: Anger (d, 470 vs 478)",0.132584120915751,0.00506961835707592,0.260028486437593,948
+"pt_06_four_groupings","Median split: Social exclusion (d, 470 vs 478)",0.197738202874066,0.0700056376472933,0.325365608416097,948
+"pt_06_four_groupings","Median split: Harsh prison conditions (d, 470 vs 478)",0.187880633319629,0.0601313505208571,0.315527702681658,948
+"pt_06_four_groupings","Median split: Perceived crime rates (d, 470 vs 478)",0.0420836215759975,-0.0853025022086118,0.169447307915665,948
+"pt_06_four_groupings","Median split: Fear of crime (d, 470 vs 478)",0.00809300229003475,-0.119211271403853,0.135393000096549,948
+"pt_06_four_groupings","Median split: First sentence (d, 470 vs 478)",0.044366017171757,-0.0829796917184486,0.171688272048228,948
+"pt_06_four_groupings","Median split: Painful death for the shark (d, 470 vs 478)",-0.0445519052970546,-0.171868170890798,0.0827878934136581,948
+"pt_06_four_groupings","Median split: Essentialism about offenders (d, 470 vs 478)",0.224213117282581,0.0963593268437958,0.351946723680881,948
+"pt_06_four_groupings","Median split: Crime is a choice (d, 470 vs 478)",0.149007330015583,0.0214446447777072,0.276491114897957,948
+"pt_06_four_groupings","Median split: Leaning toward the prosecution (d, 470 vs 478)",0.20386250681197,0.0761684905422928,0.331449315874527,948
+"pt_06_four_groupings","Median split: Rejecting society’s responsibility (d, 470 vs 478)",0.226867805425592,0.0989850263536281,0.354627991793878,948
+"pt_06_four_groupings","Median split: Due-process permissiveness (d, 470 vs 478)",0.114162110588146,-0.0133345146125979,0.241597924268184,948
+"pt_06_four_groupings","Median split: Convicting on uncertain evidence (d, 470 vs 478)",-0.00326924138180241,-0.130562955287317,0.124026198675513,948
+"pt_06_four_groupings","Median split: Punitiveness (d, 470 vs 478)",0.235824322552112,0.107929430460113,0.363593161360104,948
+"pt_06_four_groupings","Top vs bottom third: Hostile aggression cluster (d, 314 vs 317)",0.421722270120894,0.263590512607967,0.579508080915623,631
+"pt_06_four_groupings","Top vs bottom third: Hatred of offenders (d, 314 vs 317)",0.367238741887188,0.209612422487981,0.524567722005078,631
+"pt_06_four_groupings","Top vs bottom third: Revenge (d, 314 vs 317)",0.422677221641425,0.264563820755804,0.580447155513954,631
+"pt_06_four_groupings","Top vs bottom third: Degradation of prisoners (d, 314 vs 317)",0.281803225302163,0.124752874732632,0.438622008055037,631
+"pt_06_four_groupings","Top vs bottom third: Infliction of suffering (d, 314 vs 317)",0.350792399314752,0.193327471438843,0.50797694348798,631
+"pt_06_four_groupings","Top vs bottom third: Tolerance of prison violence (d, 314 vs 317)",0.254706477491245,0.0978347500269803,0.411370892458402,631
+"pt_06_four_groupings","Top vs bottom third: Anger (d, 314 vs 317)",0.253724064847012,0.0969018287573262,0.410344079891805,631
+"pt_06_four_groupings","Top vs bottom third: Social exclusion (d, 314 vs 317)",0.332143499960986,0.174774474996669,0.489242436379968,631
+"pt_06_four_groupings","Top vs bottom third: Harsh prison conditions (d, 314 vs 317)",0.253892109724566,0.0969878197761529,0.410585192317009,631
+"pt_06_four_groupings","Top vs bottom third: Perceived crime rates (d, 314 vs 317)",0.137146601535381,-0.019190269890979,0.293372991634396,631
+"pt_06_four_groupings","Top vs bottom third: Fear of crime (d, 314 vs 317)",0.0795882889336571,-0.0765766974799746,0.235689834340601,631
+"pt_06_four_groupings","Top vs bottom third: First sentence (d, 314 vs 317)",0.157005576879861,0.000651453616888405,0.3132352863004,631
+"pt_06_four_groupings","Top vs bottom third: Painful death for the shark (d, 314 vs 317)",-0.109740745794589,-0.265852645430906,0.0464583023583898,631
+"pt_06_four_groupings","Top vs bottom third: Essentialism about offenders (d, 314 vs 317)",0.394016096736358,0.236129740210364,0.551578836665815,631
+"pt_06_four_groupings","Top vs bottom third: Crime is a choice (d, 314 vs 317)",0.317834742434736,0.160644209053078,0.474774364445573,631
+"pt_06_four_groupings","Top vs bottom third: Leaning toward the prosecution (d, 314 vs 317)",0.337753489745679,0.180469439954725,0.494772540659776,631
+"pt_06_four_groupings","Top vs bottom third: Rejecting society’s responsibility (d, 314 vs 317)",0.316059541193032,0.15870659574967,0.473142501299025,631
+"pt_06_four_groupings","Top vs bottom third: Due-process permissiveness (d, 314 vs 317)",0.136616105397105,-0.0197232759464417,0.292845163791947,631
+"pt_06_four_groupings","Top vs bottom third: Convicting on uncertain evidence (d, 314 vs 317)",0.0153287506165496,-0.140747093872557,0.171392382067876,631
+"pt_06_four_groupings","Top vs bottom third: Punitiveness (d, 314 vs 317)",0.356490078698321,0.198947433077974,0.513743980297206,631
+"pt_06_four_groupings","Sentencing ratio: Hostile aggression cluster (d, 514 vs 433)",0.496706250959675,0.367519169095497,0.625637767616701,947
+"pt_06_four_groupings","Sentencing ratio: Hatred of offenders (d, 514 vs 433)",0.39983844331991,0.271241631169353,0.528227046276886,947
+"pt_06_four_groupings","Sentencing ratio: Revenge (d, 514 vs 433)",0.431323663171058,0.302247277548601,0.560174455806182,947
+"pt_06_four_groupings","Sentencing ratio: Degradation of prisoners (d, 514 vs 433)",0.335888080491518,0.207968398246766,0.463632425937885,947
+"pt_06_four_groupings","Sentencing ratio: Infliction of suffering (d, 514 vs 433)",0.377834034092941,0.249158548417055,0.506311191389283,947
+"pt_06_four_groupings","Sentencing ratio: Tolerance of prison violence (d, 514 vs 433)",0.412106546158793,0.2838766936377,0.540122559434522,947
+"pt_06_four_groupings","Sentencing ratio: Anger (d, 514 vs 433)",0.274276484620232,0.146216859033712,0.402191214897122,947
+"pt_06_four_groupings","Sentencing ratio: Social exclusion (d, 514 vs 433)",0.302801153016394,0.174572876521978,0.430869668055595,947
+"pt_06_four_groupings","Sentencing ratio: Harsh prison conditions (d, 514 vs 433)",0.435272475694673,0.306667459760905,0.563652279839623,947
+"pt_06_four_groupings","Sentencing ratio: Perceived crime rates (d, 514 vs 433)",0.270612752303085,0.141997852002197,0.39908071411348,947
+"pt_06_four_groupings","Sentencing ratio: Fear of crime (d, 514 vs 433)",0.0274300858771845,-0.10047718935733,0.155322388532659,947
+"pt_06_four_groupings","Sentencing ratio: Painful death for the shark (d, 514 vs 433)",-0.0563111660827751,-0.184078032715353,0.071486200792058,947
+"pt_06_four_groupings","Sentencing ratio: Essentialism about offenders (d, 514 vs 433)",0.476712041123316,0.347368386659925,0.605808153463265,947
+"pt_06_four_groupings","Sentencing ratio: Crime is a choice (d, 514 vs 433)",0.456287640644954,0.326786656294624,0.585548196570395,947
+"pt_06_four_groupings","Sentencing ratio: Leaning toward the prosecution (d, 514 vs 433)",0.445554264940762,0.31597130152859,0.574900240593804,947
+"pt_06_four_groupings","Sentencing ratio: Rejecting society’s responsibility (d, 514 vs 433)",0.43978302406073,0.311766638187975,0.567569425373701,947
+"pt_06_four_groupings","Sentencing ratio: Due-process permissiveness (d, 514 vs 433)",0.27688668833107,0.148650332717124,0.404975933850458,947
+"pt_06_four_groupings","Sentencing ratio: Convicting on uncertain evidence (d, 514 vs 433)",0.151730637924492,0.0237991350019468,0.279580407425319,947
+"pt_06_four_groupings","Sentencing ratio: Punitiveness without the sentence (d, 514 vs 433)",0.610771001033299,0.479803773934663,0.741420821774779,947
+"pt_06_four_groupings","Ranking: median absolute d (dashed line)",0.512676790816532,NA,NA,20
+"pt_06_four_groupings","Median split: median absolute d (dashed line)",0.200800354843018,NA,NA,20
+"pt_06_four_groupings","Top vs bottom third: median absolute d (dashed line)",0.298931383247597,NA,NA,20
+"pt_06_four_groupings","Sentencing ratio: median absolute d (dashed line)",0.39983844331991,NA,NA,19
+"pt_06_four_groupings","Ranking: median 95% CI half-width of d (caption, rounded to 0.13)",0.132633981005776,NA,NA,20
+"pt_06_four_groupings","Median split: median 95% CI half-width of d (caption, rounded to 0.13)",0.127689080732401,NA,NA,20
+"pt_06_four_groupings","Top vs bottom third: median 95% CI half-width of d (caption, rounded to 0.16)",0.156999822178725,NA,NA,20
+"pt_06_four_groupings","Sentencing ratio: median 95% CI half-width of d (caption, rounded to 0.13)",0.128492410039359,NA,NA,19
+"pt_07_groupings_summary","Ranking: median absolute d",0.512676790816532,NA,NA,20
+"pt_07_groupings_summary","Median split: median absolute d",0.200800354843018,NA,NA,20
+"pt_07_groupings_summary","Top vs bottom third: median absolute d",0.298931383247597,NA,NA,20
+"pt_07_groupings_summary","Sentencing ratio: median absolute d",0.39983844331991,NA,NA,19
+"pt_07_groupings_summary","Ranking: contrasts at one-sided p < .05",20,NA,NA,20
+"pt_07_groupings_summary","Median split: contrasts at one-sided p < .05",15,NA,NA,20
+"pt_07_groupings_summary","Top vs bottom third: contrasts at one-sided p < .05",17,NA,NA,20
+"pt_07_groupings_summary","Sentencing ratio: contrasts at one-sided p < .05",17,NA,NA,19
+"pt_08_endorsing_punishing","Agree (mean above 4), % of all, exact 95% CI: Revenge (four items)",50.42194092827,47.1893846466887,53.6518686532695,948
+"pt_08_endorsing_punishing","Agree (mean above 4), % of all, exact 95% CI: Desert theory (five items)",89.4514767932489,87.319299066602,91.334656059621,948
+"pt_08_endorsing_punishing","Agree (mean above 4), % of all, exact 95% CI: Proportionality principle",83.1223628691983,80.5833656662831,85.4535671834862,948
+"pt_08_endorsing_punishing","r with punitiveness, whole sample: Revenge (four items)",0.676257321292217,0.640149656220578,0.709383882594061,948
+"pt_08_endorsing_punishing","r with punitiveness, whole sample: Desert theory (five items)",0.674460496700525,0.638195683393708,0.707738859580773,948
+"pt_08_endorsing_punishing","r with punitiveness, whole sample: Proportionality principle",0.0376061903225119,-0.0261277520356189,0.101035647794374,948
+"pt_09_revenge_desert_both","r with punitiveness, whole sample: Revenge",0.676257321292217,0.640149656220578,0.709383882594061,948
+"pt_09_revenge_desert_both","r with punitiveness, whole sample: Desert theory",0.674460496700525,0.638195683393708,0.707738859580773,948
+"pt_09_revenge_desert_both","r with punitiveness, whole sample: Just deserts",0.431973608644299,0.37871863996243,0.482377506920888,948
+"pt_09_revenge_desert_both","r with punitiveness, whole sample: Severity-deserts",0.734120457076956,0.703324180764403,0.762166307438443,948
+"pt_09_revenge_desert_both","r with punitiveness, retributivists: Revenge",0.570317276223859,0.497382910086348,0.635246260644592,371
+"pt_09_revenge_desert_both","r with punitiveness, retributivists: Desert theory",0.544755759381338,0.468949880577603,0.612594403847971,371
+"pt_09_revenge_desert_both","r with punitiveness, retributivists: Just deserts",0.156644635377553,0.0557171109645867,0.254403322477102,371
+"pt_09_revenge_desert_both","r with punitiveness, retributivists: Severity-deserts",0.557515671694477,0.483123594384753,0.62391580563091,371
+"pt_10_agency_shares","Agency as blameworthiness: Essentialism about offenders, % endorsing (mean > 4), retributivists, exact 95% CI",53.3692722371968,48.1486950875015,58.5356681075002,371
+"pt_10_agency_shares","Agency as blameworthiness: Crime is a choice, % endorsing (mean > 4), retributivists, exact 95% CI",74.6630727762803,69.9162346130441,79.0113947306625,371
+"pt_10_agency_shares","Agency as blameworthiness: Rejecting society’s responsibility, % endorsing (mean > 4), retributivists, exact 95% CI",39.8921832884097,34.87286792582,45.0741426400098,371
+"pt_10_agency_shares","Agency as benevolence: Hatred of offenders, % endorsing (mean > 4), retributivists, exact 95% CI",56.3342318059299,51.1190342869836,61.4475490082923,371
+"pt_10_agency_shares","Agency as benevolence: Degradation of prisoners, % endorsing (mean > 4), retributivists, exact 95% CI",39.622641509434,34.6111992174858,44.8010714005111,371
+"pt_10_agency_shares","Agency as benevolence: Infliction of suffering, % endorsing (mean > 4), retributivists, exact 95% CI",46.6307277628032,41.4643318924999,51.8513049124984,371
+"pt_10_agency_shares","Agency as benevolence: Harsh prison conditions, % endorsing (mean > 4), retributivists, exact 95% CI",33.9622641509434,29.1534611968756,39.0294218474885,371
+"pt_10_agency_shares","Agency as blameworthiness: Essentialism about offenders, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",33.3333333333333,29.0031121135881,37.8829048279592,453
+"pt_10_agency_shares","Agency as blameworthiness: Crime is a choice, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",57.3951434878587,52.6951621261415,61.9979408809124,453
+"pt_10_agency_shares","Agency as blameworthiness: Rejecting society’s responsibility, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",21.8543046357616,18.1327291501443,25.9479469666205,453
+"pt_10_agency_shares","Agency as benevolence: Hatred of offenders, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",36.2030905077263,31.7698438471943,40.8178089460288,453
+"pt_10_agency_shares","Agency as benevolence: Degradation of prisoners, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",23.841059602649,19.9885236811523,28.0390266503339,453
+"pt_10_agency_shares","Agency as benevolence: Infliction of suffering, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",32.6710816777042,28.3671568162469,37.2031094662571,453
+"pt_10_agency_shares","Agency as benevolence: Harsh prison conditions, % endorsing (mean > 4), deterrence or incapacitation first, exact 95% CI",16.5562913907285,13.2509666224273,20.3054775255366,453
+"pt_10_agency_shares","Agency as blameworthiness: Essentialism about offenders, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",20.0359389038634,13.2688871609584,26.5682384911477,824
+"pt_10_agency_shares","Agency as blameworthiness: Crime is a choice, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",17.2679292884216,10.8065198922434,23.4662315174413,824
+"pt_10_agency_shares","Agency as blameworthiness: Rejecting society’s responsibility, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",18.0378786526481,11.7261737985824,24.2263838751533,824
+"pt_10_agency_shares","Agency as benevolence: Hatred of offenders, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",20.1311412982037,13.3237392287853,26.6879017111956,824
+"pt_10_agency_shares","Agency as benevolence: Degradation of prisoners, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",15.781581906785,9.41193316566715,22.0454352684109,824
+"pt_10_agency_shares","Agency as benevolence: Infliction of suffering, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",13.959646085099,7.25508315216953,20.5277895209422,824
+"pt_10_agency_shares","Agency as benevolence: Harsh prison conditions, difference in percentage points (retributivists minus deterrence/incapacitation first), Newcombe hybrid score 95% CI",17.4059727602149,11.4763630434248,23.2768337632236,824
+"pt_10_agency_shares","Agency as blameworthiness: Essentialism about offenders, difference, two-sided p (two-sample test of proportions, no continuity correction)",6.99892625461015e-09,NA,NA,824
+"pt_10_agency_shares","Agency as blameworthiness: Crime is a choice, difference, two-sided p (two-sample test of proportions, no continuity correction)",2.26439376687475e-07,NA,NA,824
+"pt_10_agency_shares","Agency as blameworthiness: Rejecting society’s responsibility, difference, two-sided p (two-sample test of proportions, no continuity correction)",1.879417841116e-08,NA,NA,824
+"pt_10_agency_shares","Agency as benevolence: Hatred of offenders, difference, two-sided p (two-sample test of proportions, no continuity correction)",7.65083282850632e-09,NA,NA,824
+"pt_10_agency_shares","Agency as benevolence: Degradation of prisoners, difference, two-sided p (two-sample test of proportions, no continuity correction)",1.08503502444369e-06,NA,NA,824
+"pt_10_agency_shares","Agency as benevolence: Infliction of suffering, difference, two-sided p (two-sample test of proportions, no continuity correction)",4.34637576072198e-05,NA,NA,824
+"pt_10_agency_shares","Agency as benevolence: Harsh prison conditions, difference, two-sided p (two-sample test of proportions, no continuity correction)",7.10748356159709e-09,NA,NA,824
+"pt_11_three_outcomes","r with Punitiveness (six components): Revenge (four items)",0.676257321292217,0.640149656220578,0.709383882594061,948
+"pt_11_three_outcomes","r with Punitiveness (six components): Revenge (Study 1’s three items)",0.548997735465701,0.502905644497185,0.591976321374497,948
+"pt_11_three_outcomes","r with Punitiveness (six components): Desert theory",0.674460496700525,0.638195683393708,0.707738859580773,948
+"pt_11_three_outcomes","r with Punitiveness (six components): Just deserts",0.431973608644299,0.37871863996243,0.482377506920888,948
+"pt_11_three_outcomes","r with Punitiveness (six components): Severity-deserts",0.734120457076956,0.703324180764403,0.762166307438443,948
+"pt_11_three_outcomes","r with Policy and sentence only (four components): Revenge (four items)",0.628219740640589,0.588070974187787,0.665280168765257,948
+"pt_11_three_outcomes","r with Policy and sentence only (four components): Revenge (Study 1’s three items)",0.521330126135614,0.473371756802939,0.566206942049013,948
+"pt_11_three_outcomes","r with Policy and sentence only (four components): Desert theory",0.620639760588733,0.579883635759781,0.658297216669644,948
+"pt_11_three_outcomes","r with Policy and sentence only (four components): Just deserts",0.420849615901341,0.367012736095543,0.471876556770492,948
+"pt_11_three_outcomes","r with Policy and sentence only (four components): Severity-deserts",0.659055603965434,0.62146264787124,0.693620597428781,948
+"pt_11_three_outcomes","r with First sentence only: Revenge (four items)",0.325885391498682,0.26777012619168,0.381637948127929,948
+"pt_11_three_outcomes","r with First sentence only: Revenge (Study 1’s three items)",0.268109160574672,0.207988323320346,0.326211818663872,948
+"pt_11_three_outcomes","r with First sentence only: Desert theory",0.389250244288678,0.333853112349336,0.441967849697227,948
+"pt_11_three_outcomes","r with First sentence only: Just deserts",0.299268067328896,0.240173140084615,0.356153019865803,948
+"pt_11_three_outcomes","r with First sentence only: Severity-deserts",0.41914783975238,0.365223440258363,0.47026881744051,948
+"pt_12_desert_limits_both","r with desert theory, whole sample: Proportionality principle",0.199396051357035,0.137469964478507,0.259769445793693,948
+"pt_12_desert_limits_both","r with desert theory, whole sample: Severity index",0.474379468284707,0.423499637938125,0.522275823613771,948
+"pt_12_desert_limits_both","r with desert theory, retributivists: Proportionality principle",0.0775226592190462,-0.024486770375759,0.177934366831977,371
+"pt_12_desert_limits_both","r with desert theory, retributivists: Severity index",0.27718597789467,0.180462848171051,0.368599512745709,371
+"pt_12_desert_limits_both","Difference, r(desert theory, severity index) minus r(desert theory, principle), whole sample (Zou 95% CI)",0.274983416927671,0.192967831908611,0.35625324943719,948
+"pt_12_desert_limits_both","Difference, r(desert theory, severity index) minus r(desert theory, principle), retributivists (Zou 95% CI)",0.199663318675624,0.0444532748752624,0.352074660228635,371
+"pt_12_desert_limits_both","Difference, whole sample, two-sided p (Steiger Z)",6.49616021584278e-11,NA,NA,948
+"pt_12_desert_limits_both","Difference, retributivists, two-sided p (Steiger Z)",0.0118414604491421,NA,NA,371
+"pt_12_desert_limits_both","SD, whole sample: Desert theory",1.19325538772219,NA,NA,948
+"pt_12_desert_limits_both","SD, whole sample: Proportionality principle",1.36197796688666,NA,NA,948
+"pt_12_desert_limits_both","SD, whole sample: Severity index",1.23761649177365,NA,NA,948
+"pt_12_desert_limits_both","SD, retributivists: Desert theory",0.827730574161699,NA,NA,371
+"pt_12_desert_limits_both","SD, retributivists: Proportionality principle",1.36718400486342,NA,NA,371
+"pt_12_desert_limits_both","SD, retributivists: Severity index",1.12631426028593,NA,NA,371
+"pt_13_sentences_groups","Mean (years, t 95% CI), first sentence, retributivists",39.9164420485175,38.7735540422619,41.0593300547731,371
+"pt_13_sentences_groups","Mean (years, t 95% CI), first sentence, all other participants",33.790294627383,32.716331697175,34.864257557591,577
+"pt_13_sentences_groups","Mean (years, t 95% CI), second sentence, retributivists",34.4070080862534,32.7912195620943,36.0227966104124,371
+"pt_13_sentences_groups","Mean (years, t 95% CI), second sentence, all other participants",26.2582322357019,24.9108873179779,27.6055771534259,577
+"pt_13_sentences_groups","Median (years), first sentence, retributivists",45,NA,NA,371
+"pt_13_sentences_groups","Median (years), first sentence, all other participants",30,NA,NA,577
+"pt_13_sentences_groups","Median (years), second sentence, retributivists",35,NA,NA,371
+"pt_13_sentences_groups","Median (years), second sentence, all other participants",25,NA,NA,577
+"pt_13_sentences_groups","SD (years), first sentence, retributivists",11.1948841722946,NA,NA,371
+"pt_13_sentences_groups","SD (years), first sentence, all other participants",13.134561705583,NA,NA,577
+"pt_13_sentences_groups","SD (years), second sentence, retributivists",15.8270672855743,NA,NA,371
+"pt_13_sentences_groups","SD (years), second sentence, all other participants",16.4780221577317,NA,NA,577
+"pt_13_sentences_groups","Share choosing 50 years (%, exact 95% CI), first sentence, retributivists",48.7870619946092,43.5933280624667,54.0002999188991,371
+"pt_13_sentences_groups","Share choosing 50 years (%, exact 95% CI), first sentence, all other participants",31.0225303292894,27.2668746763733,34.9738052035031,577
+"pt_13_sentences_groups","Share choosing 50 years (%, exact 95% CI), second sentence, retributivists",40.9703504043127,35.9211032571495,46.1648720856126,371
+"pt_13_sentences_groups","Share choosing 50 years (%, exact 95% CI), second sentence, all other participants",23.9168110918544,20.490564884701,27.6125726440767,577
+"pt_13_sentences_groups","Share who reduced the sentence (%, exact 95% CI; first sentence above 0), retributivists",34.2318059299191,29.4116858590641,39.3059219583971,371
+"pt_13_sentences_groups","Share who kept the sentence (%, exact 95% CI; first sentence above 0), retributivists",61.7250673854447,56.5666448540617,66.694775947618,371
+"pt_13_sentences_groups","Share who raised the sentence (%, exact 95% CI; first sentence above 0), retributivists",4.04312668463612,2.28027222110412,6.58091887878995,371
+"pt_13_sentences_groups","Share who reduced the sentence (%, exact 95% CI; first sentence above 0), all other participants",53.125,48.9557874193175,57.2620113519094,576
+"pt_13_sentences_groups","Share who kept the sentence (%, exact 95% CI; first sentence above 0), all other participants",43.4027777777778,39.3112580777487,47.5622903016365,576
+"pt_13_sentences_groups","Share who raised the sentence (%, exact 95% CI; first sentence above 0), all other participants",3.47222222222222,2.1335776067494,5.31178276870201,576
+"pt_13_sentences_groups","H14 (registered), Cohen's d, first sentence standardized within vignette, retributivists vs all others",0.509764448863787,0.379289765364192,0.63995743818285,948
+"pt_13_sentences_groups","H14 (registered), Cohen's d, first sentence standardized within vignette, retributivists vs deterrence- or incapacitation-first",0.407970191168919,0.270243077959291,0.545453535291715,824
+"pt_14_sentences_by_goal","Mean first sentence (years, t 95% CI), ranked first: Retribution",39.9164420485175,38.7735540422619,41.0593300547731,371
+"pt_14_sentences_by_goal","Mean first sentence (years, t 95% CI), ranked first: Incapacitation",35.5187969924812,33.986447581268,37.0511464036944,266
+"pt_14_sentences_by_goal","Mean first sentence (years, t 95% CI), ranked first: Deterrence",34.4652406417112,32.5336367556121,36.3968445278104,187
+"pt_14_sentences_by_goal","Mean first sentence (years, t 95% CI), ranked first: Rehabilitation",29.0645161290323,26.8159401098385,31.3130921482261,124
+"pt_14_sentences_by_goal","Median first sentence (years), ranked first: Retribution",45,NA,NA,371
+"pt_14_sentences_by_goal","Median first sentence (years), ranked first: Incapacitation",35,NA,NA,266
+"pt_14_sentences_by_goal","Median first sentence (years), ranked first: Deterrence",30,NA,NA,187
+"pt_14_sentences_by_goal","Median first sentence (years), ranked first: Rehabilitation",25.5,NA,NA,124
+"pt_14_sentences_by_goal","SD of first sentence (years), ranked first: Retribution",11.1948841722946,NA,NA,371
+"pt_14_sentences_by_goal","SD of first sentence (years), ranked first: Incapacitation",12.6929494639537,NA,NA,266
+"pt_14_sentences_by_goal","SD of first sentence (years), ranked first: Deterrence",13.3892357792971,NA,NA,187
+"pt_14_sentences_by_goal","SD of first sentence (years), ranked first: Rehabilitation",12.6495875028243,NA,NA,124
+"pt_14_sentences_by_goal","Share choosing 50 years (%, exact 95% CI), ranked first: Retribution",48.7870619946092,43.5933280624667,54.0002999188991,371
+"pt_14_sentences_by_goal","Share choosing 50 years (%, exact 95% CI), ranked first: Incapacitation",34.9624060150376,29.2402962476569,41.0238656708179,266
+"pt_14_sentences_by_goal","Share choosing 50 years (%, exact 95% CI), ranked first: Deterrence",33.1550802139037,26.4569023644436,40.3971938501124,187
+"pt_14_sentences_by_goal","Share choosing 50 years (%, exact 95% CI), ranked first: Rehabilitation",19.3548387096774,12.8123096903765,27.4157303788032,124
+"pt_14_sentences_by_goal","Mean first sentence standardized within vignette (Table S20), ranked first: Retribution",0.296067910260966,NA,NA,371
+"pt_14_sentences_by_goal","Mean first sentence standardized within vignette (Table S20), ranked first: Incapacitation",-0.0574760557905431,NA,NA,266
+"pt_14_sentences_by_goal","Mean first sentence standardized within vignette (Table S20), ranked first: Deterrence",-0.140270270993106,NA,NA,187
+"pt_14_sentences_by_goal","Mean first sentence standardized within vignette (Table S20), ranked first: Rehabilitation",-0.550984057990509,NA,NA,124

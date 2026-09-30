@@ -1,0 +1,2 @@
+comparison,r_jk,r_jh,r_kh,n,z,p,diff,diff_lower,diff_upper,alternative
+"r(punitiveness, hostile aggression) > r(punitiveness, crime concerns)",0.7489455235430865,0.42669557717593154,0.3731321390101928,948,12.513890862176815,0,0.322249946367155,0.2693959555566473,0.3766988438467126,greater

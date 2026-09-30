@@ -1,0 +1,4 @@
+group,rule,n,pct_of_rated
+Reduced the sentence,ratio < 1.00,433,45.7
+No reduction,ratio = 1.00,479,50.6
+Increased the sentence,ratio > 1.00,35,3.7

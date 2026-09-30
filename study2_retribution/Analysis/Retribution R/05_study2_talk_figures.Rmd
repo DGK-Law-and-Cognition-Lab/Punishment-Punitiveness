@@ -1,0 +1,875 @@
+---
+title: "Study 2 on its own: figures for talks"
+subtitle: "Retribution study, N = 948"
+author: "David G. Kamper"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: false
+---
+
+# What this document does
+
+The paper's figures either show Study 1 alone or set the two studies side by
+side. This document draws figures from **Study 2 alone**, one per slide, for
+presenting the study in a talk. It covers the replication results (Part 1 of
+Study 2's Results) and the results on what people mean by retribution (Part 2).
+
+**Design.** Every slide is 16:9, in grayscale, with a short centered title.
+Distributions are shown as violin plots (the shape of everyone's answers, with
+each participant as a jittered point and the mean and its 95% confidence
+interval on top); correlations, shares, and
+counts are shown as bar charts. The takeaway of each slide is left to the
+speaker.
+
+**Reads.** Study 2's scored data and the tables `01_main_analysis.Rmd`
+exported. Nothing here changes the analysis.
+
+**Computes.** Only what a figure needs and the analysis did not export in the
+form a figure needs: answer distributions, a few confidence intervals, and the
+comparison of hostility and crime concerns on each separate part of
+punitiveness, using the registered clusters. Every number that also exists in
+the analysis of record is checked against it by a guard, and the knit stops if
+any guard fails.
+
+**Writes.** Thirteen figures, each as PNG (for slides) and PDF (for print), to
+`output/figures/study2_talk/`, with a copy of each PNG in
+`Docs/Writing/figures/study2_talk/`. One table,
+`output/tables/study2_talk_figure_values.csv`, lists every value each figure
+plots, so a speaker can quote any number on a slide from one place.
+
+**Run order.** Knit `01_main_analysis.Rmd` first. This document reads its
+exports and stops if any is missing.
+
+```{r setup, include = FALSE}
+# === SETUP ===
+# echo = TRUE so every computation is visible in the knitted report, as in the
+# other documents in this folder. message and warning are silenced only for
+# package start-up chatter. Everything that matters is a stopifnot() guard or a
+# same() guard, which halts the knit, so nothing depends on a warning being seen.
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.align = "center")
+```
+
+# 1. Paths, packages, and inputs
+
+```{r paths}
+# === PATHS AND INPUT CHECKS ===
+# WHAT THIS CHUNK DOES: names every input and output, loads the packages, reads
+# the scored data, and stops if any export the figures need is missing.
+#
+# PATHS ARE RELATIVE to this document's folder, like the other documents here.
+S2_TABLES   <- file.path("output", "tables")
+S2_DATA     <- file.path("data", "cleaned", "retribution_scored.rds")
+OUT_FIGURES <- file.path("output", "figures", "study2_talk")
+OUT_TABLES  <- file.path("output", "tables")
+# A copy of every PNG goes to the manuscript's figure folder, beside the paper's
+# own figures, so the slides and the paper draw on the same files.
+DOCS_FIG    <- file.path("..", "..", "Docs", "Writing", "figures", "study2_talk")
+dir.create(OUT_FIGURES, recursive = TRUE, showWarnings = FALSE)
+dir.create(DOCS_FIG, recursive = TRUE, showWarnings = FALSE)
+# CLEAR THIS DOCUMENT'S OLD SLIDES FIRST. Every file named s2_*.png or s2_*.pdf
+# in these two folders is written by this document and nothing else. Removing
+# them before drawing means a slide dropped or renamed in a later version cannot
+# linger beside the current set and be mistaken for part of it.
+unlink(list.files(OUT_FIGURES, pattern = "^s2_.*\\.(png|pdf)$", full.names = TRUE))
+unlink(list.files(DOCS_FIG, pattern = "^s2_.*\\.png$", full.names = TRUE))
+
+# Every export read below. A missing file means 01_main_analysis.Rmd has not
+# been knitted since the section that writes it was added; knit it first.
+S2_NEEDED <- c("descriptives", "sentence_ceiling_share", "H1_correlations",
+               "H2_steiger", "DS_sentence_steiger", "goal_rank_matrix",
+               "goal_subscales", "H4_midpoint_tests", "H4_shares", "H5_paired",
+               "H6b_desert_principle_vs_severity", "H1_companion_severity",
+               "P2_goals_by_limits", "H9_paired", "H10r_revenge_versions",
+               "P2_H10_vs_desert", "P2_sentence_ceiling", "P2_sentence_change",
+               "sentencing_ratio_direction_cells", "sentencing_ratio_correlates",
+               "contrasts_continuous_ratio")
+S2_MISSING <- S2_NEEDED[!file.exists(file.path(S2_TABLES,
+                                               paste0(S2_NEEDED, ".csv")))]
+if (length(S2_MISSING)) stop("Knit 01_main_analysis.Rmd first. Missing: ",
+                             paste(S2_MISSING, collapse = ", "))
+stopifnot(file.exists(S2_DATA))
+
+library(ggplot2)
+
+d <- as.data.frame(readRDS(S2_DATA))
+read_s2 <- function(name) read.csv(file.path(S2_TABLES, paste0(name, ".csv")),
+                                   stringsAsFactors = FALSE)
+stopifnot(nrow(d) == 948)
+cat(sprintf("Study 2: %d participants.\n", nrow(d)))
+```
+
+# 2. Shared tools: style, grays, intervals, and a guard
+
+```{r tools}
+# === ONE STYLE FOR EVERY SLIDE ===
+# SLIDE SIZE. 13.333 x 7.5 inches is the standard 16:9 PowerPoint and Keynote
+# slide, so a figure dropped onto a blank slide fills it at full size and the
+# type prints at the size set here. PNGs are written at 200 dpi (2667 x 1500
+# pixels), sharp on a projector without making the files large.
+SLIDE_W <- 13.333; SLIDE_H <- 7.5; SLIDE_DPI <- 200
+
+# GRAYSCALE. Every slide uses grays only, so the figures read the same on any
+# projector, in print, and to a viewer who cannot tell colours apart. When a
+# slide compares categories, they are told apart by shade, and every shade is
+# also named in a legend or by a label on the bar itself.
+# The four data grays form one light-to-dark ramp. The data-visualization
+# palette validator confirmed that each step is visibly darker than the one
+# before it and that the lightest still stands out against the white slide.
+G1 <- "#1a1a1a"   # darkest: the series the slide is about
+G2 <- "#404040"
+G3 <- "#737373"
+G4 <- "#b0b0b0"   # lightest data gray
+# Two evenly spaced ramps for stacked bars, where neighbouring segments touch
+# and must be told apart at a glance (also validated, light to dark):
+RAMP4 <- c("#1a1a1a", "#4f4f4f", "#808080", "#b0b0b0")   # 1st to 4th place
+RAMP3 <- c("#b0b0b0", "#666666", "#1a1a1a")              # reduced, kept, raised
+FILL_VIOLIN <- "#d9d9d9"   # violin bodies: light, so the mean marks stand out
+INK   <- "#000000"   # titles and values
+INK2  <- "#404040"   # axis text
+MUTED <- "#7a7a7a"   # captions and reference lines
+GRID  <- "#e6e6e6"   # hairline gridlines
+BAND  <- "#eeeeee"   # shaded reference band
+
+theme_slide <- function() {
+  theme_minimal(base_size = 20, base_family = "sans") +
+    theme(text = element_text(colour = INK),
+          # SHORT, CENTERED TITLES. hjust = 0.5 centers the title; with
+          # plot.title.position = "plot" it is centered on the whole slide,
+          # not just on the plotting area.
+          plot.title = element_text(face = "bold", size = 30, hjust = 0.5,
+                                    margin = margin(b = 18)),
+          plot.caption = element_text(size = 13, colour = MUTED, hjust = 0.5,
+                                      margin = margin(t = 16), lineheight = 1.1),
+          plot.title.position = "plot", plot.caption.position = "plot",
+          axis.text = element_text(colour = INK2, size = 18),
+          axis.title = element_text(colour = INK2, size = 18),
+          axis.title.x = element_text(margin = margin(t = 10)),
+          axis.title.y = element_text(margin = margin(r = 10)),
+          panel.grid.minor = element_blank(),
+          legend.position = "top", legend.justification = "center",
+          legend.title = element_blank(),
+          legend.text = element_text(size = 18, colour = INK2),
+          legend.key.size = unit(1.1, "lines"),
+          plot.margin = margin(26, 40, 18, 30))
+}
+# Horizontal bars: gridlines run up the value axis only.
+theme_hbar <- function() theme_slide() +
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line(colour = GRID, linewidth = 0.5),
+        axis.text.y = element_text(colour = INK, size = 19))
+# Vertical bars and violins: gridlines run across the value axis only.
+theme_vbar <- function() theme_slide() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(colour = GRID, linewidth = 0.5),
+        axis.text.x = element_text(colour = INK, size = 19))
+
+# Correlations print without the leading zero (.71, not 0.71), as in the paper,
+# and negative values take a true minus sign. A correlation smaller than .01 in
+# size would print as .00 or .01 at two decimals, which misstates it, so it gets
+# three decimals (.007).
+fmt_r <- function(x, digits = 2) {
+  dg <- ifelse(abs(x) < 0.01, 3, digits)
+  s <- vapply(seq_along(x), function(i) formatC(x[i], format = "f", digits = dg[i]),
+              character(1))
+  s <- sub("^(-?)0\\.", "\\1.", s)
+  sub("^-", "−", s)
+}
+axis_r <- function(x) sub("^-", "−", sub("^(-?)0\\.", "\\1.", sprintf("%.1f", x)))
+# CAPTIONS are wrapped to the slide width, so none runs off the edge.
+cap <- function(...) paste(strwrap(paste(...), width = 140), collapse = "\n")
+
+# PEARSON r WITH ITS 95% INTERVAL. cor.test() gives the Fisher-z interval, the
+# interval the main analysis uses for every correlation.
+cor_ci <- function(x, y) {
+  tt <- cor.test(x, y)
+  data.frame(r = unname(tt$estimate), lower = tt$conf.int[1],
+             upper = tt$conf.int[2], n = sum(complete.cases(x, y)))
+}
+# A 95% interval for a mean.
+mean_ci <- function(x) {
+  tt <- t.test(x)
+  data.frame(mean = mean(x), lower = tt$conf.int[1], upper = tt$conf.int[2],
+             n = length(x))
+}
+# GUARD: two numbers must agree to within a tolerance, or the knit stops with a
+# message naming the check.
+same <- function(a, b, what, tol = 1e-8) {
+  if (!isTRUE(all.equal(as.numeric(a), as.numeric(b), tolerance = tol)))
+    stop("Guard failed: ", what, " (", paste(signif(a, 6), collapse = ", "),
+         " vs ", paste(signif(b, 6), collapse = ", "), ")")
+  invisible(TRUE)
+}
+
+# EVERY PLOTTED VALUE is collected here and written to one table at the end.
+VALUES <- list()
+keep_values <- function(fig, df) VALUES[[fig]] <<- cbind(figure = fig, df)
+
+# THE PDF DEVICE, as in 04_two_study_figures.Rmd. R's default pdf() device draws
+# every hyphen as a long minus sign ("Second-Degree" prints as "Second−Degree"),
+# cannot encode Greek letters, and does not embed its fonts. On a Mac the slides
+# are drawn with the system's own quartz PDF device, which has none of these
+# faults; elsewhere cairo_pdf(), which also prints real hyphens and embeds its
+# fonts. The title argument names each PDF after its file.
+PDF_DEVICE <- if (capabilities("aqua")) {
+  function(filename, width, height, bg = "white", ...)
+    grDevices::quartz(type = "pdf", file = filename, width = width, height = height, bg = bg,
+                      title = tools::file_path_sans_ext(basename(filename)))
+} else {
+  grDevices::cairo_pdf
+}
+save_slide <- function(p, name) {
+  png_path <- file.path(OUT_FIGURES, paste0(name, ".png"))
+  ggsave(png_path, p, width = SLIDE_W, height = SLIDE_H, dpi = SLIDE_DPI,
+         bg = "white")
+  ggsave(file.path(OUT_FIGURES, paste0(name, ".pdf")), p,
+         width = SLIDE_W, height = SLIDE_H, bg = "white", device = PDF_DEVICE)
+  file.copy(png_path, file.path(DOCS_FIG, basename(png_path)), overwrite = TRUE)
+}
+
+# HORIZONTAL BAR CHART OF CORRELATIONS, used by several slides. One bar per
+# row, the value printed past the end of its interval. `fill` names the column
+# that sets each bar's gray; `dodge` > 0 sets two bars per row side by side.
+# coord_cartesian() zooms the axis without dropping any interval that runs past
+# its ends (scale limits would silently delete such an interval).
+bar_r <- function(df, y, fill, fills, xlim, xbreaks, xlab, dodge = 0) {
+  pos <- if (dodge > 0) position_dodge(width = dodge) else position_identity()
+  ggplot(df, aes(x = r, y = .data[[y]], fill = .data[[fill]])) +
+    geom_col(width = if (dodge > 0) dodge * 0.95 else 0.68, position = pos) +
+    geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.22,
+                  orientation = "y", linewidth = 0.7, colour = INK, position = pos) +
+    geom_text(aes(x = pmax(upper, 0) + 0.012, label = fmt_r(r)), hjust = 0,
+              size = 6, colour = INK, position = pos, show.legend = FALSE) +
+    geom_vline(xintercept = 0, colour = INK2, linewidth = 0.6) +
+    scale_fill_manual(values = fills) +
+    scale_x_continuous(breaks = xbreaks, labels = axis_r) +
+    coord_cartesian(xlim = xlim, clip = "off") +
+    labs(x = xlab, y = NULL) +
+    theme_hbar()
+}
+
+# VIOLIN PLOT OF 1-TO-7 SCORES, used by two slides. The violin is the shape of
+# everyone's answers (wider where more people answered); the black point is
+# the mean and the black bar its 95% interval; the dashed line is the neutral
+# midpoint of the scale.
+violin_1to7 <- function(long, stats, x_levels) {
+  long$measure  <- factor(long$measure, levels = x_levels)
+  stats$measure <- factor(stats$measure, levels = x_levels)
+  ggplot(long, aes(x = measure, y = score)) +
+    geom_hline(yintercept = 4, linetype = "dashed", colour = MUTED, linewidth = 0.6) +
+    geom_violin(fill = FILL_VIOLIN, colour = G3, linewidth = 0.6, width = 0.85,
+                scale = "width", adjust = 1.2, trim = TRUE) +
+    # EACH POINT IS ONE PARTICIPANT, spread sideways at random so that people
+    # with the same score do not sit on top of one another. The spread is
+    # sideways only, so every point stays at the participant's score; the seed
+    # fixes the spread, so every knit draws the same slide.
+    geom_point(position = position_jitter(width = 0.22, height = 0, seed = 1),
+               size = 1.1, alpha = 0.3, colour = G3, stroke = 0) +
+    geom_errorbar(data = stats, aes(x = measure, ymin = lower, ymax = upper),
+                  inherit.aes = FALSE, width = 0.12, linewidth = 1, colour = INK) +
+    geom_point(data = stats, aes(x = measure, y = mean), inherit.aes = FALSE,
+               size = 5, colour = INK) +
+    geom_label(data = stats, aes(x = measure, y = mean, label = sprintf("%.2f", mean)),
+               inherit.aes = FALSE, nudge_x = 0.2, hjust = 0, size = 6,
+               label.size = 0, fill = "white", label.padding = unit(0.15, "lines")) +
+    scale_y_continuous(breaks = 1:7, limits = c(1, 7),
+                       labels = c("1\nStrongly\ndisagree", "2", "3", "4\nNeutral",
+                                  "5", "6", "7\nStrongly\nagree")) +
+    labs(x = NULL, y = NULL) +
+    theme_vbar() +
+    theme(axis.text.y = element_text(size = 15, lineheight = 0.9))
+}
+```
+
+# 3. The sentencing decision
+
+```{r fig01_sentences, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 1: THE FIRST SENTENCE (BAR CHART) ===
+# The share of participants choosing each number of years for the second-degree
+# murder, 0 to 50 (50 = life). The shaded band is the range the instructions
+# gave ("Most sentences given by judges for similar charges range from 20 to 30
+# years"); the dashed line is the mean.
+s1 <- d$Sentence1
+stopifnot(!anyNA(s1), length(s1) == 948)
+desc <- read_s2("descriptives")
+same(mean(s1), desc$mean[desc$variable == "Sentence1"], "mean first sentence")
+same(sd(s1),   desc$sd[desc$variable == "Sentence1"],   "SD first sentence")
+ceil <- read_s2("sentence_ceiling_share")
+same(mean(s1 == 50), ceil$prop[1], "share choosing 50 years")
+share_above_30 <- mean(s1 > 30)
+cat(sprintf("Mean %.1f years; %.1f%% chose 50; %.1f%% chose more than 30.\n",
+            mean(s1), 100 * mean(s1 == 50), 100 * share_above_30))
+
+sent_tab <- data.frame(years = 0:50,
+                       pct = 100 * as.numeric(table(factor(s1, levels = 0:50))) / length(s1))
+top <- max(sent_tab$pct)
+fig01 <- ggplot(sent_tab, aes(years, pct)) +
+  annotate("rect", xmin = 19.5, xmax = 30.5, ymin = -Inf, ymax = Inf,
+           fill = BAND, colour = NA) +
+  annotate("text", x = 25, y = top * 0.98, label = "Typical range\n20 to 30 years",
+           size = 6, colour = INK2, lineheight = 0.95, vjust = 1) +
+  geom_col(width = 0.8, fill = G3) +
+  geom_vline(xintercept = mean(s1), linetype = "dashed", colour = INK, linewidth = 0.8) +
+  annotate("text", x = mean(s1) + 0.7, y = top * 0.72, hjust = 0, size = 6,
+           colour = INK, label = sprintf("Mean = %.1f years", mean(s1))) +
+  annotate("text", x = 48.6, y = 100 * mean(s1 == 50), hjust = 1, vjust = 0.5,
+           size = 6, colour = INK,
+           label = sprintf("%.0f%% chose life", 100 * mean(s1 == 50))) +
+  scale_x_continuous(breaks = seq(0, 50, 5), expand = expansion(add = 0.8)) +
+  scale_y_continuous(labels = function(x) paste0(x, "%"),
+                     expand = expansion(mult = c(0, 0.06))) +
+  labs(title = "Sentences for Second-Degree Murder",
+       x = "Years in prison (50 = life)", y = "Participants",
+       caption = cap(sprintf(paste("Study 2, N = 948. %.0f%% chose more than 30 years.",
+                                   "Participants were told that most sentences for similar charges",
+                                   "range from 20 to 30 years."), 100 * share_above_30))) +
+  theme_vbar() +
+  theme(axis.text.x = element_text(colour = INK2, size = 18))
+save_slide(fig01, "s2_01_sentences")
+keep_values("s2_01_sentences", data.frame(
+  label = c("Mean first sentence (years)", "SD", "Share choosing 50",
+            "Share choosing more than 30"),
+  value = c(mean(s1), sd(s1), mean(s1 == 50), share_above_30),
+  lower = NA, upper = NA))
+fig01
+```
+
+# 4. Punitiveness and its correlates
+
+```{r fig02_correlates, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 2: THE TWELVE REGISTERED CORRELATES (BAR CHART) ===
+# Each attitude's correlation with the eight-item punitiveness scale, with its
+# 95% interval, exactly as the registered H1 table exported them. The shade
+# marks the registered cluster each attitude belongs to (01_main_analysis.Rmd,
+# 4.9): hostile aggression = hatred, revenge, degradation, infliction of
+# suffering, tolerance of prison violence (darkest); crime concerns = perceived
+# crime rates, fear of crime (lightest). The other five belong to neither.
+h1 <- read_s2("H1_correlations")
+stopifnot(nrow(h1) == 12)
+HOSTILE_SET <- c("Hatred", "Revenge", "Degradation", "Infliction of suffering",
+                 "Tolerance of prison violence")
+CRIME_SET   <- c("Perceived crime rates", "Fear of crime")
+stopifnot(all(c(HOSTILE_SET, CRIME_SET) %in% h1$y))
+CL_LEVELS <- c("Hostility toward offenders", "Other attitudes", "Concern about crime")
+h1$cluster <- factor(ifelse(h1$y %in% HOSTILE_SET, CL_LEVELS[1],
+                     ifelse(h1$y %in% CRIME_SET, CL_LEVELS[3], CL_LEVELS[2])),
+                     levels = CL_LEVELS)
+h1$label <- factor(h1$y, levels = h1$y[order(h1$r)])
+h1$lower <- h1$ci_lower; h1$upper <- h1$ci_upper
+fig02 <- bar_r(h1, "label", "cluster", fills = setNames(c(G1, G3, G4), CL_LEVELS),
+               xlim = c(0, 0.83), xbreaks = seq(0, 0.8, 0.2),
+               xlab = "Correlation with punitiveness (r)") +
+  labs(title = "What Goes With Punitiveness",
+       caption = cap("Study 2, N = 948. Error bars are 95% confidence intervals.",
+                     "All twelve correlations were preregistered (H1)."))
+save_slide(fig02, "s2_02_correlates")
+keep_values("s2_02_correlates", data.frame(label = h1$y, value = h1$r,
+                                           lower = h1$lower, upper = h1$upper))
+fig02
+```
+
+```{r fig03_hostility, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 3: HOSTILITY AGAINST CRIME CONCERNS (GROUPED BAR CHART) ===
+# The two registered clusters' correlations with punitiveness (the registered
+# H2 comparison) and with each separate part of punitiveness. The parts are the
+# five attitude parts of the eight-item scale, scored as 01_main_analysis.Rmd
+# scores them in 7.6D (item pairs averaged; single items as they stand), plus
+# the within-vignette standardized sentence. The clusters here are the
+# REGISTERED ones (hostile_agg, crime_concerns), so this slide is Study 2 on its
+# own terms; 7.6D ran the same parts on the clusters rebuilt as Study 1 built
+# them, for the comparison with Study 1.
+parts <- data.frame(
+  punit          = d$punitiveness,
+  punish_more    = rowMeans(d[, c("punishmore_1_R", "punishmore_2")]),
+  parsimony_rej  = rowMeans(d[, c("parsimony_1_R", "parsimony_2_R")]),
+  three_strikes  = rowMeans(d[, c("threestrikes_1", "threestrikes_2")]),
+  lwop           = as.numeric(d$LWOP),
+  death_penalty  = as.numeric(d$deathpenalty),
+  sentence       = d$Sentence1_z)
+stopifnot(!anyNA(parts), !anyNA(d$hostile_agg), !anyNA(d$crime_concerns))
+PART_LABELS <- c(punit = "Punitiveness (all eight items)",
+                 punish_more = "More punishment",
+                 parsimony_rej = "Rejecting parsimony",
+                 three_strikes = "Three strikes",
+                 lwop = "Life without parole",
+                 death_penalty = "Death penalty",
+                 sentence = "Sentence given")
+# Steiger's test with Zou's interval, called exactly as the main analysis calls
+# it, for the difference between the two correlations on each outcome. Reported
+# in the values table; the slide shows the two correlations themselves.
+steiger_diff <- function(y, k, h) {
+  r_jk <- cor(y, k); r_jh <- cor(y, h); r_kh <- cor(k, h); n <- length(y)
+  res <- cocor::cocor.dep.groups.overlap(r.jk = r_jk, r.jh = r_jh, r.kh = r_kh,
+                                         n = n, alternative = "greater",
+                                         test = c("steiger1980", "zou2007"),
+                                         return.htest = TRUE)
+  z <- unname(res$steiger1980$statistic)
+  data.frame(diff = r_jk - r_jh, diff_lower = res$zou2007$conf.int[1],
+             diff_upper = res$zou2007$conf.int[2], z = z,
+             p_two_sided = 2 * pnorm(-abs(z)))
+}
+h2rows <- do.call(rbind, lapply(names(PART_LABELS), function(v) {
+  hk <- cor_ci(parts[[v]], d$hostile_agg); ck <- cor_ci(parts[[v]], d$crime_concerns)
+  cbind(outcome = PART_LABELS[[v]], key = v,
+        r_hostile = hk$r, lo_hostile = hk$lower, up_hostile = hk$upper,
+        r_crime = ck$r, lo_crime = ck$lower, up_crime = ck$upper,
+        steiger_diff(parts[[v]], d$hostile_agg, d$crime_concerns))
+}))
+# GUARDS. The punitiveness row is the registered H2 test; the sentence row is
+# the registered-cluster sentence comparison 7.5 exported. Both must match.
+h2_rec <- read_s2("H2_steiger")
+same(h2rows$r_hostile[1], h2_rec$r_jk, "H2 hostility r")
+same(h2rows$r_crime[1],   h2_rec$r_jh, "H2 crime concerns r")
+same(h2rows$diff[1],      h2_rec$diff, "H2 difference")
+same(h2rows$z[1],         h2_rec$z,    "H2 Steiger z")
+sent_rec <- read_s2("DS_sentence_steiger")[1, ]
+same(h2rows$r_hostile[7], sent_rec$r_jk, "sentence: hostility r")
+same(h2rows$r_crime[7],   sent_rec$r_jh, "sentence: crime concerns r")
+same(h2rows$diff[7],      sent_rec$diff, "sentence: difference")
+print(h2rows[, c("outcome", "r_hostile", "r_crime", "diff", "diff_lower",
+                 "diff_upper", "z", "p_two_sided")], digits = 3)
+
+SERIES3 <- c("Hostility toward offenders", "Concern about crime")
+long3 <- rbind(
+  data.frame(outcome = h2rows$outcome, series = SERIES3[1],
+             r = h2rows$r_hostile, lower = h2rows$lo_hostile, upper = h2rows$up_hostile),
+  data.frame(outcome = h2rows$outcome, series = SERIES3[2],
+             r = h2rows$r_crime, lower = h2rows$lo_crime, upper = h2rows$up_crime))
+long3$outcome <- factor(long3$outcome, levels = rev(unname(PART_LABELS)))
+# position_dodge() places the FIRST level lowest; reversing the levels puts the
+# hostility bar above the crime-concerns bar in every row, as the legend reads.
+long3$series  <- factor(long3$series, levels = rev(SERIES3))
+fig03 <- bar_r(long3, "outcome", "series", fills = setNames(c(G1, G4), SERIES3),
+               xlim = c(0, 0.86), xbreaks = seq(0, 0.8, 0.2),
+               xlab = "Correlation (r)", dodge = 0.8) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(title = "Hostility Versus Concern About Crime",
+       caption = cap("Study 2, N = 948. Hostility: hatred, revenge, degradation, suffering, prison violence.",
+                     "Concern about crime: perceived crime rates, fear of crime. Error bars are 95%",
+                     "confidence intervals. Preregistered for all eight items together (H2); not for the parts."))
+save_slide(fig03, "s2_03_hostility_vs_crime")
+keep_values("s2_03_hostility_vs_crime", rbind(
+  data.frame(label = paste("Hostility:", h2rows$outcome), value = h2rows$r_hostile,
+             lower = h2rows$lo_hostile, upper = h2rows$up_hostile),
+  data.frame(label = paste("Crime concerns:", h2rows$outcome), value = h2rows$r_crime,
+             lower = h2rows$lo_crime, upper = h2rows$up_crime),
+  data.frame(label = paste("Difference (Steiger, Zou CI):", h2rows$outcome),
+             value = h2rows$diff, lower = h2rows$diff_lower, upper = h2rows$diff_upper)))
+fig03
+```
+
+# 5. The goals of punishment
+
+```{r fig04_ranking, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 4: HOW THE FOUR GOALS WERE RANKED (STACKED BAR CHART) ===
+# The share of participants placing each goal first, second, third and fourth,
+# from the exported rank matrix. First place is darkest and sits at the left of
+# each bar.
+rk <- read_s2("goal_rank_matrix")
+rk$goal <- ifelse(grepl("retribution", rk$goal), "Retribution",
+           ifelse(grepl("incapacitation", rk$goal), "Incapacitation",
+           ifelse(grepl("deterrence", rk$goal), "Deterrence", "Rehabilitation")))
+GOAL_ORDER <- c("Retribution", "Incapacitation", "Deterrence", "Rehabilitation")
+stopifnot(setequal(rk$goal, GOAL_ORDER),
+          all(rowSums(rk[, c("first", "second", "third", "fourth")]) == 948))
+rank_long <- do.call(rbind, lapply(c("first", "second", "third", "fourth"), function(p)
+  data.frame(goal = rk$goal, place = p, pct = 100 * rk[[p]] / 948)))
+PLACE_LAB <- c(first = "Ranked 1st", second = "2nd", third = "3rd", fourth = "4th (last)")
+rank_long$place <- factor(PLACE_LAB[rank_long$place], levels = PLACE_LAB)
+rank_long$goal  <- factor(rank_long$goal, levels = rev(GOAL_ORDER))
+fig04 <- ggplot(rank_long, aes(x = pct, y = goal, fill = place)) +
+  # position_stack(reverse = TRUE) puts 1st place at the left of each bar.
+  geom_col(width = 0.7, colour = "white", linewidth = 1,
+           position = position_stack(reverse = TRUE)) +
+  # group = place makes the labels stack in the same order as the bars; without
+  # it, the colour mapping would regroup them and misplace every label.
+  geom_text(aes(label = sprintf("%.0f%%", pct), group = place,
+                colour = place %in% PLACE_LAB[1:3]),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 6.5,
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = setNames(RAMP4, PLACE_LAB)) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.01))) +
+  labs(title = "Ranking the Goals of Punishment", x = NULL, y = NULL,
+       caption = cap("Study 2, N = 948. Participants ranked four reasons for punishment from best to weakest:",
+                     "\"Criminals deserve to be punished\" (retribution); \"While they are locked up, prisoners",
+                     "cannot commit other crimes\" (incapacitation); \"Punishment deters others from committing",
+                     "crimes\" (deterrence); \"Prisoners get rehabilitated in prison\" (rehabilitation).")) +
+  theme_hbar() +
+  theme(panel.grid.major.x = element_blank(), axis.text.x = element_blank())
+save_slide(fig04, "s2_04_ranking")
+keep_values("s2_04_ranking", data.frame(
+  label = paste(rank_long$goal, rank_long$place), value = rank_long$pct / 100,
+  lower = NA, upper = NA))
+fig04
+```
+
+```{r fig05_ratings, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 5: HOW THE FOUR GOALS WERE RATED (VIOLIN PLOT) ===
+# Each goal scale (the mean of its items, 1 to 7), one violin per goal, with the
+# mean and its 95% interval. The means are checked against the exported ones.
+GOAL_KEY <- c(retribution = "Retribution", incapacitation = "Incapacitation",
+              deterrence = "Deterrence", rehabilitation = "Rehabilitation")
+for (v in names(GOAL_KEY)) stopifnot(!anyNA(d[[v]]))
+rating <- do.call(rbind, lapply(names(GOAL_KEY), function(v)
+  cbind(measure = GOAL_KEY[[v]], mean_ci(d[[v]]))))
+gs <- read_s2("goal_subscales")
+for (v in names(GOAL_KEY))
+  same(rating$mean[rating$measure == GOAL_KEY[[v]]],
+       gs$mean[grepl(paste0("^", v), gs$measure)], paste("rating mean,", v))
+rating_long <- do.call(rbind, lapply(names(GOAL_KEY), function(v)
+  data.frame(measure = GOAL_KEY[[v]], score = d[[v]])))
+fig05 <- violin_1to7(rating_long, rating, unname(GOAL_KEY)) +
+  labs(title = "Rating the Goals of Punishment",
+       caption = cap("Study 2, N = 948. Each goal rated on its own, 1 to 7. Small points are participants; large points are",
+                     "means with 95% confidence intervals. Ratings came before the ranking."))
+save_slide(fig05, "s2_05_ratings")
+keep_values("s2_05_ratings", data.frame(label = paste("Rating:", rating$measure),
+                                        value = rating$mean, lower = rating$lower,
+                                        upper = rating$upper))
+fig05
+```
+
+# 6. Proportionality
+
+```{r fig06_proportionality, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 6: AGREEMENT WITH PROPORTIONALITY AND ITS DEPARTURES (STACKED BARS) ===
+# For each of the three items, the share who disagreed (1-3), were neutral (4),
+# or agreed (5-7). Items are raw, as answered.
+ITEMS6 <- c(proportionality = "\"Punishment should be proportionate to the\nseverity of the crime, no more and no less\"",
+            severity_1 = "\"Punishment should be greater than\nthe seriousness of the crime\"",
+            severity_2 = "\"Punishment should be less severe than\nthe harmfulness of the crime\"")
+for (v in names(ITEMS6)) stopifnot(!anyNA(d[[v]]), all(d[[v]] %in% 1:7))
+# GUARDS against the registered H4 and H5 exports.
+h4 <- read_s2("H4_midpoint_tests"); h4s <- read_s2("H4_shares"); h5 <- read_s2("H5_paired")
+same(mean(d$proportionality), h4$mean[h4$variable == "proportionality"], "proportionality mean")
+same(mean(d$severity_1), h5$M1, "severity_1 mean")
+same(mean(d$severity_2), h5$M2, "severity_2 mean")
+same(sum(d$proportionality <= 4), h4s$k[3], "proportionality at or below 4")
+same(sum(d$severity_1 > 4), h4s$k[1], "severity_1 above 4")
+AGREE_LEV <- c("Disagree", "Neutral", "Agree")
+prop_long <- do.call(rbind, lapply(names(ITEMS6), function(v) data.frame(
+  item = ITEMS6[[v]], answer = AGREE_LEV,
+  pct = 100 * c(mean(d[[v]] < 4), mean(d[[v]] == 4), mean(d[[v]] > 4)))))
+prop_long$item   <- factor(prop_long$item, levels = rev(unname(ITEMS6)))
+prop_long$answer <- factor(prop_long$answer, levels = AGREE_LEV)
+fig06 <- ggplot(prop_long, aes(x = pct, y = item, fill = answer)) +
+  geom_col(width = 0.66, colour = "white", linewidth = 1,
+           position = position_stack(reverse = TRUE)) +
+  geom_text(data = prop_long[prop_long$pct >= 5, ],
+            aes(label = sprintf("%.0f%%", pct), group = answer,
+                colour = answer != "Neutral"),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 6.5,
+            show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = c(Disagree = G3, Neutral = "#d0d0d0", Agree = G1)) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.01))) +
+  labs(title = "Agreement With Proportionality", x = NULL, y = NULL,
+       caption = cap("Study 2, N = 948. Disagree: 1 to 3 on the 7-point scale; neutral: 4; agree: 5 to 7.",
+                     "Shares under 5% are not labeled.")) +
+  theme_hbar() +
+  theme(panel.grid.major.x = element_blank(), axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 17, colour = INK, lineheight = 0.95))
+save_slide(fig06, "s2_06_proportionality")
+keep_values("s2_06_proportionality", data.frame(
+  label = paste(gsub("\n", " ", prop_long$item), prop_long$answer),
+  value = prop_long$pct / 100, lower = NA, upper = NA))
+fig06
+```
+
+```{r fig07_desert_direction, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 7: WHAT DESERT AND PUNITIVENESS GO WITH (GROUPED BAR CHART) ===
+# Desert (R1-R4) and the eight-item punitiveness scale, each correlated with the
+# proportionality principle, the severity index, and each of the index's two
+# items. All values are exported (8.3b and 7.1) and checked against the data.
+# Unregistered; intervals are two-sided.
+h6b <- read_s2("H6b_desert_principle_vs_severity")
+comp <- read_s2("H1_companion_severity")
+MEAS7 <- c("No more, no less\n(proportionality principle)",
+           "Never below the offense\n(severity index)",
+           "More than the crime",
+           "Not less than the harm")
+des <- data.frame(series = "Desert", measure = MEAS7,
+                  r = h6b$r[1:4], lower = h6b$ci_lower[1:4], upper = h6b$ci_upper[1:4])
+pun <- data.frame(series = "Punitiveness", measure = MEAS7,
+                  r = c(h6b$r[6], h6b$r[5], comp$r[2], comp$r[3]),
+                  lower = c(h6b$ci_lower[6], h6b$ci_lower[5], comp$ci_lower[2], comp$ci_lower[3]),
+                  upper = c(h6b$ci_upper[6], h6b$ci_upper[5], comp$ci_upper[2], comp$ci_upper[3]))
+# GUARDS: recompute each correlation from the scored data.
+same(des$r, c(cor(d$deserved, d$proportionality_principle), cor(d$deserved, d$severity_index),
+              cor(d$deserved, d$severity_1), cor(d$deserved, d$severity_2_R)), "desert rows")
+same(pun$r, c(cor(d$punitiveness, d$proportionality_principle), cor(d$punitiveness, d$severity_index),
+              cor(d$punitiveness, d$severity_1), cor(d$punitiveness, d$severity_2_R)), "punitiveness rows")
+SERIES7 <- c("Desert", "Punitiveness")
+long7 <- rbind(des, pun)
+long7$measure <- factor(long7$measure, levels = rev(MEAS7))
+long7$series  <- factor(long7$series, levels = rev(SERIES7))
+fig07 <- bar_r(long7, "measure", "series", fills = setNames(c(G1, G4), SERIES7),
+               xlim = c(-0.08, 0.72), xbreaks = seq(0, 0.6, 0.2),
+               xlab = "Correlation (r)", dodge = 0.8) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(title = "What Desert Goes With",
+       caption = cap("Study 2, N = 948. Desert: four items on punishment as deserved. \"More than the crime\":",
+                     "punishment should be greater than the seriousness of the crime. \"Not less than the harm\":",
+                     "rejecting punishment less severe than the harm. Not preregistered. Error bars are 95%",
+                     "confidence intervals.")) +
+  theme(axis.text.y = element_text(size = 17, colour = INK, lineheight = 0.95))
+save_slide(fig07, "s2_07_desert_direction")
+keep_values("s2_07_desert_direction", data.frame(
+  label = paste(long7$series, "with", gsub("\n", " ", long7$measure)), value = long7$r,
+  lower = long7$lower, upper = long7$upper))
+fig07
+```
+
+```{r fig08_goals_limits, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 8: EACH GOAL AGAINST EACH LIMIT (GROUPED BAR CHART) ===
+# From the 4 x 4 grid of 8.9B, the two limit scores: parsimony (both items), the
+# limit consequentialist theory sets, and the proportionality component (three
+# items), the limit retributive theory sets. Bars below zero mean that the more
+# people endorse the goal, the less they accept the limit. The single-item rows
+# of 8.9B are in the values table.
+gl <- read_s2("P2_goals_by_limits")
+stopifnot(nrow(gl) == 16)
+LIM8 <- c("Parsimony (2 items)" = "Parsimony",
+          "Proportionality component (3 items)" = "Proportionality")
+gl$goal <- ifelse(gl$x == "Desert (R1-R4)", "Desert", gl$x)
+same(gl$r[gl$goal == "Desert" & gl$y == "Proportionality component (3 items)"],
+     cor(d$deserved, d$proportionality_jd), "desert x proportionality component (H6)")
+g8 <- gl[gl$y %in% names(LIM8), ]
+g8$limit <- factor(LIM8[g8$y], levels = unname(LIM8))
+g8$goal  <- factor(g8$goal, levels = c("Desert", "Deterrence", "Incapacitation",
+                                       "Rehabilitation"))
+stopifnot(nrow(g8) == 8, !anyNA(g8$limit), !anyNA(g8$goal))
+DODGE8 <- position_dodge(width = 0.8)
+fig08 <- ggplot(g8, aes(x = goal, y = r, fill = limit)) +
+  geom_hline(yintercept = 0, colour = INK2, linewidth = 0.7) +
+  geom_col(width = 0.76, position = DODGE8) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2,
+                linewidth = 0.7, colour = INK, position = DODGE8) +
+  # Each value sits just beyond the end of its interval, above a bar that
+  # points up and below a bar that points down.
+  geom_text(aes(y = ifelse(r >= 0, ci_upper + 0.025, ci_lower - 0.025),
+                vjust = ifelse(r >= 0, 0, 1), label = fmt_r(r)),
+            position = DODGE8, size = 6, colour = INK) +
+  scale_fill_manual(values = c(Parsimony = G1, Proportionality = G4)) +
+  scale_y_continuous(breaks = seq(-0.5, 0.2, 0.1), labels = axis_r) +
+  coord_cartesian(ylim = c(-0.56, 0.22), clip = "off") +
+  labs(title = "Goals of Punishment and Their Limits", x = NULL,
+       y = "Correlation with the limit (r)",
+       caption = cap("Study 2, N = 948. Parsimony: \"Criminal punishments should be as light as possible\";",
+                     "\"The state should not punish more than is absolutely necessary.\" Proportionality: the",
+                     "three-item component. Only desert with proportionality was preregistered (H6).",
+                     "Error bars are 95% confidence intervals.")) +
+  theme_vbar()
+save_slide(fig08, "s2_08_goals_vs_limits")
+keep_values("s2_08_goals_vs_limits", data.frame(
+  label = paste(gl$goal, "x", gl$y), value = gl$r, lower = gl$ci_lower, upper = gl$ci_upper))
+fig08
+```
+
+# 7. Desert and revenge
+
+```{r fig09_endorsement, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 9: HOW MUCH PEOPLE ENDORSE DESERT AND REVENGE (VIOLIN PLOT) ===
+# Desert, just deserts and revenge, each a mean of items on a 1-to-7 scale, one
+# violin each, with the mean and its 95% interval. Means are checked against
+# the registered H9 export.
+ENDORSE <- c(deserved = "Desert", just_deserts = "Just deserts", revenge = "Revenge")
+endorse <- do.call(rbind, lapply(names(ENDORSE), function(v)
+  cbind(measure = ENDORSE[[v]], mean_ci(d[[v]]))))
+h9 <- read_s2("H9_paired")
+same(endorse$mean[1], h9$M1[2], "desert mean"); same(endorse$mean[2], h9$M1[1], "just deserts mean")
+same(endorse$mean[3], h9$M2[1], "revenge mean")
+endorse_long <- do.call(rbind, lapply(names(ENDORSE), function(v)
+  data.frame(measure = ENDORSE[[v]], score = d[[v]])))
+fig09 <- violin_1to7(endorse_long, endorse, unname(ENDORSE)) +
+  labs(title = "Endorsing Desert and Revenge",
+       caption = cap("Study 2, N = 948. Desert: four items on punishment as deserved. Just deserts: desert",
+                     "averaged with the proportionality component. Revenge: four items. Small points are participants;",
+                     "large points are means with 95% confidence intervals. Preregistered comparison: H9."))
+save_slide(fig09, "s2_09_endorsement")
+keep_values("s2_09_endorsement", data.frame(label = paste("Mean:", endorse$measure),
+                                            value = endorse$mean, lower = endorse$lower,
+                                            upper = endorse$upper))
+fig09
+```
+
+```{r fig10_association, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 10: HOW CLOSELY EACH TRACKS PUNITIVENESS (BAR CHART) ===
+# Correlation of desert, just deserts, and two scorings of revenge with the
+# eight-item punitiveness scale. Each r is checked against the export holding it.
+d$revenge_literal <- rowMeans(d[, c("revenge_1", "revenge_2")])
+stopifnot(!anyNA(d$revenge_literal))
+ASSOC <- c(deserved = "Desert", just_deserts = "Just deserts",
+           revenge = "Revenge (all four items)", revenge_literal = "Revenge (two literal items)")
+assoc <- do.call(rbind, lapply(names(ASSOC), function(v)
+  cbind(measure = ASSOC[[v]], cor_ci(d$punitiveness, d[[v]]))))
+hv <- read_s2("P2_H10_vs_desert"); rv <- read_s2("H10r_revenge_versions")
+same(assoc$r[1], hv$r_jh[2], "desert x punitiveness")
+same(assoc$r[2], hv$r_jh[1], "just deserts x punitiveness")
+same(assoc$r[3], rv$r_punit_revenge[1], "revenge x punitiveness")
+same(assoc$r[4], rv$r_punit_revenge[4], "literal revenge x punitiveness")
+assoc$family  <- factor(ifelse(grepl("^Revenge", assoc$measure), "Revenge",
+                               "Desert and just deserts"),
+                        levels = c("Desert and just deserts", "Revenge"))
+assoc$measure <- factor(assoc$measure, levels = rev(unname(ASSOC)))
+fig10 <- bar_r(assoc, "measure", "family",
+               fills = c("Desert and just deserts" = G1, Revenge = G4),
+               xlim = c(0, 0.8), xbreaks = seq(0, 0.8, 0.2),
+               xlab = "Correlation with punitiveness (r)") +
+  labs(title = "Desert, Revenge, and Punitiveness",
+       caption = cap("Study 2, N = 948. The literal revenge items: \"Society has the right to take revenge on",
+                     "criminal offenders\"; \"Society should punish to get back at criminal offenders.\"",
+                     "Error bars are 95% confidence intervals. Preregistered comparison (H10): revenge",
+                     "(all four items) against just deserts."))
+save_slide(fig10, "s2_10_association")
+keep_values("s2_10_association", data.frame(label = paste("r with punitiveness:", assoc$measure),
+                                            value = assoc$r, lower = assoc$lower,
+                                            upper = assoc$upper))
+fig10
+```
+
+# 8. The second sentence
+
+```{r fig11_two_sentences, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 11: FIRST AND SECOND SENTENCES (VIOLIN PLOT) ===
+# Both sentences for all 948 participants, one violin each, with the mean and
+# its 95% interval. Before the second sentence, participants learned that the
+# offender was paralyzed and no longer a threat, and that the case would never
+# be made public. Means are checked against the exported paired comparison.
+s2 <- d$Sentence2
+stopifnot(!anyNA(s2))
+sc <- read_s2("P2_sentence_change")
+same(mean(s2), sc$M1, "mean second sentence"); same(mean(s1), sc$M2, "mean first sentence")
+SENT <- c("First sentence", "Second sentence")
+sent_long <- rbind(data.frame(measure = SENT[1], years = s1),
+                   data.frame(measure = SENT[2], years = s2))
+sent_long$measure <- factor(sent_long$measure, levels = SENT)
+sent_stats <- rbind(cbind(measure = SENT[1], mean_ci(s1)), cbind(measure = SENT[2], mean_ci(s2)))
+sent_stats$measure <- factor(sent_stats$measure, levels = SENT)
+fig11 <- ggplot(sent_long, aes(x = measure, y = years)) +
+  geom_violin(fill = FILL_VIOLIN, colour = G3, linewidth = 0.6, width = 0.8,
+              adjust = 1.4, trim = TRUE) +
+  # Each point is one participant, jittered sideways only (see violin_1to7()).
+  geom_point(position = position_jitter(width = 0.2, height = 0, seed = 1),
+             size = 1.1, alpha = 0.3, colour = G3, stroke = 0) +
+  geom_errorbar(data = sent_stats, aes(x = measure, ymin = lower, ymax = upper),
+                inherit.aes = FALSE, width = 0.1, linewidth = 1, colour = INK) +
+  geom_point(data = sent_stats, aes(x = measure, y = mean), inherit.aes = FALSE,
+             size = 5, colour = INK) +
+  geom_label(data = sent_stats, aes(x = measure, y = mean,
+                                    label = sprintf("Mean = %.1f", mean)),
+             inherit.aes = FALSE, nudge_x = 0.2, hjust = 0, size = 6,
+             label.size = 0, fill = "white", label.padding = unit(0.15, "lines")) +
+  scale_y_continuous(breaks = seq(0, 50, 10), limits = c(0, 50)) +
+  labs(title = "First and Second Sentences", x = NULL, y = "Years in prison (50 = life)",
+       caption = cap("Study 2, N = 948. Before the second sentence, participants learned that the offender",
+                     "was paralyzed and no longer a threat, and that the case would never be made public.",
+                     "Small points are participants; large points are means with 95% confidence intervals.",
+                     "The second sentence always followed the first.")) +
+  theme_vbar()
+save_slide(fig11, "s2_11_two_sentences")
+keep_values("s2_11_two_sentences", data.frame(label = paste("Mean:", sent_stats$measure),
+                                              value = sent_stats$mean,
+                                              lower = sent_stats$lower,
+                                              upper = sent_stats$upper))
+fig11
+```
+
+```{r fig12_second_sentence, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 12: WHAT PARTICIPANTS DID WITH THE SECOND SENTENCE (STACKED BARS) ===
+# Reduced, kept, or raised, shown separately for participants whose first
+# sentence was the 50-year maximum (who could not raise it) and for those below
+# it. The one participant whose first sentence was zero has no ratio and is left
+# out, as in the analysis.
+ok12 <- d$Sentence1 > 0
+dir12 <- ifelse(d$Sentence2 < d$Sentence1, "Reduced",
+         ifelse(d$Sentence2 == d$Sentence1, "Kept", "Raised"))[ok12]
+GRP12 <- c("First sentence: life (50 years)", "First sentence: under 50 years")
+grp12 <- ifelse(d$Sentence1[ok12] == 50, GRP12[1], GRP12[2])
+tab12 <- table(factor(grp12, levels = GRP12),
+               factor(dir12, levels = c("Reduced", "Kept", "Raised")))
+print(tab12)
+# GUARDS against the exported counts and shares.
+cells <- read_s2("sentencing_ratio_direction_cells")
+same(colSums(tab12), cells$n, "reduced / kept / raised counts")
+ce <- read_s2("P2_sentence_ceiling")
+same(tab12[1, "Kept"], ce$k[1], "kept, first sentence 50")
+same(tab12[2, ], ce$k[2:4], "below 50: reduced, kept, raised")
+long12 <- as.data.frame(tab12); names(long12) <- c("group", "choice", "n")
+long12$pct <- 100 * long12$n / ave(long12$n, long12$group, FUN = sum)
+long12$group_lab <- sprintf("%s\n(n = %d)", long12$group,
+                            ave(long12$n, long12$group, FUN = sum))
+long12$group_lab <- factor(long12$group_lab, levels = rev(unique(long12$group_lab)))
+fig12 <- ggplot(long12, aes(x = pct, y = group_lab, fill = choice)) +
+  geom_col(width = 0.6, colour = "white", linewidth = 1,
+           position = position_stack(reverse = TRUE)) +
+  geom_text(data = long12[long12$pct >= 4, ],
+            aes(label = sprintf("%.0f%%", pct), group = choice,
+                colour = choice != "Reduced"),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 7,
+            fontface = "bold", show.legend = FALSE) +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = INK), guide = "none") +
+  scale_fill_manual(values = setNames(RAMP3, c("Reduced", "Kept", "Raised"))) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.01))) +
+  labs(title = "What People Did With the Second Sentence", x = NULL, y = NULL,
+       caption = cap(sprintf(paste("Study 2, n = 947 (first sentence above zero). Overall, %.1f%% kept",
+                                   "their sentence, %.1f%% reduced it, and %.1f%% raised it."),
+                             cells$pct_of_rated[2], cells$pct_of_rated[1], cells$pct_of_rated[3]),
+                     "This grouping was not preregistered.")) +
+  theme_hbar() +
+  theme(panel.grid.major.x = element_blank(), axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 19, colour = INK, lineheight = 0.95))
+save_slide(fig12, "s2_12_second_sentence")
+keep_values("s2_12_second_sentence", data.frame(
+  label = paste(long12$group, long12$choice), value = long12$pct / 100, lower = NA, upper = NA))
+fig12
+```
+
+```{r fig13_ratio, fig.width = 13.333, fig.height = 7.5}
+# === SLIDE 13: WHAT KEEPING THE SENTENCE GOES WITH (BAR CHART) ===
+# The sentencing ratio (second sentence / first) correlated with desert, revenge,
+# punitiveness and the proportionality principle, each with its Fisher 95%
+# interval. Every r is checked against the export that holds it.
+MEAS13 <- c(deserved = "Desert", revenge = "Revenge", punitiveness = "Punitiveness",
+            proportionality_principle = "No more, no less\n(proportionality principle)")
+rat <- do.call(rbind, lapply(names(MEAS13), function(v)
+  cbind(measure = MEAS13[[v]], cor_ci(d$sentence_ratio, d[[v]]))))
+stopifnot(all(rat$n == 947))
+src <- read_s2("sentencing_ratio_correlates"); cc <- read_s2("contrasts_continuous_ratio")
+same(rat$r[1], src$r[1], "ratio x desert")
+same(rat$r[4], src$r[4], "ratio x proportionality principle")
+same(rat$r[2], cc$beta[cc$outcome == "Revenge"], "ratio x revenge", tol = 1e-6)
+same(rat$r[3], cc$beta[grepl("^Punitiveness", cc$outcome)], "ratio x punitiveness", tol = 1e-6)
+rat$measure <- factor(rat$measure, levels = rev(unname(MEAS13)))
+rat$shade <- factor(ifelse(rat$measure == MEAS13[4], "light", "dark"), levels = c("dark", "light"))
+fig13 <- bar_r(rat, "measure", "shade", fills = c(dark = G2, light = G4),
+               xlim = c(-0.1, 0.42), xbreaks = seq(-0.1, 0.4, 0.1),
+               xlab = "Correlation with the share of the sentence kept (r)") +
+  theme(legend.position = "none",
+        axis.text.y = element_text(size = 19, colour = INK, lineheight = 0.95)) +
+  labs(title = "What Keeping the Sentence Goes With",
+       caption = cap("Study 2, n = 947. Share kept: the second sentence divided by the first. Error bars are",
+                     "95% confidence intervals. Desert and the proportionality principle: not preregistered;",
+                     "revenge and punitiveness: from the preregistered analysis."))
+save_slide(fig13, "s2_13_share_kept")
+keep_values("s2_13_share_kept", data.frame(label = paste("Ratio with", gsub("\n", " ", rat$measure)),
+                                           value = rat$r, lower = rat$lower, upper = rat$upper))
+fig13
+```
+
+# 9. What was written
+
+```{r written}
+# EVERY PLOTTED VALUE in one table, so a number on any slide can be looked up.
+vals <- do.call(rbind, VALUES)
+rownames(vals) <- NULL
+vals$label <- gsub("\n", " ", vals$label)
+write.csv(vals, file.path(OUT_TABLES, "study2_talk_figure_values.csv"), row.names = FALSE)
+cat(sprintf("%d plotted values written to study2_talk_figure_values.csv\n", nrow(vals)))
+print(list.files(OUT_FIGURES))
+print(list.files(DOCS_FIG))
+```

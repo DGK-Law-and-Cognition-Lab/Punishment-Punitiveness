@@ -1,0 +1,28 @@
+hypothesis,outcome,"1. Soft core R1,R3,R4","2. Soft core strict R1,R4","3. Obligation R2,R5","4. Rationales R6,R7",5. REGISTERED deserved R1-R4,"6. REGISTERED retribution, 7 items"
+H13,Hostile-aggression cluster (z),0.57***,0.56***,0.53***,0.47***,0.57***,0.58***
+H13,Hatred,0.58***,0.58***,0.53***,0.47***,0.58***,0.58***
+H13,Revenge,0.55***,0.53***,0.49***,0.46***,0.55***,0.56***
+H13,Degradation,0.37***,0.37***,0.32***,0.31***,0.37***,0.37***
+H13,Infliction of suffering,0.48***,0.47***,0.47***,0.42***,0.49***,0.50***
+H13,Tolerance of prison violence,0.29***,0.30***,0.29***,0.21***,0.29***,0.29***
+H13,Anger,0.50***,0.50***,0.47***,0.40***,0.51***,0.51***
+H13,Social exclusion,0.56***,0.55***,0.51***,0.44***,0.56***,0.56***
+H13,Harsh prison conditions,0.46***,0.46***,0.42***,0.37***,0.47***,0.47***
+H13,Perceived crime rates,0.41***,0.42***,0.44***,0.36***,0.43***,0.44***
+H13,Fear of crime,0.15***,0.14***,0.14***,0.13***,0.15***,0.16***
+H14,Sentence 1 (z within vignette),0.36***,0.38***,0.40***,0.26***,0.38***,0.37***
+H15,Shark: how painful the death should be,0.16***,0.13***,0.10***,0.17***,0.15***,0.16***
+H16,Essentialism about criminals,0.59***,0.58***,0.55***,0.45***,0.60***,0.59***
+H17,Crime is a choice,0.58***,0.58***,0.55***,0.46***,0.59***,0.59***
+H18,Leaning toward the prosecution,0.41***,0.42***,0.39***,0.32***,0.42***,0.42***
+H19,Rejecting society's responsibility,0.41***,0.44***,0.41***,0.27***,0.42***,0.41***
+H20,Due-process permissiveness,0.36***,0.34***,0.34***,0.34***,0.36***,0.38***
+H20,Convicting on uncertain evidence,0.37***,0.34***,0.30***,0.36***,0.37***,0.39***
+H21,"Punitiveness (self-report, 8 items)",0.66***,0.65***,0.62***,0.51***,0.67***,0.66***
+H21,"Punitiveness (full index, + sentence)",0.59***,0.60***,0.60***,0.45***,0.61***,0.60***
+E1,Right-Wing Authoritarianism,0.54***,0.52***,0.50***,0.48***,0.54***,0.56***
+E1,Social Dominance Orientation,0.31***,0.30***,0.28***,0.20***,0.30***,0.29***
+E1,Violence proneness,0.39***,0.38***,0.38***,0.33***,0.39***,0.41***
+E1,Racial resentment,0.39***,0.40***,0.38***,0.30***,0.39***,0.40***
+E1,Cognitive reflection (0-3),-0.04,-0.02,-0.04,-0.07*,-0.04,-0.05
+E1,"Cognitive reflection (0-2, lily pad dropped)",-0.04,-0.02,-0.03,-0.06*,-0.04,-0.05

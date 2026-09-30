@@ -1,0 +1,5 @@
+measure,n_outcomes,n_predicted_sign,n_directional_p05,median_abs_d
+"1. Ranking (categorical, primary)",27,25,25,0.4704894871691494
+2. Median split on relative retribution,27,23,19,0.1767689480099343
+3. Tertiles on relative retribution,27,24,22,0.2614538278291148
+4. Sentencing ratio (behavioral),25,24,21,0.3358880804915176

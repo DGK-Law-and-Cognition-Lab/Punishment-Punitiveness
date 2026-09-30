@@ -1,0 +1,8 @@
+hypothesis,test,key_statistic,p_value,sig
+H4,"Proportionality item vs midpoint 4 (one-sided, less)","M = 5.72, t(947) = 38.80, d = 1.26",1,
+H5,"severity_1 vs severity_2 (paired, one-sided)","diff = 0.64, t(947) = 7.98, d = 0.26",2.141250145009923e-15,***
+H6,"Coherence of just deserts (r, alpha, CFA)","r = 0.085, alpha = 0.157",0.008624885201635088,**
+H7,Limits with revenge (one-sided) and just deserts (two-sided),core limits with revenge r = 0.656,5.900441963321604e-118,***
+H8,Limits with punitiveness (one-sided),core limits with punitiveness r = 0.721,2.3527999279698505e-153,***
+H9,"Just deserts vs revenge (paired, one-sided)","diff = 1.24, t(947) = 27.71, d = 0.90",1.4279947365566052e-124,***
+H10,Steiger: revenge vs just deserts as correlates of punitiveness,"difference in r = 0.251, z = 8.96",0,***

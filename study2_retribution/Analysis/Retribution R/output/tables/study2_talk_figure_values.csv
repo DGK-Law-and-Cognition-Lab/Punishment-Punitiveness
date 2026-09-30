@@ -1,0 +1,110 @@
+"figure","label","value","lower","upper"
+"s2_01_sentences","Mean first sentence (years)",36.1877637130802,NA,NA
+"s2_01_sentences","SD",12.761088643925,NA,NA
+"s2_01_sentences","Share choosing 50",0.379746835443038,NA,NA
+"s2_01_sentences","Share choosing more than 30",0.54746835443038,NA,NA
+"s2_02_correlates","Harsh prison conditions",0.709113782962712,0.67596227000629,0.739401020239044
+"s2_02_correlates","Revenge",0.692624024448363,0.657969305702546,0.724351276495544
+"s2_02_correlates","Hatred",0.678772396067647,0.642885481384042,0.711685869707159
+"s2_02_correlates","Infliction of suffering",0.641760839617798,0.602717583271855,0.677738602170414
+"s2_02_correlates","Social exclusion",0.625124376070138,0.584726594187465,0.662429389910995
+"s2_02_correlates","Due-process permissiveness",0.565416294793339,0.520482727216004,0.607226996139041
+"s2_02_correlates","Degradation",0.552492990815477,0.506644340164603,0.595225532994976
+"s2_02_correlates","Anger",0.544400782036998,0.49799114329095,0.587700836158018
+"s2_02_correlates","Tolerance of prison violence",0.501685780788296,0.452467583745031,0.547856952688907
+"s2_02_correlates","Perceived crime rates",0.488631973979448,0.438606461258636,0.535638634098804
+"s2_02_correlates","Convicting on uncertain evidence",0.473584762237021,0.422658128078859,0.521530033152593
+"s2_02_correlates","Fear of crime",0.241825861341994,0.18094049095371,0.300864712137484
+"s2_03_hostility_vs_crime","Hostility: Punitiveness (all eight items)",0.769799369711638,0.742522107569209,0.794527623658423
+"s2_03_hostility_vs_crime","Hostility: More punishment",0.720574759546491,0.688491355030385,0.749843335792184
+"s2_03_hostility_vs_crime","Hostility: Rejecting parsimony",0.526851324818034,0.479256780904859,0.571356356110536
+"s2_03_hostility_vs_crime","Hostility: Three strikes",0.586599458015312,0.54321701383337,0.626857946998232
+"s2_03_hostility_vs_crime","Hostility: Life without parole",0.492208158022019,0.442401449559121,0.538987888705446
+"s2_03_hostility_vs_crime","Hostility: Death penalty",0.58486988292712,0.541358403613228,0.625257021894476
+"s2_03_hostility_vs_crime","Hostility: Sentence given",0.372738215883418,0.316580154686803,0.426292500635456
+"s2_03_hostility_vs_crime","Crime concerns: Punitiveness (all eight items)",0.426960849404144,0.373441546587694,0.477647299350875
+"s2_03_hostility_vs_crime","Crime concerns: More punishment",0.399416019163593,0.344505894817538,0.451602529416198
+"s2_03_hostility_vs_crime","Crime concerns: Rejecting parsimony",0.297836012058098,0.238691080369491,0.354779486146573
+"s2_03_hostility_vs_crime","Crime concerns: Three strikes",0.314530341975475,0.255985474815215,0.370776340535123
+"s2_03_hostility_vs_crime","Crime concerns: Life without parole",0.302126155731918,0.24313185091777,0.358893576586343
+"s2_03_hostility_vs_crime","Crime concerns: Death penalty",0.310046710737634,0.251336999066612,0.366483307360604
+"s2_03_hostility_vs_crime","Crime concerns: Sentence given",0.246942880186682,0.186199144425697,0.305806013907817
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): Punitiveness (all eight items)",0.342838520307494,0.290559324558991,0.396880787344026
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): More punishment",0.321158740382898,0.266601488983365,0.377075066722666
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): Rejecting parsimony",0.229015312759935,0.166722873297948,0.291450705226139
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): Three strikes",0.272069116039837,0.211672109038877,0.332880606507918
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): Life without parole",0.190082002290101,0.126971254974813,0.253244937093677
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): Death penalty",0.274823172189486,0.214296026480182,0.335748089145965
+"s2_03_hostility_vs_crime","Difference (Steiger, Zou CI): Sentence given",0.125795335696736,0.0592652577657895,0.192130628468856
+"s2_04_ranking","Incapacitation Ranked 1st",0.280590717299578,NA,NA
+"s2_04_ranking","Retribution Ranked 1st",0.391350210970464,NA,NA
+"s2_04_ranking","Deterrence Ranked 1st",0.197257383966245,NA,NA
+"s2_04_ranking","Rehabilitation Ranked 1st",0.130801687763713,NA,NA
+"s2_04_ranking","Incapacitation 2nd",0.352320675105485,NA,NA
+"s2_04_ranking","Retribution 2nd",0.209915611814346,NA,NA
+"s2_04_ranking","Deterrence 2nd",0.336497890295359,NA,NA
+"s2_04_ranking","Rehabilitation 2nd",0.10126582278481,NA,NA
+"s2_04_ranking","Incapacitation 3rd",0.248945147679325,NA,NA
+"s2_04_ranking","Retribution 3rd",0.182489451476793,NA,NA
+"s2_04_ranking","Deterrence 3rd",0.360759493670886,NA,NA
+"s2_04_ranking","Rehabilitation 3rd",0.207805907172996,NA,NA
+"s2_04_ranking","Incapacitation 4th (last)",0.118143459915612,NA,NA
+"s2_04_ranking","Retribution 4th (last)",0.216244725738397,NA,NA
+"s2_04_ranking","Deterrence 4th (last)",0.105485232067511,NA,NA
+"s2_04_ranking","Rehabilitation 4th (last)",0.560126582278481,NA,NA
+"s2_05_ratings","Rating: Retribution",5.38034960819771,5.30539604703076,5.45530316936466
+"s2_05_ratings","Rating: Incapacitation",5.61181434599156,5.52744846011114,5.69618023187198
+"s2_05_ratings","Rating: Deterrence",5.5,5.41392629091211,5.58607370908789
+"s2_05_ratings","Rating: Rehabilitation",4.51582278481013,4.42524991650442,4.60639565311584
+"s2_06_proportionality","""Punishment should be proportionate to the severity of the crime, no more and no less"" Disagree",0.0685654008438819,NA,NA
+"s2_06_proportionality","""Punishment should be proportionate to the severity of the crime, no more and no less"" Neutral",0.100210970464135,NA,NA
+"s2_06_proportionality","""Punishment should be proportionate to the severity of the crime, no more and no less"" Agree",0.831223628691983,NA,NA
+"s2_06_proportionality","""Punishment should be greater than the seriousness of the crime"" Disagree",0.555907172995781,NA,NA
+"s2_06_proportionality","""Punishment should be greater than the seriousness of the crime"" Neutral",0.188818565400844,NA,NA
+"s2_06_proportionality","""Punishment should be greater than the seriousness of the crime"" Agree",0.255274261603376,NA,NA
+"s2_06_proportionality","""Punishment should be less severe than the harmfulness of the crime"" Disagree",0.69831223628692,NA,NA
+"s2_06_proportionality","""Punishment should be less severe than the harmfulness of the crime"" Neutral",0.184599156118143,NA,NA
+"s2_06_proportionality","""Punishment should be less severe than the harmfulness of the crime"" Agree",0.117088607594937,NA,NA
+"s2_07_desert_direction","Desert with No more, no less (proportionality principle)",0.195413173845527,0.133401605787531,0.255900581877545
+"s2_07_desert_direction","Desert with Never below the offense (severity index)",0.475912942744906,0.425123673832354,0.5237147029092
+"s2_07_desert_direction","Desert with More than the crime",0.328113848905201,0.270084937005056,0.383767760430028
+"s2_07_desert_direction","Desert with Not less than the harm",0.370690743613109,0.314440920273725,0.424346531673512
+"s2_07_desert_direction","Punitiveness with No more, no less (proportionality principle)",0.00662432505576281,-0.0570711274739506,0.0702660693121683
+"s2_07_desert_direction","Punitiveness with Never below the offense (severity index)",0.596788427248869,0.554174769348735,0.636282141045895
+"s2_07_desert_direction","Punitiveness with More than the crime",0.483043502433949,0.432679636563006,0.53040182023876
+"s2_07_desert_direction","Punitiveness with Not less than the harm",0.382602849342609,0.326894906650528,0.435661153609459
+"s2_08_goals_vs_limits","Desert x Parsimony (2 items)",-0.453756803211331,-0.502898773713398,-0.401690800533544
+"s2_08_goals_vs_limits","Desert x Parsimony principle item alone",-0.267899655435614,-0.326010105747698,-0.207772359920327
+"s2_08_goals_vs_limits","Desert x Proportionality component (3 items)",0.0852643121837065,0.0217107967787855,0.148131502659296
+"s2_08_goals_vs_limits","Desert x Proportionality principle item alone",0.195413173845527,0.133401605787531,0.255900581877545
+"s2_08_goals_vs_limits","Deterrence x Parsimony (2 items)",-0.395145159952238,-0.447556276606965,-0.340028710149614
+"s2_08_goals_vs_limits","Deterrence x Parsimony principle item alone",-0.227854953238687,-0.287357399268369,-0.166600586747511
+"s2_08_goals_vs_limits","Deterrence x Proportionality component (3 items)",0.0597729410477144,-0.00391333349133716,0.122976295773713
+"s2_08_goals_vs_limits","Deterrence x Proportionality principle item alone",0.200466374785416,0.138563615675593,0.260808799915863
+"s2_08_goals_vs_limits","Incapacitation x Parsimony (2 items)",-0.450132885999389,-0.499488631921091,-0.397864534240253
+"s2_08_goals_vs_limits","Incapacitation x Parsimony principle item alone",-0.25369863634229,-0.312324925900396,-0.193147228615324
+"s2_08_goals_vs_limits","Incapacitation x Proportionality component (3 items)",0.0887401494131931,0.0252112169557961,0.151555212035285
+"s2_08_goals_vs_limits","Incapacitation x Proportionality principle item alone",0.195686272368151,0.133680498872521,0.256165924589429
+"s2_08_goals_vs_limits","Rehabilitation x Parsimony (2 items)",-0.0448068750689502,-0.108169657238352,0.0189184788286032
+"s2_08_goals_vs_limits","Rehabilitation x Parsimony principle item alone",0.0154129146282924,-0.0483058719714681,0.0790067615033619
+"s2_08_goals_vs_limits","Rehabilitation x Proportionality component (3 items)",-0.0213747313044842,-0.0849305254440414,0.0423542922102312
+"s2_08_goals_vs_limits","Rehabilitation x Proportionality principle item alone",0.167096067430774,0.10453687902843,0.228338105199292
+"s2_09_endorsement","Mean: Desert",5.54008438818565,5.46218711372071,5.6179816626506
+"s2_09_endorsement","Mean: Just deserts",5.38097749648383,5.32854370020814,5.43341129275951
+"s2_09_endorsement","Mean: Revenge",4.14425105485232,4.05562146486043,4.23288064484421
+"s2_10_association","r with punitiveness: Desert",0.665903094712314,0.628896267426586,0.699899459796046
+"s2_10_association","r with punitiveness: Just deserts",0.441477497252182,0.388733205198302,0.491337632020959
+"s2_10_association","r with punitiveness: Revenge (all four items)",0.692624024448363,0.657969305702546,0.724351276495544
+"s2_10_association","r with punitiveness: Revenge (two literal items)",0.56858271034815,0.523876956732431,0.610164638777697
+"s2_11_two_sentences","Mean: First sentence",36.1877637130802,35.3743957467187,37.0011316794416
+"s2_11_two_sentences","Mean: Second sentence",29.4472573839662,28.3828959888347,30.5116187790978
+"s2_12_second_sentence","First sentence: life (50 years) Reduced",0.225,NA,NA
+"s2_12_second_sentence","First sentence: under 50 years Reduced",0.599659284497445,NA,NA
+"s2_12_second_sentence","First sentence: life (50 years) Kept",0.775,NA,NA
+"s2_12_second_sentence","First sentence: under 50 years Kept",0.340715502555366,NA,NA
+"s2_12_second_sentence","First sentence: life (50 years) Raised",0,NA,NA
+"s2_12_second_sentence","First sentence: under 50 years Raised",0.0596252129471891,NA,NA
+"s2_13_share_kept","Ratio with Desert",0.220754709943017,0.159289826303922,0.280514785173667
+"s2_13_share_kept","Ratio with Revenge",0.227276913751147,0.165975007134963,0.286829014239646
+"s2_13_share_kept","Ratio with Punitiveness",0.306629896192544,0.247764691644101,0.363239433404774
+"s2_13_share_kept","Ratio with No more, no less (proportionality principle)",-0.00361394914843647,-0.0673034592257814,0.0601048937270673

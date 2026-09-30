@@ -1,0 +1,5 @@
+analysis,punitiveness,n,estimate,ci_lower,ci_upper,p_two,p_dir
+"Sentencing ratio with punitiveness (r, two-sided)",Punitiveness (eight-item scale),947,0.30662989619254444,0.24776469164410134,0.3632394334047739,4.58455633005625e-22,4.58455633005625e-22
+"Sentencing ratio, continuous (beta, one-sided)",Punitiveness (eight-item scale),947,0.3066298961925455,0.24586571769863239,0.36739407468645857,4.584556330054886e-22,2.292278165027443e-22
+"Second sentence residualized on the first, continuous (beta, one-sided)",Punitiveness (eight-item scale),948,0.1710944688658452,0.10822974527418319,0.2339591924575072,1.1573339803141019e-7,5.7866699015705094e-8
+"H21 under the sentencing-ratio grouping (d, one-sided)",Punitiveness (eight-item scale),947,0.6022922463807054,0.4715770928045123,0.732696419898176,1.537236332470909e-19,7.686181662354546e-20

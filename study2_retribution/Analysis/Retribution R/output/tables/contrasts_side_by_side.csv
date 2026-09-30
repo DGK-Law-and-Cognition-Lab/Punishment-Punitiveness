@@ -1,0 +1,28 @@
+hypothesis,outcome,"1. Ranking (categorical, primary)",2. Median split on relative retribution,3. Tertiles on relative retribution,4. Sentencing ratio (behavioral)
+H13,Hostile-aggression cluster (z),0.64***,0.31***,0.42***,0.50***
+H13,Hatred,0.57***,0.26***,0.37***,0.40***
+H13,Revenge,0.56***,0.26***,0.42***,0.43***
+H13,Degradation,0.43***,0.25***,0.28***,0.34***
+H13,Infliction of suffering,0.52***,0.23***,0.35***,0.38***
+H13,Tolerance of prison violence,0.43***,0.22***,0.25***,0.41***
+H13,Anger,0.39***,0.13*,0.25***,0.27***
+H13,Social exclusion,0.53***,0.20**,0.33***,0.30***
+H13,Harsh prison conditions,0.59***,0.19**,0.25***,0.44***
+H13,Perceived crime rates,0.43***,0.04,0.14*,0.27***
+H13,Fear of crime,0.12*,0.01,0.08,0.03
+H14,Sentence 1 (z within vignette),0.51***,0.04,0.16*,NA
+H15,Shark: how painful the death should be,0.20**,-0.04,-0.11,-0.06
+H16,Essentialism about criminals,0.69***,0.22***,0.39***,0.48***
+H17,Crime is a choice,0.57***,0.15*,0.32***,0.46***
+H18,Leaning toward the prosecution,0.47***,0.20***,0.34***,0.45***
+H19,Rejecting society's responsibility,0.61***,0.23***,0.32***,0.44***
+H20,Due-process permissiveness,0.43***,0.11*,0.14*,0.28***
+H20,Convicting on uncertain evidence,0.32***,-0.00,0.02,0.15*
+H21,"Punitiveness (self-report, 8 items)",0.78***,0.26***,0.36***,0.60***
+H21,"Punitiveness (full index, + sentence)",0.76***,0.18**,0.30***,NA
+E1,Right-Wing Authoritarianism,0.49***,0.08,0.14*,0.18**
+E1,Social Dominance Orientation,0.39***,0.14*,0.24**,0.29***
+E1,Violence proneness,0.39***,0.16**,0.26***,0.31***
+E1,Racial resentment,0.42***,0.19**,0.29***,0.43***
+E1,Cognitive reflection (0-3),0.02,0.03,0.05,-0.07
+E1,"Cognitive reflection (0-2, lily pad dropped)",0.05,0.02,0.04,-0.10

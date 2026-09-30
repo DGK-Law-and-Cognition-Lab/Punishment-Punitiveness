@@ -1,0 +1,4 @@
+scoring,comparison,r_jk,r_jh,r_kh,n,z,p,diff,diff_lower,diff_upper,alternative
+"Registered: punitiveness, 8 self-report items","r(punitiveness, hostile aggression) > r(punitiveness, crime concerns)",0.7697993697116379,0.42696084940414375,0.3731321390101928,948,13.64915273588857,0,0.3428385203074941,0.29055932455899125,0.3968807873440263,greater
+Matched to Study 1: six components,"r(punitiveness, hostile aggression) > r(punitiveness, crime concerns)",0.7489455235430865,0.42669557717593154,0.3731321390101928,948,12.513890862176815,0,0.322249946367155,0.2693959555566473,0.3766988438467126,greater
+"Matched to Study 1: six components, Study 1's items and aggregation","r(punitiveness, hostile aggression) > r(punitiveness, crime concerns)",0.754024871609163,0.39653326684069257,0.34634541214375947,948,13.515054807286601,0,0.3574916047684704,0.30295165527108237,0.4135879339160804,greater

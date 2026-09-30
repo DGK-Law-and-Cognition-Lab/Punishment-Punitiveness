@@ -1,0 +1,74 @@
+%% Retribution paper: Supplementary Materials
+%%
+%% Compile with pdfLaTeX (Overleaf's default). The apa7 class in manuscript
+%% mode ("man") formats the text in APA style and moves every table and every
+%% figure to the end of the document, each on its own page, as journals ask.
+%% To see tables and figures in the text instead while drafting, add the
+%% option "floatsintext" to \documentclass below.
+%%
+%% Files:
+%%   results.tex  the supplement's text (Sections S1 to S5)
+%%   tables.tex   Tables S1 to S18
+%%   figures.tex  Figures S1 to S9
+%%   figures/     the figure files (PDF, drawn by 04_two_study_figures.Rmd;
+%%                Figures 2 and 4 are Study 1's own JPG files)
+
+\documentclass[man,12pt,donotrepeattitle]{apa7}
+
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}   % Times-style text and math
+\usepackage{graphicx}
+\usepackage{booktabs}              % \toprule, \midrule, \bottomrule
+\usepackage{array}                 % column types with alignment
+\usepackage{newunicodechar}        % symbols typed directly in the text
+% Greek letters are set upright, as APA style has them (newtxmath's \up forms).
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{∆}{\ensuremath{\Delta}}
+\newunicodechar{α}{\ensuremath{\upalpha}}
+\newunicodechar{χ}{\ensuremath{\upchi}}
+\newunicodechar{²}{\ensuremath{^{2}}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{ρ}{\ensuremath{\uprho}}
+\newunicodechar{λ}{\ensuremath{\uplambda}}
+\newunicodechar{κ}{\ensuremath{\upkappa}}
+\newunicodechar{β}{\ensuremath{\upbeta}}
+\newunicodechar{ω}{\ensuremath{\upomega}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{†}{\ensuremath{^{\dagger}}}
+\newunicodechar{‡}{\ensuremath{^{\ddagger}}}
+\newunicodechar{ᵃ}{\textsuperscript{a}}
+% Tables and figures are single-spaced inside (APA 7 allows single spacing in
+% tables); the text stays double-spaced. This keeps each table and figure,
+% with its note, on one page.
+\usepackage{etoolbox}
+\AtBeginEnvironment{table}{\linespread{1}\selectfont}
+\AtBeginEnvironment{figure}{\linespread{1}\selectfont}
+% In manuscript mode apa7 moves floats to the end and typesets them as table*
+% and figure*, so the same setting is applied there.
+\AtBeginEnvironment{table*}{\linespread{1}\selectfont}
+\AtBeginEnvironment{figure*}{\linespread{1}\selectfont}
+% Tables longer than a page are set as longtables. endfloat (which apa7 uses
+% in manuscript mode) is told to move them to the end like any other table,
+% and they get the same single spacing and type size as the other tables.
+\usepackage{longtable}
+\DeclareDelayedFloatFlavour*{longtable}{table}
+\AtBeginEnvironment{longtable}{\footnotesize\linespread{1}\selectfont}
+% One space after a period, as APA style asks, rather than TeX's wider one.
+\frenchspacing
+% Tables run the full text width, flush with the margins.
+\setlength{\LTleft}{0pt}\setlength{\LTright}{\fill}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\title{Supplementary Materials}
+\shorttitle{Supplementary Materials}
+\authorsnames{David G. Kamper, Dan Simon}
+\authorsaffiliations{{University of Southern California}}
+
+\begin{document}
+\maketitle
+
+\input{results}
+\input{tables}
+\input{figures}
+
+\end{document}
