@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Dark Side of Punishment — Simon, Melnikoff, & Kamper</title>
-<meta name="description" content="Investigating the psychological underpinnings of public punitiveness: hostile aggression vs. crime concerns, and the cultural-default-with-selective-suppression pattern in punishment justifications.">
+<title>The Dark Side of Punishment | Simon &amp; Kamper</title>
+<meta name="description" content="Data, code, materials, and reports for The Dark Side of Punishment, by Dan Simon and David G. Kamper: two preregistered surveys of U.S. adults on punitiveness, hostile aggression, and retribution.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
   :root {
     --ink: #1a1a1a;
     --ink-secondary: #4a4a4a;
-    --ink-muted: #767676;
+    --ink-muted: #6e6e6e;
     --surface: #faf9f7;
     --surface-warm: #f3f1ed;
     --surface-card: #ffffff;
@@ -33,7 +33,7 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 3.5rem; }
 
   body {
     font-family: var(--sans);
@@ -42,7 +42,31 @@
     color: var(--ink);
     background: var(--surface);
     -webkit-font-smoothing: antialiased;
+    overflow-wrap: break-word;
   }
+
+  a { color: var(--accent); }
+  a:focus-visible, .report-card:focus-visible, .fig-card a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  /* On the dark header and footer the accent outline is too faint; use white. */
+  .hero a:focus-visible, .footer a:focus-visible { outline-color: #fff; }
+  /* .fig-card clips its overflow, so draw the figure link's ring inside the link. */
+  .fig-card a:focus-visible { outline-offset: -3px; }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 200;
+    background: var(--surface-card);
+    color: var(--accent);
+    padding: .5rem 1rem;
+    border-radius: 0 0 6px 0;
+    font-weight: 600;
+  }
+  .skip-link:focus { left: 0; }
 
   /* ===== HEADER / HERO ===== */
   .hero {
@@ -73,6 +97,7 @@
     gap: .5rem;
     flex-wrap: wrap;
     margin-bottom: 2.5rem;
+    padding-right: 11rem;
   }
   .hero-badges a {
     display: inline-flex;
@@ -109,8 +134,8 @@
     font-size: clamp(.95rem, 2vw, 1.15rem);
     font-weight: 300;
     line-height: 1.6;
-    color: rgba(255,255,255,.7);
-    max-width: 640px;
+    color: rgba(255,255,255,.75);
+    max-width: 660px;
     margin-bottom: 2rem;
     font-style: italic;
   }
@@ -119,7 +144,7 @@
     flex-wrap: wrap;
     gap: .4rem 1.5rem;
     font-size: .88rem;
-    color: rgba(255,255,255,.55);
+    color: rgba(255,255,255,.6);
   }
   .hero-authors span { white-space: nowrap; }
   .hero-authors strong { color: rgba(255,255,255,.9); font-weight: 500; }
@@ -217,7 +242,7 @@
     font-family: var(--serif);
     font-size: 1.2rem;
     font-weight: 500;
-    margin: 2rem 0 .75rem;
+    margin: 2.25rem 0 .75rem;
     color: var(--ink);
   }
   .section p {
@@ -225,11 +250,31 @@
     color: var(--ink-secondary);
     margin-bottom: 1rem;
   }
+  .section p.small {
+    font-size: .84rem;
+    color: var(--ink-muted);
+  }
+
+  /* ===== NOTE / CALLOUT ===== */
+  .note {
+    max-width: var(--max-w);
+    background: var(--surface-warm);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: .9rem 1.2rem;
+    margin: 1.25rem 0;
+    font-size: .88rem;
+    color: var(--ink-secondary);
+    line-height: 1.6;
+  }
+  .note strong { color: var(--ink); font-weight: 600; }
+  .note ul { margin: .4rem 0 0 1.1rem; }
+  .note li { margin-bottom: .3rem; }
 
   /* ===== FINDINGS CARDS ===== */
   .findings-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: 1.25rem;
     margin: 1.5rem 0;
   }
@@ -265,13 +310,19 @@
     font-size: .88rem;
     line-height: 1.6;
     color: var(--ink-secondary);
-    margin: 0;
+    margin: 0 0 .6rem;
   }
+  .finding-card p:last-child { margin-bottom: 0; }
+  .finding-card p.fine {
+    font-size: .8rem;
+    color: var(--ink-muted);
+  }
+  .num { font-family: var(--mono); font-size: .84em; font-weight: 500; color: var(--accent); white-space: nowrap; }
 
   /* ===== STAT HIGHLIGHT ===== */
   .stat-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
     gap: 1rem;
     margin: 1.5rem 0;
   }
@@ -304,11 +355,18 @@
     border: 1px solid var(--border);
     background: var(--surface-card);
     box-shadow: var(--shadow-sm);
+    max-width: var(--max-w);
   }
   table {
     width: 100%;
     border-collapse: collapse;
     font-size: .85rem;
+  }
+  caption {
+    text-align: left;
+    padding: .8rem 1rem .2rem;
+    font-size: .8rem;
+    color: var(--ink-muted);
   }
   thead th {
     text-align: left;
@@ -320,7 +378,14 @@
     color: var(--ink-muted);
     background: var(--surface-warm);
     border-bottom: 2px solid var(--border);
-    white-space: nowrap;
+  }
+  tbody th {
+    text-align: left;
+    font-weight: 500;
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--ink);
+    vertical-align: top;
   }
   tbody td {
     padding: .6rem 1rem;
@@ -328,58 +393,16 @@
     color: var(--ink-secondary);
     vertical-align: top;
   }
-  tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: rgba(0,0,0,.015); }
+  tbody tr:last-child td, tbody tr:last-child th { border-bottom: none; }
+  td.mono { font-family: var(--mono); font-size: .82rem; }
   td a {
     color: var(--accent);
     text-decoration: none;
     font-weight: 500;
-    border-bottom: 1px solid rgba(139,37,0,.2);
+    border-bottom: 1px solid rgba(139,37,0,.55);
     transition: border-color .15s;
   }
   td a:hover { border-color: var(--accent); }
-  .sig { font-family: var(--mono); font-size: .8rem; color: var(--accent); }
-  td.mono { font-family: var(--mono); font-size: .82rem; }
-  .check { color: #2d8a4e; }
-
-  /* ===== HYPOTHESIS CARDS ===== */
-  .hyp-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem;
-    margin: 1.5rem 0;
-  }
-  .hyp-card {
-    background: var(--surface-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.3rem 1.4rem;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-  }
-  .hyp-card .hyp-id {
-    font-family: var(--mono);
-    font-size: .72rem;
-    font-weight: 500;
-    letter-spacing: .08em;
-    color: var(--accent);
-  }
-  .hyp-card .hyp-desc {
-    font-size: .88rem;
-    color: var(--ink-secondary);
-    line-height: 1.5;
-    flex: 1;
-  }
-  .hyp-card .hyp-status {
-    font-size: .78rem;
-    font-weight: 600;
-    color: #2d8a4e;
-    display: flex;
-    align-items: center;
-    gap: .3rem;
-  }
 
   /* ===== CODE BLOCK ===== */
   .code-block {
@@ -390,19 +413,21 @@
     font-family: var(--mono);
     font-size: .8rem;
     line-height: 1.65;
-    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
     margin: 1rem 0;
+    max-width: var(--max-w);
   }
-  .code-block .comment { color: #6a9955; }
+  .code-block .comment { color: #8fbf7a; }
   .code-block .val { color: #b5cea8; }
   .code-block .key { color: #9cdcfe; }
 
   /* ===== REPORT LINKS GRID ===== */
   .report-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     gap: 1rem;
-    margin: 1.5rem 0;
+    margin: 1.25rem 0 1.5rem;
   }
   .report-card {
     display: block;
@@ -422,20 +447,16 @@
     transform: translateY(-2px);
   }
   .report-card::after {
-    content: '→';
+    content: '\2192';
     position: absolute;
     right: 1.2rem;
-    top: 50%;
-    transform: translateY(-50%) translateX(0);
+    top: 1.2rem;
     color: var(--accent);
     font-size: 1.1rem;
     opacity: 0;
     transition: all .2s;
   }
-  .report-card:hover::after {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
+  .report-card:hover::after { opacity: 1; }
   .report-card .rc-lang {
     font-family: var(--mono);
     font-size: .62rem;
@@ -458,100 +479,137 @@
     color: var(--ink-muted);
     line-height: 1.45;
   }
+  .report-card .rc-file {
+    display: block;
+    margin-top: .55rem;
+    font-family: var(--mono);
+    font-size: .68rem;
+    color: var(--accent);
+    word-break: break-all;
+  }
 
-  /* ===== PIPELINE ===== */
-  .pipeline {
+  /* ===== FIGURE GALLERY ===== */
+  .fig-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: .75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    gap: 1.25rem;
     margin: 1.5rem 0;
   }
-  .pipe-step {
+  .fig-card {
     background: var(--surface-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem 1.1rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .2s, transform .2s;
   }
-  .pipe-step .pipe-num {
+  .fig-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .fig-card a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .fig-thumb {
+    aspect-ratio: 4 / 3;
+    background: #fff;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .75rem;
+  }
+  .fig-thumb img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .fig-card figcaption {
+    padding: .85rem 1.1rem 1rem;
+    font-size: .84rem;
+    line-height: 1.45;
+    color: var(--ink-secondary);
+  }
+  .fig-card figcaption .fig-num {
+    display: block;
     font-family: var(--mono);
-    font-size: .62rem;
+    font-size: .65rem;
     font-weight: 500;
     letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: .3rem;
-  }
-  .pipe-step .pipe-title {
-    font-weight: 600;
-    font-size: .88rem;
-    margin-bottom: .4rem;
-  }
-  .pipe-step .pipe-items {
-    font-size: .78rem;
-    color: var(--ink-muted);
-    line-height: 1.5;
-  }
-
-  /* ===== CLUSTER LABELS ===== */
-  .cluster-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin: 1.5rem 0;
-  }
-  .cluster-card {
-    border-left: 3px solid var(--accent);
-    padding: .8rem 1.1rem;
-    background: var(--surface-card);
-    border-radius: 0 8px 8px 0;
-    box-shadow: var(--shadow-sm);
-  }
-  .cluster-card .cl-name {
-    font-weight: 600;
-    font-size: .88rem;
     margin-bottom: .25rem;
   }
-  .cluster-card .cl-detail {
-    font-size: .78rem;
-    color: var(--ink-muted);
-    line-height: 1.5;
+  .fig-card figcaption .fig-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: .95rem;
+    color: var(--ink);
   }
 
-  /* ===== FACADE BLOCK ===== */
-  .facade-grid {
+  /* ===== LINK LISTS ===== */
+  .link-list {
+    list-style: none;
+    max-width: var(--max-w);
+    margin: .75rem 0 1rem;
+  }
+  .link-list li {
+    padding: .5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: .9rem;
+    color: var(--ink-secondary);
+  }
+  .link-list li:last-child { border-bottom: none; }
+  .link-list a {
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(139,37,0,.55);
+  }
+  .link-list a:hover { border-bottom-color: var(--accent); }
+  .link-list .ll-label {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-right: .4rem;
+  }
+
+  /* ===== MATERIALS COLUMNS ===== */
+  .two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.25rem;
     margin: 1.5rem 0;
   }
-  .facade-col {
+  .col-card {
     background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 1.3rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
   }
-  .facade-col h4 {
+  .col-card h3 {
     font-family: var(--serif);
-    font-size: .95rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    margin-bottom: .6rem;
+    margin: 0 0 .4rem;
   }
-  .facade-col p, .facade-col .facade-stat {
-    font-size: .85rem;
-    color: var(--ink-secondary);
-    line-height: 1.6;
-    margin-bottom: .4rem;
-  }
-  .facade-stat .fval {
-    font-family: var(--mono);
-    font-weight: 500;
-    color: var(--accent);
-  }
+  .col-card .link-list { margin: .25rem 0 0; }
+  .col-card .link-list li { font-size: .86rem; }
 
   /* ===== FOOTER ===== */
   .footer {
     background: var(--ink);
-    color: rgba(255,255,255,.5);
+    color: rgba(255,255,255,.6);
     padding: 3rem 2rem;
     margin-top: 3rem;
   }
@@ -562,7 +620,7 @@
     grid-template-columns: 2fr 1fr 1fr;
     gap: 2rem;
   }
-  .footer h4 {
+  .footer h2 {
     color: rgba(255,255,255,.85);
     font-family: var(--serif);
     font-size: 1rem;
@@ -574,7 +632,7 @@
     line-height: 1.6;
   }
   .footer a {
-    color: rgba(255,255,255,.6);
+    color: rgba(255,255,255,.7);
     text-decoration: none;
     transition: color .15s;
   }
@@ -588,18 +646,36 @@
     font-size: .75rem;
     font-style: italic;
     font-family: var(--serif);
-    color: rgba(255,255,255,.35);
+    color: rgba(255,255,255,.5);
     line-height: 1.6;
   }
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
     .hero-inner { padding: 3rem 1.25rem 2.5rem; }
-    .hero-github { position: static; margin-bottom: 1.5rem; width: fit-content; }
+    .hero-github { position: static; margin: 1.25rem 1.25rem 0; width: fit-content; }
+    .hero-badges { padding-right: 0; }
     .main { padding: 0 1.25rem 3rem; }
+    .footer { padding: 2.5rem 1.25rem; }
     .footer-inner { grid-template-columns: 1fr; gap: 1.5rem; }
-    .facade-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
     .nav-inner { padding: 0 1rem; }
+    /* The nav scrolls sideways at this width: fade its right edge to show that
+       more links follow, and add end space so the last link clears the fade. */
+    .nav-inner {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+    }
+    .nav-inner::after { content: ''; flex: 0 0 1.5rem; }
+  }
+  @media (max-width: 480px) {
+    .hero-inner { padding: 2.25rem 1rem 2rem; }
+    .hero-github { margin: 1rem 1rem 0; }
+    .hero-authors span { white-space: normal; }
+    .main { padding: 0 1rem 3rem; }
+    .footer { padding: 2.5rem 1rem; }
+    .finding-card, .report-card, .col-card { padding: 1.15rem 1.1rem; }
+    .code-block { padding: 1rem; font-size: .74rem; }
   }
 
   /* ===== ANIMATIONS ===== */
@@ -613,438 +689,412 @@
   .hero-subtitle { animation-delay: .1s; }
   .hero-authors { animation-delay: .2s; }
   .hero-badges { animation-delay: .05s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .finding-card:hover, .report-card:hover, .fig-card:hover { transform: none; }
+  }
 </style>
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to content</a>
+
 <!-- ===== HERO ===== -->
 <header class="hero">
   <a class="hero-github" href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness" target="_blank" rel="noopener">
-    <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
     View on GitHub
   </a>
   <div class="hero-inner">
     <div class="hero-badges">
-      <a href="https://osf.io/kr7y2/overview?view_only=d312013b176a411c8cf6c126d7f54617" target="_blank" rel="noopener">OSF Pre-registered</a>
+      <a href="https://osf.io/kr7y2/overview?view_only=d312013b176a411c8cf6c126d7f54617" target="_blank" rel="noopener">Study 1 preregistration</a>
+      <a href="study2_retribution/Docs/Preregistration/Retribution%20Study%20-%20Preregistration,FINAL,%20June%2029.pdf">Study 2 preregistration</a>
       <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a>
-      <a href="https://www.r-project.org/" target="_blank" rel="noopener">R ≥ 4.0</a>
-      <a href="https://www.python.org/" target="_blank" rel="noopener">Python 3.10+</a>
     </div>
     <h1>The Dark Side of Punishment</h1>
-    <p class="hero-subtitle">Probing the psychological underpinnings of public punitiveness: hostile aggression dominates self-reported justifications, but the language people reach for to justify their punishments is shaped by a shared cultural script.</p>
+    <p class="hero-subtitle">Two preregistered surveys of U.S. adults on the psychology of the punisher: how punitiveness relates to hostility toward offenders and to concern about crime, and how people who rank retribution first among the goals of punishment compare with others.</p>
     <div class="hero-authors">
       <span><strong>Dan Simon</strong> &middot; USC Gould School of Law</span>
-      <span><strong>David E. Melnikoff</strong> &middot; Stanford GSB</span>
       <span><strong>David G. Kamper</strong> &middot; UCLA &amp; UChicago Law</span>
     </div>
   </div>
 </header>
 
 <!-- ===== NAV ===== -->
-<nav class="nav-bar">
+<nav class="nav-bar" aria-label="Sections">
   <div class="nav-inner">
-    <a href="#reports">Reports</a>
+    <a href="#overview">Overview</a>
     <a href="#findings">Findings</a>
-    <a href="#hypotheses">Hypotheses</a>
-    <a href="#results">Results</a>
-    <a href="#design">Design</a>
-    <a href="#facade">Facade</a>
-    <a href="#pipeline">Pipeline</a>
-    <a href="#data">Data &amp; Tables</a>
-    <a href="#reliability">Reliability</a>
+    <a href="#figures">Figures</a>
+    <a href="#reports">Reports</a>
+    <a href="#materials">Materials &amp; Data</a>
+    <a href="#earlier">Earlier Work</a>
     <a href="#cite">Cite</a>
   </div>
 </nav>
 
-<main class="main">
+<main class="main" id="main">
 
-  <!-- ===== ANALYSIS REPORTS ===== -->
-  <section class="section" id="reports">
-    <div class="section-label">Analysis Reports</div>
-    <h2>Full Interactive Reports</h2>
-    <p>Each analysis script is available as an interactive HTML report with code, outputs, and visualizations. Click any card to view.</p>
+  <!-- ===== OVERVIEW ===== -->
+  <section class="section" id="overview">
+    <div class="section-label">Overview</div>
+    <h2>What the paper asks</h2>
+    <p>The paper asks what role the psychology of the punisher plays in criminal punishment, and whether people who favor retribution live up to the theory's image. Both studies surveyed U.S. adults recruited through Prolific's representative sample, with quotas for age, sex, ethnicity, and political affiliation, and both were preregistered. Study 1 (496 participants) relates punitiveness to eighteen psychological correlates and compares hostile aggression toward offenders with concern about crime. Study 2 (948 participants) repeats Study 1's main tests and then examines retribution: whether its two components, desert theory and the proportionality principle, hang together, and how the participants who ranked retribution first among four goals of punishment (the retributivists) compare with other participants.</p>
 
-    <div class="report-grid">
-      <a class="report-card" href="analysis/r/01_main_analysis.html">
-        <div class="rc-lang">R Markdown</div>
-        <div class="rc-title">Main Analysis (Study 1)</div>
-        <div class="rc-desc">H1–H3, descriptives, reliability, regressions, demographic moderation, CFA</div>
-      </a>
-      <a class="report-card" href="analysis/r/02_nlp_integration.html">
-        <div class="rc-lang">R Markdown</div>
-        <div class="rc-title">NLP Integration (Study 2)</div>
-        <div class="rc-desc">99-cell facade matrix, multiverse verdicts, hierarchical regressions, theme correlations</div>
-      </a>
-      <a class="report-card" href="analysis/r/03_supplementary_analyses.html">
-        <div class="rc-lang">R Markdown</div>
-        <div class="rc-title">Supplementary Analyses</div>
-        <div class="rc-desc">Tautology sensitivity, parsimony, CFA, TOST equivalence, sentence anchor, prototype multiverse</div>
-      </a>
-      <a class="report-card" href="https://colab.research.google.com/drive/1oQSBmuGCB48b5hF1DWkte1qpHw9etV0X" target="_blank" rel="noopener">
-        <div class="rc-lang">Python · Open in Colab</div>
-        <div class="rc-title">NLP — Preprocessing &amp; Dictionaries</div>
-        <div class="rc-desc">Text cleaning, VADER sentiment, Empath categories, hand-built dictionary classifier</div>
-      </a>
-      <a class="report-card" href="https://colab.research.google.com/drive/1Qjk3VlOik9ObHZmyDurYIfFaUzYhpGJ0" target="_blank" rel="noopener">
-        <div class="rc-lang">Python · Open in Colab</div>
-        <div class="rc-title">NLP — Classification</div>
-        <div class="rc-desc">DeBERTa zero-shot, Claude forced-choice, 40-sentence ground-truth validation</div>
-      </a>
-      <a class="report-card" href="https://colab.research.google.com/drive/11Dpj5cgn0LTxxwjn7DMI-sZvj1F4wOJC" target="_blank" rel="noopener">
-        <div class="rc-lang">Python · Open in Colab</div>
-        <div class="rc-title">NLP — Embeddings &amp; Similarity</div>
-        <div class="rc-desc">BGE + voyage-3 + MPNet × 5 prototype variants (45 combinations)</div>
-      </a>
-      <a class="report-card" href="https://colab.research.google.com/drive/1JJDWBjEQO-dCKisftIBXK--E7HN-BGKT" target="_blank" rel="noopener">
-        <div class="rc-lang">Python · Open in Colab</div>
-        <div class="rc-title">NLP — Topics, Convergence &amp; Export</div>
-        <div class="rc-desc">BERTopic, UMAP, cross-method convergence (raw agreement + Cohen's κ), feature export</div>
-      </a>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-val">496</div>
+        <div class="stat-label">Study 1 participants<br>(December 2025 to January 2026)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">948</div>
+        <div class="stat-label">Study 2 participants analyzed<br>(July 2026)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">6</div>
+        <div class="stat-label">standardized components<br>of punitiveness</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">39.1%</div>
+        <div class="stat-label">of Study 2 participants ranked<br>retribution first</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>How punitiveness is scored.</strong> In both studies, punitiveness is the mean of six components, each standardized so that each carries the same weight: support for more punishment, rejection of parsimony, support for three-strikes laws, support for life without parole, support for the death penalty, and the sentence each participant recommended for a second-degree murder described in a vignette (standardized within vignette; in Study 2, the first of two sentences). Where an analysis relates punitiveness to the sentence, or to a measure built from the sentences, punitiveness leaves the sentence out and is the mean of the five attitude components.
     </div>
   </section>
 
   <!-- ===== KEY FINDINGS ===== -->
   <section class="section" id="findings">
-    <div class="section-label">Overview</div>
-    <h2>Key Findings</h2>
-    <p>Two studies investigate whether the prosocial reasons people invoke when justifying punishment — deterrence, public safety, rehabilitation — are the actual psychological drivers of their punitive choices. We find a divergence between substrate and vocabulary that we describe as a <em>cultural default with selective suppression</em>.</p>
+    <div class="section-label">Results</div>
+    <h2>Key findings</h2>
+    <p>The numbers below are from the paper's Results. Both studies are correlational surveys: they show which attitudes go with punitiveness, not what causes it.</p>
 
     <div class="findings-grid">
       <div class="finding-card">
-        <div class="finding-num">Finding 1</div>
-        <div class="finding-title">Hostile Aggression Outpredicts Crime Concerns</div>
-        <p>Punitiveness correlates substantially more strongly with hostile aggression measures (hatred, revenge, degradation, endorsement of suffering; <em>r</em> = .59) than with legitimate crime concerns (<em>r</em> = .32). Steiger's <em>Z</em> = 6.26, <em>p</em> &lt; .001. Robust to three stringency levels of tautology sensitivity.</p>
+        <div class="finding-num">Study 1 &middot; Hypothesis 1</div>
+        <div class="finding-title">Punitiveness is related to all eighteen correlates</div>
+        <p>All 18 correlates were positively related to punitiveness, and all 18 correlations remained significant after Benjamini-Hochberg correction. The three strongest were with harsh prison conditions (<em>r</em>&nbsp;=&nbsp;<span class="num">.667</span>), hatred of offenders (<span class="num">.620</span>), and social exclusion (<span class="num">.610</span>); the weakest were with trait vengefulness (<span class="num">.190</span>) and blood sports viewership (<span class="num">.166</span>).</p>
       </div>
       <div class="finding-card">
-        <div class="finding-num">Finding 2</div>
-        <div class="finding-title">Prosocial Surface, Mismatched Substrate</div>
-        <p>Across five classification methods, 71%–96% of justifications get classified as prosocial. But of 33 cells in the text-feature × psychology matrix that reached both significance and a meaningful effect size, <strong>32 were negative</strong> — language tracks Study 1 psychology in the wrong direction.</p>
+        <div class="finding-num">Study 1 &middot; Hypothesis 2</div>
+        <div class="finding-title">Hostile aggression correlates more strongly than crime concerns</div>
+        <p>The hostile aggression cluster correlated with punitiveness at <em>r</em>&nbsp;=&nbsp;<span class="num">.690</span>, 95% CI [.641, .734], and the crime concerns cluster at <em>r</em>&nbsp;=&nbsp;<span class="num">.360</span> [.280, .434]; Steiger's <em>Z</em>&nbsp;=&nbsp;8.54, <em>p</em>&nbsp;&lt;&nbsp;.001. The difference was &Delta;<em>r</em>&nbsp;=&nbsp;<span class="num">.331</span>, with a bootstrap (BCa) 95% CI of [.240, .431].</p>
+        <p class="fine">Hostile aggression: social exclusion, degradation, infliction of suffering, tolerance of prison violence, harsh prison conditions, and revenge. Crime concerns: perceived crime rates and fear of crime. Each cluster is the mean of its items.</p>
       </div>
       <div class="finding-card">
-        <div class="finding-num">Finding 3</div>
-        <div class="finding-title">Selective Suppression of Rehabilitation</div>
-        <p>The most punitive participants do not endorse more revenge or suffering in their language. They specifically drop one prosocial theme — <strong>rehabilitation</strong> (BGE rehab × punitiveness <em>r</em> = -.37) — while invoking deterrence, incapacitation, and proportional justice at rates indistinguishable from low-hostile participants.</p>
+        <div class="finding-num">Study 2 &middot; Part 1</div>
+        <div class="finding-title">The Study 1 pattern appears again</div>
+        <p>Punitiveness correlated positively with all twelve preregistered correlates. It correlated <em>r</em>&nbsp;=&nbsp;<span class="num">.749</span> with the hostile aggression cluster and <em>r</em>&nbsp;=&nbsp;<span class="num">.427</span> with crime concerns; &Delta;<em>r</em>&nbsp;=&nbsp;.322, 95% CI [.269, .377], Steiger's <em>Z</em>&nbsp;=&nbsp;12.51, one-sided <em>p</em>&nbsp;&lt;&nbsp;.001.</p>
+        <p class="fine">As Study 2's preregistration defines them, hostile aggression is hatred, revenge, degradation, infliction of suffering, and tolerance of prison violence, and crime concerns are perceived crime rates and fear of crime; each cluster is the mean of its standardized members. Because the clusters differ from Study 1's in membership and scoring, this is a conceptual replication.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">Study 2 &middot; Part 2</div>
+        <div class="finding-title">Desert theory goes with severity more than with proportionality</div>
+        <p>Desert theory, the mean of five items holding that crime must or may be punished (for example, &ldquo;Justice requires that crimes be punished&rdquo; and &ldquo;Punishment is justified because criminals deserve to be punished&rdquo;), correlated <em>r</em>&nbsp;=&nbsp;<span class="num">.199</span>, 95% CI [.137, .260], with the proportionality principle (agreement that punishment should be proportionate to the crime, no more and no less) and <em>r</em>&nbsp;=&nbsp;<span class="num">.474</span> [.423, .522] with the severity index, on which a high score means punishment at or above the gravity of the crime and never below it; &Delta;<em>r</em>&nbsp;=&nbsp;.275, <em>Z</em>&nbsp;=&nbsp;6.53, <em>p</em>&nbsp;&lt;&nbsp;.001.</p>
+        <p class="fine">These correlations were not registered. The registered test, on a three-item proportionality component, also found that the two parts of just deserts do not hold together.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">Study 2 &middot; Part 2</div>
+        <div class="finding-title">Desert theory and revenge track punitiveness equally</div>
+        <p>Desert theory and revenge correlated with punitiveness about equally, <em>r</em>&nbsp;=&nbsp;<span class="num">.674</span> and <span class="num">.676</span> (&Delta;<em>r</em>&nbsp;=&nbsp;.002, one-sided <em>p</em>&nbsp;=&nbsp;.47). Just deserts, the mean of desert theory and the proportionality principle, correlated <em>r</em>&nbsp;=&nbsp;<span class="num">.432</span>, well below revenge (&Delta;<em>r</em>&nbsp;=&nbsp;.244, <em>Z</em>&nbsp;=&nbsp;8.70, one-sided <em>p</em>&nbsp;&lt;&nbsp;.001).</p>
+        <p class="fine">The gap arises because the proportionality principle is essentially unrelated to punitiveness (<em>r</em>&nbsp;=&nbsp;.038), so averaging it into just deserts lowers just deserts' correlation with punitiveness.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">Study 2 &middot; Part 3</div>
+        <div class="finding-title">Retributivists scored higher on every registered contrast</div>
+        <p>The 371 participants (39.1%) who ranked retribution first were compared with the 453 who ranked deterrence (187) or incapacitation (266) first. Retributivists scored higher on all 20 registered contrasts, 19 of them at one-sided <em>p</em>&nbsp;&lt;&nbsp;.05, with a median Cohen's <em>d</em> of <span class="num">0.41</span> (range 0.06 to 0.66). They were more punitive, <em>d</em>&nbsp;=&nbsp;<span class="num">0.66</span>, 95% CI [0.52, 0.80]. Only fear of crime fell short (<em>d</em>&nbsp;=&nbsp;0.06, <em>p</em>&nbsp;=&nbsp;.19).</p>
+        <p class="fine">This comparison leaves out the 124 participants who ranked rehabilitation first and was not registered. The registered comparison, with all 577 other participants, gives the same pattern with somewhat larger differences (median <em>d</em>&nbsp;=&nbsp;0.51).</p>
       </div>
     </div>
-  </section>
 
-  <!-- ===== HYPOTHESES ===== -->
-  <section class="section" id="hypotheses">
-    <div class="section-label">Pre-registered</div>
-    <h2>Hypotheses</h2>
-    <div class="hyp-grid">
-      <div class="hyp-card">
-        <div class="hyp-id">H1</div>
-        <div class="hyp-desc">Punitiveness will be positively correlated with all correlate measures</div>
-        <div class="hyp-status"><span class="check">&#10003;</span> Supported</div>
-      </div>
-      <div class="hyp-card">
-        <div class="hyp-id">H2</div>
-        <div class="hyp-desc">Hostile Aggression cluster will show stronger correlations with punitiveness than Crime Concerns cluster</div>
-        <div class="hyp-status"><span class="check">&#10003;</span> Supported</div>
-      </div>
-      <div class="hyp-card">
-        <div class="hyp-id">H3</div>
-        <div class="hyp-desc">Most correlate measures will be positively intercorrelated</div>
-        <div class="hyp-status"><span class="check">&#10003;</span> Supported</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== KEY RESULTS ===== -->
-  <section class="section" id="results">
-    <div class="section-label">Results</div>
-    <h2>Correlations with Punitiveness (H1)</h2>
-
+    <h3>The hostile aggression advantage in both studies</h3>
     <div class="table-wrap">
       <table>
+        <caption>Correlations of each cluster with punitiveness, and their difference</caption>
         <thead>
-          <tr><th>Construct</th><th>r</th><th>Sig.</th></tr>
+          <tr><th scope="col">Measure</th><th scope="col">Study 1 (N = 496)</th><th scope="col">Study 2 (N = 948)</th></tr>
         </thead>
         <tbody>
-          <tr><td>Harsh prison conditions</td><td class="mono">.56</td><td class="sig">***</td></tr>
-          <tr><td>Social exclusion</td><td class="mono">.54</td><td class="sig">***</td></tr>
-          <tr><td>Hatred of criminals</td><td class="mono">.53</td><td class="sig">***</td></tr>
-          <tr><td>Infliction of suffering</td><td class="mono">.52</td><td class="sig">***</td></tr>
-          <tr><td>Right-wing authoritarianism</td><td class="mono">.50</td><td class="sig">***</td></tr>
-          <tr><td>Racial resentment</td><td class="mono">.47</td><td class="sig">***</td></tr>
-          <tr><td>Anger toward criminals</td><td class="mono">.45</td><td class="sig">***</td></tr>
-          <tr><td>Degradation</td><td class="mono">.44</td><td class="sig">***</td></tr>
-          <tr><td>Due process violations</td><td class="mono">.43</td><td class="sig">***</td></tr>
-          <tr><td>Revenge</td><td class="mono">.43</td><td class="sig">***</td></tr>
-          <tr><td>Violence proneness</td><td class="mono">.42</td><td class="sig">***</td></tr>
-          <tr><td>Perceived crime rates</td><td class="mono">.40</td><td class="sig">***</td></tr>
-          <tr><td>Uncertain evidence</td><td class="mono">.35</td><td class="sig">***</td></tr>
-          <tr><td>Prison violence tolerance</td><td class="mono">.35</td><td class="sig">***</td></tr>
-          <tr><td>Social dominance orientation</td><td class="mono">.32</td><td class="sig">***</td></tr>
-          <tr><td>Fear of crime</td><td class="mono">.18</td><td class="sig">***</td></tr>
-          <tr><td>Vengefulness</td><td class="mono">.12</td><td class="sig">**</td></tr>
-          <tr><td>Blood sports viewership</td><td class="mono">.11</td><td class="sig">*</td></tr>
+          <tr><th scope="row">Hostile aggression cluster, <em>r</em></th><td class="mono">.690</td><td class="mono">.749</td></tr>
+          <tr><th scope="row">Crime concerns cluster, <em>r</em></th><td class="mono">.360</td><td class="mono">.427</td></tr>
+          <tr><th scope="row">Difference, &Delta;<em>r</em> [95% CI]</th><td class="mono">.331 [.240, .431]</td><td class="mono">.322 [.269, .377]</td></tr>
+          <tr><th scope="row">Steiger's <em>Z</em></th><td class="mono">8.54</td><td class="mono">12.51</td></tr>
         </tbody>
       </table>
     </div>
+    <p class="small">The clusters are built differently in the two studies (see the notes on the cards above). The Study 1 interval is a bootstrap (BCa) interval; the Study 2 interval is Zou's interval.</p>
 
-    <h3>H2 Test: Hostile Aggression vs. Crime Concerns</h3>
-    <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-val">.59</div>
-        <div class="stat-label">r(Punitiveness,<br>Hostile Aggression)</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">.32</div>
-        <div class="stat-label">r(Punitiveness,<br>Crime Concerns)</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">6.26</div>
-        <div class="stat-label">Steiger's Z</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">&lt; .001</div>
-        <div class="stat-label">p-value</div>
-      </div>
-    </div>
-    <p>This finding is robust to removal of potentially overlapping items (tautology sensitivity at three stringency levels), alternative punitiveness operationalizations (parsimony scale removed), bootstrap BCa resampling (10,000 iterations), demographic moderation (only Crime Concerns &times; Age survives FDR correction), and a 4-factor CFA-based latent variable approach.</p>
-  </section>
-
-  <!-- ===== STUDY DESIGN ===== -->
-  <section class="section" id="design">
-    <div class="section-label">Method</div>
-    <h2>Study Design</h2>
-    <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-val">496</div>
-        <div class="stat-label">Participants<br>(after exclusions)</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">.84</div>
-        <div class="stat-label">Punitiveness<br>Cronbach's α</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">3</div>
-        <div class="stat-label">Vignette<br>Conditions</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">56</div>
-        <div class="stat-label">Survey<br>Items</div>
-      </div>
-    </div>
-
-    <h3>Correlate Clusters</h3>
-    <div class="cluster-grid">
-      <div class="cluster-card">
-        <div class="cl-name">Crime Concerns</div>
-        <div class="cl-detail">Perceived crime rates, Fear of crime &middot; 5 items</div>
-      </div>
-      <div class="cluster-card">
-        <div class="cl-name">Emotions Toward Criminals</div>
-        <div class="cl-detail">Hatred, Anger &middot; 5 items</div>
-      </div>
-      <div class="cluster-card">
-        <div class="cl-name">Hostile Aggression</div>
-        <div class="cl-detail">Social exclusion, Degradation, Suffering, Prison violence, Harsh conditions, Revenge &middot; 16 items</div>
-      </div>
-      <div class="cluster-card">
-        <div class="cl-name">Personality</div>
-        <div class="cl-detail">RWA, SDO, Vengefulness, Violence proneness, Racial resentment, Blood sports &middot; 30 items</div>
-      </div>
-    </div>
-
-    <h3>NLP Methods</h3>
-    <p>Participants provided written explanations for their sentencing decisions, analyzed with six computational approaches: sentiment analysis (VADER), dictionary-based classification (Empath + custom dictionaries), zero-shot classification (BART-large-mnli), semantic similarity to prototype sentences (all-mpnet-base-v2), topic modeling (BERTopic), and UMAP visualization with clustering.</p>
-  </section>
-
-  <!-- ===== STUDY 2: NLP RESULTS ===== -->
-  <section class="section" id="facade">
-    <div class="section-label">Study 2 / NLP Results</div>
-    <h2>Cultural Default with Selective Suppression</h2>
-
-    <div class="facade-grid">
-      <div class="facade-col">
-        <h4>The Prosocial Surface</h4>
-        <div class="facade-stat">Across 5 classification methods, <span class="fval">71%–96%</span> of justifications classified as prosocial as their primary theme</div>
-        <div class="facade-stat">No method classified more than <span class="fval">30%</span> of responses as primarily dark</div>
-        <p style="margin-top:.6rem;">Almost everyone reaches for the prosocial vocabulary when asked to justify their punishment choices.</p>
-      </div>
-      <div class="facade-col">
-        <h4>The Mismatch With Psychology</h4>
-        <div class="facade-stat">Of 33 cells in the text-feature × psychology matrix that reached both significance and a meaningful effect size, <span class="fval">32 were negative</span></div>
-        <div class="facade-stat">Strongest single effect: BGE rehabilitation × punitiveness = <span class="fval">-.37</span></div>
-        <p style="margin-top:.6rem;">Where text features track Study 1 psychology at all, they track it in the wrong direction.</p>
-      </div>
-    </div>
-
-    <h3>Multiverse Verdicts (Six Operationalizations of the Prosocial-Minus-Dark Gap)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Gap measure</th><th>r with Hostile Aggression</th><th>r with Crime Concerns</th><th>Verdict</th></tr></thead>
-        <tbody>
-          <tr><td>BGE embeddings</td><td class="mono">|r| ≤ .08</td><td class="mono">|r| ≤ .08</td><td>Cultural default</td></tr>
-          <tr><td>voyage-3 embeddings</td><td class="mono">|r| ≤ .08</td><td class="mono">|r| ≤ .08</td><td>Cultural default</td></tr>
-          <tr><td>MPNet embeddings</td><td class="mono">|r| ≤ .08</td><td class="mono">|r| ≤ .08</td><td>Cultural default</td></tr>
-          <tr><td>Dictionary classifier</td><td class="mono">-.10<span class="sig">*</span></td><td class="mono">-.10<span class="sig">*</span></td><td>Cultural default (symmetric)</td></tr>
-          <tr><td>Claude ML</td><td class="mono">-.25<span class="sig">***</span></td><td class="mono">smaller</td><td>Individual facade</td></tr>
-          <tr><td>DeBERTa ML</td><td class="mono">-.17<span class="sig">***</span></td><td class="mono">smaller</td><td>Individual facade</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>Four of six measures return cultural-default verdicts. Two return individual-facade verdicts. None return sincerity. The disagreement reflects the granularity of each method: continuous embedding gaps smooth small wording differences into one score; discrete classifiers detect a specific shift away from the rehabilitation theme.</p>
-
-    <h3>Theme-Level Correlations (Where the Suppression Lives)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Theme (BGE similarity)</th><th>× Punitiveness</th><th>× RWA</th><th>× Hostile Agg.</th><th>× Racial Resentment</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Rehabilitation</strong></td><td class="mono">-.37<span class="sig">***</span></td><td class="mono">-.20<span class="sig">***</span></td><td class="mono">-.15<span class="sig">**</span></td><td class="mono">-.16<span class="sig">**</span></td></tr>
-          <tr><td>Deterrence</td><td class="mono">+.05</td><td class="mono">+.04</td><td class="mono">+.03</td><td class="mono">+.06</td></tr>
-          <tr><td>Incapacitation</td><td class="mono">+.07</td><td class="mono">+.06</td><td class="mono">+.04</td><td class="mono">+.05</td></tr>
-          <tr><td>Retribution</td><td class="mono">+.06</td><td class="mono">+.05</td><td class="mono">+.07</td><td class="mono">+.04</td></tr>
-          <tr><td>Revenge</td><td class="mono">+.02</td><td class="mono">+.01</td><td class="mono">-.02</td><td class="mono">+.03</td></tr>
-          <tr><td>Suffering</td><td class="mono">+.04</td><td class="mono">+.02</td><td class="mono">+.01</td><td class="mono">+.05</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>The high-hostile, high-punitive participants don't say more revenge or suffering things. They say fewer rehabilitation things. Other prosocial themes are unaffected. The pattern holds across all three embedding models (BGE, voyage, MPNet).</p>
-
-    <h3>Text Features Add Prediction Beyond Self-Report</h3>
-    <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-val">+.134</div>
-        <div class="stat-label">ΔR² text → sentencing<br>(Step 2 over Step 1 scales)</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">+.079</div>
-        <div class="stat-label">ΔR² text → punitiveness<br>(Step 2 over Step 1 scales)</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">3</div>
-        <div class="stat-label">embedding models<br>tested for robustness</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val">45</div>
-        <div class="stat-label">prototype × model<br>combinations in multiverse</div>
-      </div>
-    </div>
-    <p>Computational text analysis adds substantive predictive information beyond what conventional self-report scales capture. The rehabilitation-suppression effect is the strongest single text predictor in both regressions.</p>
-  </section>
-
-  <!-- ===== PIPELINE ===== -->
-  <section class="section" id="pipeline">
-    <div class="section-label">Workflow</div>
-    <h2>Analysis Pipeline</h2>
-    <div class="pipeline">
-      <div class="pipe-step">
-        <div class="pipe-num">Phase 1–2</div>
-        <div class="pipe-title">Data Preparation</div>
-        <div class="pipe-items">Loading, filtering, attention check exclusions (N&nbsp;=&nbsp;496), reverse coding, composite scores, reliability</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Phase 3</div>
-        <div class="pipe-title">Confirmatory Tests</div>
-        <div class="pipe-items">H1 correlations with FDR correction, H2 Steiger's Z, H3 intercorrelation matrix</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Phase 4</div>
-        <div class="pipe-title">Sensitivity &amp; Robustness</div>
-        <div class="pipe-items">Bootstrap CIs, vignette stability, political moderation, tautology tests, TOST equivalence</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Phase 5</div>
-        <div class="pipe-title">Advanced Modeling</div>
-        <div class="pipe-items">EFA, CFA, multiple regression, hierarchical regression (incremental R²)</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Phase 6</div>
-        <div class="pipe-title">NLP Analysis</div>
-        <div class="pipe-items">VADER, Empath, zero-shot (BART), semantic similarity, BERTopic, UMAP clustering</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Phase 7</div>
-        <div class="pipe-title">NLP Integration</div>
-        <div class="pipe-items">Facade detection, incremental validity, text → sentencing prediction</div>
-      </div>
+    <div class="note">
+      <strong>Reading the Study 2 comparisons.</strong> Retributivists are identified here by the preregistration's primary definition, the forced ranking of four goals of punishment. The preregistration names three further groupings (a median split and top and bottom thirds of relative retribution, and whether participants kept or raised their sentence, or reduced it, after learning facts meant to remove incapacitation and deterrence as reasons to punish). The four groupings agreed little more often than chance (&kappa; from .05 to .21), so a result under one grouping describes the participants that grouping selects.
     </div>
   </section>
 
-  <!-- ===== DATA TABLES ===== -->
-  <section class="section" id="data">
-    <div class="section-label">Open Data</div>
-    <h2>Data &amp; Output Tables</h2>
-    <p>All output tables are available as downloadable CSV files. Visualizations are in the figures directory.</p>
+  <!-- ===== FIGURES ===== -->
+  <section class="section" id="figures">
+    <div class="section-label">Figures</div>
+    <h2>The paper's figures</h2>
+    <p>The eleven figures of the paper, drawn by <code>04_two_study_figures.Rmd</code>. Select a figure to open it at full size. The paper itself is available as a <a href="study2_retribution/Docs/Writing/DARK%20II%20-%20PAPER,%20CLASS%20workshop.docx">Word document</a>, and the Supplementary Materials as a <a href="study2_retribution/Docs/Writing/Retribution%20--%20Supplementary%20Materials,%20DRAFT.docx">Word document</a> or in <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/study2_retribution/Docs/Writing/Retribution%20--%20Supplementary%20Materials,%20DRAFT.md" target="_blank" rel="noopener">Markdown on GitHub</a>.</p>
 
-    <h3>Key Visualizations</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Figure</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><a href="analysis/output/figures/heatmap_construct_level.png">Construct-Level Heatmap</a></td><td>Correlations between punitiveness and all 16 constructs</td></tr>
-          <tr><td><a href="analysis/output/figures/heatmap_cluster_level.png">Cluster-Level Heatmap</a></td><td>High-level view of cluster relationships</td></tr>
-          <tr><td><a href="analysis/output/figures/heatmap_intercorrelations.png">Intercorrelations</a></td><td>Correlations among all correlate measures (H3)</td></tr>
-          <tr><td><a href="analysis/output/figures/bootstrap_h2_distribution.png">Bootstrap H2 Distribution</a></td><td>Bootstrap CIs for Steiger's Z test</td></tr>
-          <tr><td><a href="analysis/output/figures/facade_scatter_plot.png">Facade Scatter Plot</a></td><td>Hostile aggression vs. prosocial language</td></tr>
-          <tr><td><a href="analysis/output/figures/UMAP.png">UMAP Embeddings</a></td><td>Semantic embedding space of justifications</td></tr>
-          <tr><td><a href="analysis/output/figures/tost_equivalence_plot.png">TOST Equivalence</a></td><td>Equivalence testing for null facade correlations</td></tr>
-        </tbody>
-      </table>
+    <div class="fig-grid">
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig1_study1_sentences.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig1_study1_sentences.png" width="1740" height="900" loading="lazy" alt="Bar chart of the percentage of Study 1 participants who chose each sentence from 0 to 50 years. Responses cluster at round numbers; 32.3% chose the 50-year maximum, and the mean, 35.2 years, lies above the 20-to-30-year range the instructions described as typical."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 1</span><span class="fig-title">Sentences in Study 1</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig2_study1_cluster_matrix.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig2_study1_cluster_matrix.png" width="1740" height="1050" loading="lazy" alt="Grayscale correlation matrix of punitiveness and the five correlate clusters in Study 1. Punitiveness correlates .69 with hostile aggression, .62 with emotions, .60 with personality and ideology, .56 with process violations, and .36 with crime concerns."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 2</span><span class="fig-title">Correlations Among Punitiveness and the Correlate Clusters in Study 1</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig4_study1_construct_matrix.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig4_study1_construct_matrix.png" width="1740" height="1770" loading="lazy" alt="Grayscale correlation matrix of punitiveness and all 18 correlates in Study 1, grouped by cluster. All correlations are positive, and the hostile aggression measures form the tightest block of strong correlations."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 3</span><span class="fig-title">Correlations Among Punitiveness and All 18 Correlates in Study 1</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig17_study2_sentences.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig17_study2_sentences.png" width="1740" height="900" loading="lazy" alt="Bar chart of the percentage of Study 2 participants who chose each first sentence from 0 to 50 years. 38.0% chose the 50-year maximum, and the mean, 36.2 years, lies above the 20-to-30-year range the instructions described as typical."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 4</span><span class="fig-title">First Sentences in Study 2</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig18_study2_correlates.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig18_study2_correlates.png" width="1740" height="1080" loading="lazy" alt="Horizontal bar chart of the correlations of punitiveness with the twelve preregistered correlates in Study 2, with 95% confidence intervals, shaded by cluster. All are positive, from .68 for harsh prison conditions and revenge to .24 for fear of crime."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 5</span><span class="fig-title">Correlations of Punitiveness With the Twelve Preregistered Correlates in Study 2 (H1)</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig8_study2_goals.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig8_study2_goals.png" width="1740" height="720" loading="lazy" alt="Stacked bar chart of how Study 2 participants ranked four goals of punishment. Retribution was ranked first by 39%, incapacitation by 28%, deterrence by 20%, and rehabilitation by 13%; rehabilitation was ranked last by 56%."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 6</span><span class="fig-title">Ranking the Four Goals of Punishment in Study 2</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig10_study2_desert_direction.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig10_study2_desert_direction.png" width="1740" height="480" loading="lazy" alt="Bar chart of the correlations of desert theory with the proportionality principle, .20, and with the severity index, .47, each with a 95% confidence interval."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 7</span><span class="fig-title">Correlations of Desert Theory With the Proportionality Principle and the Severity Index in Study 2</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig11_study2_goals_limits.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig11_study2_goals_limits.png" width="1740" height="960" loading="lazy" alt="Grouped bar chart of the correlations of desert theory, deterrence, incapacitation, and rehabilitation with parsimony and with the proportionality principle in Study 2. Desert theory, deterrence, and incapacitation correlate negatively with parsimony, about minus .40 to minus .46, and rehabilitation near zero; all four correlate .17 to .20 with the proportionality principle."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 8</span><span class="fig-title">Correlations of Each Goal of Punishment With the Limits on Punishment in Study 2</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig13_study2_second_sentence.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig13_study2_second_sentence.png" width="1740" height="2220" loading="lazy" alt="Three panels on the second sentencing decision in Study 2. Panel A shows the first and second sentences as violin plots; the mean falls from 36.2 to 29.4 years. Panel B shows that 78% of participants whose first sentence was 50 years kept it, while among those below 50 years, 60% reduced it, 34% kept it, and 6% raised it. Panel C shows that the sentencing ratio correlates .22 with desert theory, .23 with revenge, .31 with punitiveness without the sentence, and about zero with the proportionality principle."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 9</span><span class="fig-title">The Second Sentencing Decision in Study 2</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig15_study2_retributivist_contrasts.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig15_study2_retributivist_contrasts.png" width="1740" height="1980" loading="lazy" alt="Horizontal bar chart of Cohen's d, with 95% confidence intervals, for retributivists minus participants who ranked deterrence or incapacitation first, on each registered measure and on the exploratory personality and cognitive reflection measures. Every difference is positive; the largest is punitiveness, 0.66, and the smallest are fear of crime and cognitive reflection, 0.06."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 10</span><span class="fig-title">Retributivists Compared With Participants Who Ranked Deterrence or Incapacitation First in Study 2</span></figcaption>
+      </figure>
+      <figure class="fig-card">
+        <a href="study2_retribution/Docs/Writing/figures/paper/fig16_study2_endorsement.png">
+          <div class="fig-thumb"><img src="study2_retribution/Docs/Writing/figures/paper/fig16_study2_endorsement.png" width="1740" height="1200" loading="lazy" alt="Paired bar chart of the percentage of participants endorsing each of eight hostile attitudes, and of those who would put the shark to death, among retributivists and among participants who ranked deterrence or incapacitation first. Among retributivists the share ranges from 11% for a painful death for the shark to 56% for hatred; in the comparison group it ranges from 5% to 36%."></div>
+        </a>
+        <figcaption><span class="fig-num">Figure 11</span><span class="fig-title">Participants Endorsing Each Hostile Attitude in Study 2, Among Retributivists and Among Participants Who Ranked Deterrence or Incapacitation First (H12)</span></figcaption>
+      </figure>
     </div>
 
-    <h3>Data Tables</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Table</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><a href="analysis/output/tables/H1_punitiveness_correlations.csv">H1 Results</a></td><td>All punitiveness correlations with FDR correction</td></tr>
-          <tr><td><a href="analysis/output/tables/reliability_alphas.csv">Reliability</a></td><td>Cronbach's α for all scales</td></tr>
-          <tr><td><a href="analysis/output/tables/descriptive_statistics.csv">Descriptives</a></td><td>Means, SDs, ranges for all variables</td></tr>
-          <tr><td><a href="analysis/output/tables/correlation_table_construct_level.csv">Full Correlation Matrix</a></td><td>Complete construct-level correlations</td></tr>
-          <tr><td><a href="analysis/output/tables/steiger_by_punitiveness_measure.csv">Steiger's Z Tests</a></td><td>H2 test by punitiveness measure</td></tr>
-          <tr><td><a href="analysis/output/tables/vignette_correlation_stability.csv">Vignette Stability</a></td><td>Cross-vignette correlation consistency</td></tr>
-          <tr><td><a href="analysis/output/tables/tautology_sensitivity_steiger.csv">Tautology Sensitivity</a></td><td>H2 results after removing overlapping content</td></tr>
-          <tr><td><a href="analysis/output/tables/tost_equivalence_results.csv">TOST Equivalence</a></td><td>Equivalence tests for null NLP correlations</td></tr>
-          <tr><td><a href="analysis/output/tables/nlp_facade_correlations.csv">NLP Facade Correlations</a></td><td>Text features × psychological measures</td></tr>
-          <tr><td><a href="analysis/output/tables/nlp_sentence_correlations.csv">NLP Sentence Correlations</a></td><td>Text features predicting sentencing</td></tr>
-          <tr><td><a href="analysis/output/tables/bertopic_topics.csv">BERTopic Topics</a></td><td>Topic modeling results</td></tr>
-        </tbody>
-      </table>
+    <h3>Figures of the Supplementary Materials</h3>
+    <ul class="link-list">
+      <li><span class="ll-label">Figure S1</span><a href="study2_retribution/Docs/Writing/figures/paper/fig5_sentences_both_studies.png">Sentences in Both Studies</a></li>
+      <li><span class="ll-label">Figure S2</span><a href="study2_retribution/Docs/Writing/figures/paper/fig6_correlates_both_studies.png">Punitiveness and Its Correlates in Both Studies</a></li>
+      <li><span class="ll-label">Figure S3</span><a href="study2_retribution/Docs/Writing/figures/paper/fig7_hostility_advantage_both_studies.png">The Hostile Aggression Advantage in Both Studies</a></li>
+      <li><span class="ll-label">Figure S4</span><a href="study2_retribution/Docs/Writing/figures/paper/fig9_study2_proportionality.png">Agreement With Proportionality and With Each Departure From It in Study 2 (H4 and H5)</a></li>
+      <li><span class="ll-label">Figure S5</span><a href="study2_retribution/Docs/Writing/figures/paper/fig12_study2_desert_revenge.png">Endorsement of Desert Theory, Just Deserts, the Registered Just-Deserts Score, and Revenge, and Their Correlations With Punitiveness, in Study 2 (H9 and H10)</a></li>
+      <li><span class="ll-label">Figure S6</span><a href="study2_retribution/Docs/Writing/figures/paper/fig14_study2_groupings.png">How Far the Groupings of Retributivists Agree in Study 2</a></li>
+    </ul>
+  </section>
+
+  <!-- ===== REPORTS ===== -->
+  <section class="section" id="reports">
+    <div class="section-label">Analysis Reports</div>
+    <h2>Knitted reports</h2>
+    <p>Each report is an R Markdown document knitted to HTML, with its code, output, and figures. The Study 2 documents are in <code>study2_retribution/Analysis/Retribution R/</code>; the <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/study2_retribution/README.md#how-to-reproduce-the-analyses" target="_blank" rel="noopener">Study 2 README</a> explains the knit order and what each document reads and writes.</p>
+
+    <h3>Study 2: the paper's analyses</h3>
+    <div class="report-grid">
+      <a class="report-card" href="study2_retribution/Analysis/Retribution%20R/01_main_analysis.html">
+        <div class="rc-lang">R Markdown &middot; knit 30 September 2026</div>
+        <div class="rc-title">Retribution Study: Main Analysis</div>
+        <div class="rc-desc">Cleaning, the registered exclusions (1,015 responses to 948), scoring, reliability, and the registered hypotheses. The source of the paper's Study 2 results.</div>
+        <span class="rc-file">01_main_analysis.html</span>
+      </a>
+      <a class="report-card" href="study2_retribution/Analysis/Retribution%20R/04_two_study_figures.html">
+        <div class="rc-lang">R Markdown &middot; knit 27 September 2026</div>
+        <div class="rc-title">The paper's figures: Study 1, both studies, and Study 2</div>
+        <div class="rc-desc">Draws the paper's figures and computes the Study 1 numbers the paper reports on its six-component scoring of punitiveness. It reads Study 1 files from the authors' local folders, so it does not knit from this repository; its outputs are included.</div>
+        <span class="rc-file">04_two_study_figures.html</span>
+      </a>
+    </div>
+
+    <h3>Study 2: figures for talks</h3>
+    <div class="report-grid">
+      <a class="report-card" href="study2_retribution/Analysis/Retribution%20R/05_study2_talk_figures.html">
+        <div class="rc-lang">R Markdown &middot; knit 22 September 2026</div>
+        <div class="rc-title">Study 2 on its own: figures for talks</div>
+        <div class="rc-desc">Figures of Study 2 alone, one per slide, covering the replication of Study 1 (Part 1) and what people mean by retribution (Part 2). The document was edited after this knit.</div>
+        <span class="rc-file">05_study2_talk_figures.html</span>
+      </a>
+      <a class="report-card" href="study2_retribution/Analysis/Retribution%20R/06_princeton_talk_figures.html">
+        <div class="rc-lang">R Markdown &middot; knit 29 September 2026</div>
+        <div class="rc-title">Figures for a talk at Princeton</div>
+        <div class="rc-desc">Slides on revenge and the desert-based scores, on how retributivists differ from other participants, and on the four ways of identifying retributivists.</div>
+        <span class="rc-file">06_princeton_talk_figures.html</span>
+      </a>
+    </div>
+
+    <h3>Study 2: earlier knits</h3>
+    <p class="small">These two reports were knit in August 2026 from the scored data of an earlier knit of 01, so their numbers can differ from the paper's, and a new knit may not reproduce them exactly.</p>
+    <div class="report-grid">
+      <a class="report-card" href="study2_retribution/Analysis/Retribution%20R/03_supplementary_analyses.html">
+        <div class="rc-lang">R Markdown &middot; knit 2 August 2026</div>
+        <div class="rc-title">Retribution Study: Supplementary and Exploratory Analyses</div>
+        <div class="rc-desc">E1, E2, the factor structure of the correlates, the change between the two sentences, moderators, agreement among the ways of identifying retributivists, and response quality.</div>
+        <span class="rc-file">03_supplementary_analyses.html</span>
+      </a>
+      <a class="report-card" href="study2_retribution/Analysis/Retribution%20R/02_nlp_integration.html">
+        <div class="rc-lang">R Markdown &middot; knit 1 August 2026</div>
+        <div class="rc-title">Retribution Study: Language Analysis (E3 to E7)</div>
+        <div class="rc-desc">The language analysis of the open-ended answers, which is not finished and is not reported in the paper. This knit shows only the word-list results, for 293 to 295 participants.</div>
+        <span class="rc-file">02_nlp_integration.html</span>
+      </a>
+    </div>
+
+    <h3>Study 1: reports from the earlier version</h3>
+    <div class="note">
+      These reports were written for the earlier version of the project and use its scoring. In them, punitiveness is the mean of two halves, the eight attitude items and the sentence, so the sentence counts for half; the paper weights its six components equally. Their numbers therefore differ from the current paper's. The paper's Study 1 numbers are computed in <code>04_two_study_figures</code> above.
+    </div>
+    <div class="report-grid">
+      <a class="report-card" href="analysis/r/01_main_analysis.html">
+        <div class="rc-lang">R Markdown &middot; earlier version</div>
+        <div class="rc-title">Study 1: Main Analysis</div>
+        <div class="rc-desc">Cleaning, exclusions, reliability, the preregistered hypotheses H1 to H3, stability across vignettes, moderation, and factor analysis.</div>
+        <span class="rc-file">analysis/r/01_main_analysis.html</span>
+      </a>
+      <a class="report-card" href="analysis/r/03_supplementary_analyses.html">
+        <div class="rc-lang">R Markdown &middot; earlier version</div>
+        <div class="rc-title">Study 1: Supplementary Analyses</div>
+        <div class="rc-desc">Sensitivity analyses of H2 with overlapping measures removed, equivalence tests, and further checks, some of them on the earlier language-analysis features.</div>
+        <span class="rc-file">analysis/r/03_supplementary_analyses.html</span>
+      </a>
     </div>
   </section>
 
-  <!-- ===== RELIABILITY ===== -->
-  <section class="section" id="reliability">
-    <div class="section-label">Measurement</div>
-    <h2>Scale Reliability</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Construct</th><th>α</th><th>N Items</th></tr></thead>
-        <tbody>
-          <tr><td>Punitiveness (8 attitudinal items)</td><td class="mono">.84</td><td class="mono">8</td></tr>
-          <tr><td>Punitiveness (9 items, with sentencing)</td><td class="mono">.84</td><td class="mono">9</td></tr>
-          <tr><td>RWA</td><td class="mono">.87</td><td class="mono">5</td></tr>
-          <tr><td>SDO</td><td class="mono">.92</td><td class="mono">8</td></tr>
-          <tr><td>Vengefulness</td><td class="mono">.88</td><td class="mono">5</td></tr>
-          <tr><td>Racial Resentment</td><td class="mono">.90</td><td class="mono">4</td></tr>
-          <tr><td>Hostile Aggression Cluster</td><td class="mono">.92</td><td class="mono">16</td></tr>
-          <tr><td>Personality Cluster</td><td class="mono">.92</td><td class="mono">30</td></tr>
-          <tr><td>Parsimony*</td><td class="mono">.48</td><td class="mono">2</td></tr>
-          <tr><td>Prison Violence Tolerance*</td><td class="mono">.56</td><td class="mono">2</td></tr>
-        </tbody>
-      </table>
+  <!-- ===== MATERIALS & DATA ===== -->
+  <section class="section" id="materials">
+    <div class="section-label">Open Materials</div>
+    <h2>Materials and data</h2>
+    <p>Both studies were approved by the Institutional Review Board at the University of Southern California. The repository's <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/README.md" target="_blank" rel="noopener">README</a> describes its structure.</p>
+
+    <div class="two-col">
+      <div class="col-card">
+        <h3>Study 1</h3>
+        <ul class="link-list">
+          <li><span class="ll-label">Preregistration</span><a href="https://osf.io/kr7y2/overview?view_only=d312013b176a411c8cf6c126d7f54617" target="_blank" rel="noopener">OSF (osf.io/kr7y2)</a>, which holds the registered document (.pdf)</li>
+          <li><span class="ll-label">Survey</span><a href="materials/stimuli/PUNISHMENT_21_-__Pro-Social.qsf">Qualtrics survey</a> (.qsf, for import into Qualtrics)</li>
+          <li><span class="ll-label">Data</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/tree/main/data" target="_blank" rel="noopener">data/</a>: the Qualtrics export and the cleaned data, prepared for the earlier version (the counts and scores in its README follow the earlier manuscript)</li>
+          <li><span class="ll-label">Codebooks</span>Both from the earlier version: the <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/data/codebook/CODEBOOK.md" target="_blank" rel="noopener">codebook</a>, which also lists that version's composite scores, and the <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/data/codebook/NLP_CODEBOOK.md" target="_blank" rel="noopener">language-analysis codebook</a></li>
+          <li><span class="ll-label">Code</span>From the earlier version: <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/tree/main/analysis" target="_blank" rel="noopener">analysis/</a> and <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/HOW_TO_REGENERATE_REPORTS.md" target="_blank" rel="noopener">how to regenerate its reports</a> (there, &ldquo;Study 2&rdquo; means the language analysis)</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Study 2</h3>
+        <ul class="link-list">
+          <li><span class="ll-label">Preregistration</span>The <a href="study2_retribution/Docs/Preregistration/Retribution%20Study%20-%20Preregistration,FINAL,%20June%2029.pdf">registered document</a> (.pdf). The registration on <a href="https://osf.io/u97xs" target="_blank" rel="noopener">OSF (osf.io/u97xs)</a> is not public at present, so the OSF page opens only for accounts with access.</li>
+          <li><span class="ll-label">Survey</span><a href="study2_retribution/Experiment/Retribution_Study.qsf">Qualtrics survey</a> (.qsf, for import into Qualtrics)</li>
+          <li><span class="ll-label">Data</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/tree/main/study2_retribution/Data" target="_blank" rel="noopener">study2_retribution/Data/</a>: the Qualtrics export of all 1,015 responses, and an interim export of the first 300</li>
+          <li><span class="ll-label">Scored data</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/tree/main/study2_retribution/Analysis/Retribution%20R/data/cleaned" target="_blank" rel="noopener">data/cleaned/</a>, written by the R Markdown documents</li>
+          <li><span class="ll-label">Documentation</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/study2_retribution/README.md" target="_blank" rel="noopener">Study 2 README</a>: folder structure, how to reproduce the analyses, and the data files</li>
+        </ul>
+      </div>
     </div>
-    <p style="font-size:.82rem;color:var(--ink-muted);">*Parsimony and prison-violence-tolerance scales fall below conventional reliability thresholds; see the <a href="analysis/r/03_supplementary_analyses.html" style="color:var(--accent);">supplementary analyses</a> for item-level examination.</p>
+
+    <div class="note">
+      <strong>De-identification.</strong>
+      <ul>
+        <li>Prolific IDs were replaced by pseudonyms, "P" followed by six digits. One map covers the participants of both studies.</li>
+        <li>Study 1: the Qualtrics export in <code>data/raw/</code> has no IP address or location columns.</li>
+        <li>Study 2: the IP address, location, recipient, and external reference columns of the Qualtrics exports were blanked, in the exports and in the scored data.</li>
+        <li>The raw, identifiable data of both studies and the map from Prolific IDs to pseudonyms are kept by the authors and are not public.</li>
+      </ul>
+      Details are in the <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/README.md#de-identification" target="_blank" rel="noopener">README</a> and the <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/study2_retribution/README.md#data-and-de-identification" target="_blank" rel="noopener">Study 2 README</a>.
+    </div>
+  </section>
+
+  <!-- ===== EARLIER WORK ===== -->
+  <section class="section" id="earlier">
+    <div class="section-label">Earlier Work</div>
+    <h2>The earlier version of the project</h2>
+    <p>This project began as an earlier manuscript by Dan Simon, David E. Melnikoff, and David G. Kamper, which reported Study 1 and a language analysis of the open-ended answers in which Study 1's participants explained their sentences. The files in the repository's top-level folders come from that version. Its conclusions are those of the earlier manuscript; the current paper does not analyze the open-ended answers.</p>
+
+    <ul class="link-list">
+      <li><span class="ll-label">Manuscript</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/tree/main/manuscript" target="_blank" rel="noopener">manuscript/</a>: LaTeX source, tables, and figures of the earlier manuscript and its supplement</li>
+      <li><span class="ll-label">Summary</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/docs/NLP_ANALYSIS_SUMMARY.md" target="_blank" rel="noopener">Summary of the language analysis</a> and <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/docs/METHODOLOGY.md" target="_blank" rel="noopener">notes on the methods</a></li>
+      <li><span class="ll-label">Notebooks</span><a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/tree/main/analysis/python" target="_blank" rel="noopener">analysis/python/</a>: the four notebooks, also linked below in Colab</li>
+    </ul>
+
+    <h3>Reports of the language analysis</h3>
+    <p class="small">The language analysis scored each open-ended answer with dictionaries, classifiers (including a large language model used as a rater), sentence embeddings, and topic models, and related the scores to the survey measures.</p>
+    <div class="report-grid">
+      <a class="report-card" href="analysis/r/02_nlp_integration.html">
+        <div class="rc-lang">R Markdown &middot; earlier version</div>
+        <div class="rc-title">Language analysis: integration with the survey data</div>
+        <div class="rc-desc">R analyses of the text features produced by the notebooks: their correlations with the survey measures and hierarchical regressions.</div>
+        <span class="rc-file">analysis/r/02_nlp_integration.html</span>
+      </a>
+      <a class="report-card" href="https://colab.research.google.com/drive/1oQSBmuGCB48b5hF1DWkte1qpHw9etV0X" target="_blank" rel="noopener">
+        <div class="rc-lang">Python &middot; open in Colab</div>
+        <div class="rc-title">Preprocessing and dictionaries</div>
+        <div class="rc-desc">Text cleaning, VADER sentiment, Empath categories, and a hand-built dictionary classifier.</div>
+      </a>
+      <a class="report-card" href="https://colab.research.google.com/drive/1Qjk3VlOik9ObHZmyDurYIfFaUzYhpGJ0" target="_blank" rel="noopener">
+        <div class="rc-lang">Python &middot; open in Colab</div>
+        <div class="rc-title">Classification</div>
+        <div class="rc-desc">A zero-shot DeBERTa classifier and a large-language-model rater, checked against a 40-sentence validation set.</div>
+      </a>
+      <a class="report-card" href="https://colab.research.google.com/drive/11Dpj5cgn0LTxxwjn7DMI-sZvj1F4wOJC" target="_blank" rel="noopener">
+        <div class="rc-lang">Python &middot; open in Colab</div>
+        <div class="rc-title">Embeddings and similarity</div>
+        <div class="rc-desc">Similarity to prototype sentences under three sentence-embedding models (BGE, a Voyage model, and MPNet) and five sets of prototypes.</div>
+      </a>
+      <a class="report-card" href="https://colab.research.google.com/drive/1JJDWBjEQO-dCKisftIBXK--E7HN-BGKT" target="_blank" rel="noopener">
+        <div class="rc-lang">Python &middot; open in Colab</div>
+        <div class="rc-title">Topics, convergence, and export</div>
+        <div class="rc-desc">BERTopic, UMAP, agreement among the methods, and export of the text features.</div>
+      </a>
+    </div>
   </section>
 
   <!-- ===== CITATION ===== -->
   <section class="section" id="cite">
     <div class="section-label">Reference</div>
-    <h2>Citation</h2>
-    <div class="code-block"><span class="comment">@article</span>{simon2026darkside,
-  <span class="key">title</span>   = {The Dark Side of Punishment},
-  <span class="key">author</span>  = {Simon, Dan and Melnikoff, David E. and Kamper, David G.},
-  <span class="key">year</span>    = {<span class="val">2026</span>},
-  <span class="key">note</span>    = {Manuscript under review at the Journal of Personality and Social Psychology}
+    <h2>Cite</h2>
+    <p>The current paper is a manuscript in preparation:</p>
+    <p>Simon, D., &amp; Kamper, D. G. (2026). <em>The dark side of punishment</em> [Manuscript in preparation].</p>
+    <div class="code-block"><span class="comment">@unpublished</span>{simon2026darkside,
+  <span class="key">title</span>  = {The Dark Side of Punishment},
+  <span class="key">author</span> = {Simon, Dan and Kamper, David G.},
+  <span class="key">year</span>   = {<span class="val">2026</span>},
+  <span class="key">note</span>   = {Manuscript in preparation}
 }</div>
+    <p class="small">The repository's <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/CITATION.cff" target="_blank" rel="noopener">CITATION.cff</a> was written for the earlier version and cites the earlier manuscript, by Dan Simon, David E. Melnikoff, and David G. Kamper.</p>
 
-    <h3>Ethics &amp; Limitations</h3>
-    <p>This research was approved by USC IRB (UP-21-00756, exempt status, minimal risk). All participants provided informed consent; no identifying information was collected. Key limitations include correlational design, an online (Prolific) sample, self-report measures (the NLP triangulation does not fully escape this — both modalities are self-generated), single measurement occasion, and three vignettes all involving second-degree murder (generalization to other crime types is an open question).</p>
+    <h3>License</h3>
+    <p>The repository is released under the <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>.</p>
   </section>
 
 </main>
@@ -1053,46 +1103,49 @@
 <footer class="footer">
   <div class="footer-inner">
     <div>
-      <h4>About This Research</h4>
-      <p>This project is part of the Law &amp; Cognition Lab's research program on criminal justice attitudes. All data, code, and materials are open-access under the MIT License.</p>
+      <h2>About this repository</h2>
+      <p>Data, code, survey materials, and reports for <em>The Dark Side of Punishment</em>, by Dan Simon and David G. Kamper. The repository is part of the Law &amp; Cognition Lab's research on criminal justice attitudes.</p>
     </div>
     <div>
-      <h4>Links</h4>
+      <h2>Links</h2>
       <div class="footer-links">
-        <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness">GitHub Repository</a>
-        <a href="https://osf.io/kr7y2/overview?view_only=d312013b176a411c8cf6c126d7f54617">OSF Pre-registration</a>
-        <a href="data/codebook/CODEBOOK.md">Codebook</a>
-        <a href="data/codebook/NLP_CODEBOOK.md">NLP Codebook</a>
-        <a href="docs/METHODOLOGY.md">Methodology</a>
+        <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness">GitHub repository</a>
+        <a href="https://osf.io/kr7y2/overview?view_only=d312013b176a411c8cf6c126d7f54617">Study 1 preregistration (OSF)</a>
+        <a href="study2_retribution/Docs/Preregistration/Retribution%20Study%20-%20Preregistration,FINAL,%20June%2029.pdf">Study 2 preregistration (PDF)</a>
+        <a href="https://github.com/DGK-Law-and-Cognition-Lab/Punishment-Punitiveness/blob/main/study2_retribution/README.md">Study 2 README</a>
+        <a href="https://opensource.org/licenses/MIT">MIT License</a>
       </div>
     </div>
     <div>
-      <h4>Contact</h4>
+      <h2>Contact</h2>
       <div class="footer-links">
-        <a href="mailto:dsimon@law.usc.edu">Dan Simon — dsimon@law.usc.edu</a>
-        <a href="mailto:davidgkamper@ucla.edu">David Kamper — davidgkamper@ucla.edu</a>
+        <a href="mailto:dsimon@law.usc.edu">Dan Simon: dsimon@law.usc.edu</a>
+        <a href="mailto:davidgkamper@ucla.edu">David Kamper: davidgkamper@ucla.edu</a>
       </div>
     </div>
   </div>
   <div class="footer-bottom">
-    This research challenges the assumption that criminal punishment is fundamentally prosocial by demonstrating its strong associations with hostile psychological factors. We talk about deterrence while meaning revenge.
+    The repository is released under the MIT License. The raw, identifiable data of both studies are kept by the authors and are not public.
   </div>
 </footer>
 
-<!-- Sticky nav highlight -->
+<!-- Highlights the nav link of the section in view -->
 <script>
-  const sections = document.querySelectorAll('.section[id]');
-  const navLinks = document.querySelectorAll('.nav-inner a');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(l => l.classList.remove('active'));
-        const link = document.querySelector(`.nav-inner a[href="#${e.target.id}"]`);
-        if (link) link.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -75% 0px' });
-  sections.forEach(s => obs.observe(s));
+  (function () {
+    if (!('IntersectionObserver' in window)) return;
+    var sections = document.querySelectorAll('.section[id]');
+    var navLinks = document.querySelectorAll('.nav-inner a');
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          navLinks.forEach(function (l) { l.classList.remove('active'); l.removeAttribute('aria-current'); });
+          var link = document.querySelector('.nav-inner a[href="#' + e.target.id + '"]');
+          if (link) { link.classList.add('active'); link.setAttribute('aria-current', 'true'); }
+        }
+      });
+    }, { rootMargin: '-20% 0px -75% 0px' });
+    sections.forEach(function (s) { obs.observe(s); });
+  })();
 </script>
 
 </body>
